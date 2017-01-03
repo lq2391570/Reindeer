@@ -17,6 +17,23 @@ class ViewController: UIViewController {
         
     }
 
+    @IBAction func gotoLogin(_ sender: UIButton) {
+        
+        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateInitialViewController()
+        self.navigationController?.pushViewController(vc!, animated: true)
+        
+        
+    }
+    
+    @IBAction func gotoHomePage(_ sender: UIButton) {
+        let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateInitialViewController()
+        let nav = UINavigationController(rootViewController: vc!)
+        self.view.window?.rootViewController = nav
+        
+    //    self.navigationController.roo
+    }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

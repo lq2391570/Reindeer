@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import SVProgressHUD
+
 
 var ScreenWidth = UIScreen.main.bounds.size.width
 var ScreenHeight = UIScreen.main.bounds.size.height
@@ -62,4 +64,59 @@ func createAlertWithTextField(title:String?,message:String?,viewControll:UIViewC
     
 }
 
+//func colorWithHexColorString(hexColorString:String) -> UIColor{
+//    if hexColorString.characters.count < 6 { //长度不合法
+//        return UIColor.black
+//    }
+//    var tempString = hexColorString.lowercased()
+//    if tempString.hasPrefix("0x") { //检测开头是0x
+//      tempString = tempString.substring(from: tempString.index(tempString.startIndex, offsetBy: 2))
+//    }else if tempString.hasPrefix("#"){//检测开头是#
+//        tempString = tempString.substring(from: tempString.index(tempString.startIndex, offsetBy: 1))
+//    }
+//    if tempString.characters.count != 6 {
+//        return UIColor.black
+//    }
+//    //分解三种颜色的值
+//    let range1 = tempString.startIndex..<tempString.index(tempString.startIndex, offsetBy: 2)
+//    let range2 = tempString.index(tempString.startIndex, offsetBy: 2)..<tempString.index(tempString.startIndex, offsetBy: 2)
+//    let range3 = tempString.index(tempString.startIndex, offsetBy: 4)..<tempString.index(tempString.startIndex, offsetBy: 2)
+//    
+//    let rString = tempString.substring(with: range1)
+//    let gString = tempString.substring(with: range2)
+//    let bString = tempString.substring(with: range3)
+//    
+//    
+//    
+//    
+//    
+//    
+//    
+//}
+extension UIColor {
+    
+    /// 用十六进制颜色创建UIColor
+    ///
+    /// - Parameter hexColor: 十六进制颜色 (0F0F0F)
+    convenience init(hexColor: String) {
+        
+        // 存储转换后的数值
+        var red:UInt32 = 0, green:UInt32 = 0, blue:UInt32 = 0
+            let range1 = hexColor.startIndex..<hexColor.index(hexColor.startIndex, offsetBy: 2)
+            let range2 = hexColor.index(hexColor.startIndex, offsetBy: 2)..<hexColor.index(hexColor.startIndex, offsetBy: 4)
+            let range3 = hexColor.index(hexColor.startIndex, offsetBy: 4)..<hexColor.index(hexColor.startIndex, offsetBy: 6)
+        
+            let rString = hexColor.substring(with: range1)
+            let gString = hexColor.substring(with: range2)
+            let bString = hexColor.substring(with: range3)
+        // 分别转换进行转换
+        Scanner(string: rString).scanHexInt32(&red)
+        
+        Scanner(string: gString).scanHexInt32(&green)
+        
+        Scanner(string: bString).scanHexInt32(&blue)
+        
+        self.init(red: CGFloat(red)/255.0, green: CGFloat(green)/255.0, blue: CGFloat(blue)/255.0, alpha: 1.0)
+    }
+}
 
