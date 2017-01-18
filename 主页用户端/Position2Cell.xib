@@ -15,10 +15,10 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="225"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="224"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="224.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="10普通面试" translatesAutoresizingMaskIntoConstraints="NO" id="nJ5-k8-g2A">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="hua.png" translatesAutoresizingMaskIntoConstraints="NO" id="nJ5-k8-g2A">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="160"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="320" id="d3K-W2-CXV"/>
@@ -189,5 +189,6 @@
         <image name="7工作经验" width="30" height="30"/>
         <image name="8学历要求" width="30" height="30"/>
         <image name="9视频面试" width="30" height="30"/>
+        <image name="hua.png" width="120" height="120"/>
     </resources>
 </document>

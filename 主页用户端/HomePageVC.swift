@@ -7,15 +7,20 @@
 //
 
 import UIKit
+import PYSearch
 
-class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
+
+class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate {
 
     
     @IBOutlet var tableView: UITableView!
     
-    var arrowView:ArrowsView!
-    var titleBtn:UIButton!
     
+    var headView:DropDownView?
+    var arrowView:ArrowsView!
+    var heightOfSeciton:CGFloat = 0.0
+    
+    var titleBtn:UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,13 +63,19 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         print("设置")
         
     }
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("点击22")
+        if tableView.tag == 100 {
+            print("点击33")
+        }
+        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "StationDetailVC")
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     //titleView
     func createTitleView() -> UIView {
         
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 30)
-    
         titleBtn = UIButton(type: .custom)
         titleBtn.frame = CGRect(x: 0, y: 0, width: 80, height: 30)
         titleBtn.setTitle("产品经理", for: .normal)
@@ -85,7 +96,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         tableView.register(UINib.init(nibName: "Position2Cell", bundle: nil), forCellReuseIdentifier: "Position2Cell")
         tableView.register(UINib.init(nibName: "Position3Cell", bundle: nil), forCellReuseIdentifier: "Position3Cell")
         tableView.register(UINib.init(nibName: "PositionLongCell", bundle: nil), forCellReuseIdentifier: "PositionLongCell")
-        
+    //    tableView.tableHeaderView?.isUserInteractionEnabled = false
         tableView.separatorStyle = .none
     }
     
@@ -99,27 +110,33 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
             titleBtn.isSelected = false
         }
     }
-   
-    
     
      func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
      {
         guard section == 1 else {
             return 0
         }
-        return 40
+        return heightOfSeciton + 40
     }
        func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
         guard section == 1 else {
             return nil
         }
-        let headView = DropDownView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 40))
-        headView.supViewController = self
-        headView.backgroundColor = UIColor.blue
-       
+        headView = DropDownView()
+        headView!.supViewController = self
+        headView!.backgroundColor = UIColor.white
+        headView?.viewHeight = { (height) in
+        self.heightOfSeciton = height
+        print("self.heightOfSeciton=\(self.heightOfSeciton)")
+        self.tableView.reloadData()
+        }
+        print("headView.frame=\(headView!.frame)")
+      //  headView?.isUserInteractionEnabled = false
         return headView
-        
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("headView.frame=\(headView?.frame)")
     }
     func btnClick(btn:UIButton) -> Void {
         print("点击了第\(btn.tag)个按钮")
@@ -128,7 +145,11 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     func rightBarBtnClick() -> Void {
         print("rightBarBtnClick")
     }
-    
+    //背景的点击事件
+    func tapGRHandler() -> Void {
+        print("点击背景")
+        
+    }
     func numberOfSections(in tableView: UITableView) -> Int
     {
         return 2
@@ -161,19 +182,22 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
             return 0
         }
     }
+    func recommendCellClick(sender:UIButton) -> Void {
+        print("sender.tag = \(sender.tag)")
+        
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if indexPath.section == 0 {
             if ScreenWidth == 320{
                 let cell:Position3Cell = tableView.dequeueReusableCell(withIdentifier: "Position3Cell") as! Position3Cell
-                
+                cell.searchBar.delegate = self
                 return cell
             }else {
                 let cell:PositionLongCell = tableView.dequeueReusableCell(withIdentifier: "PositionLongCell") as! PositionLongCell
-                
+                 cell.searchBar.delegate = self
                 return cell
             }
-            
         }else
         {
             if indexPath.row == 0 {
@@ -183,9 +207,37 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
                 let cell:PositionCell = tableView.dequeueReusableCell(withIdentifier: "PositionCell") as! PositionCell
                 return cell
             }
-            
         }
-        
+    }
+    //searchBar代理
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool
+    {
+        return true
+    }
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
+    {
+        print("开始搜索")
+        //创建热门搜索
+        let hotSearchs = ["Java", "Python", "Objective-C", "Swift", "C", "C++", "PHP", "C#", "Perl", "Go", "JavaScript", "R", "Ruby", "MATLAB"]
+        //创建控制器
+        let searchViewController = PYSearchViewController.init(hotSearches: hotSearchs, searchBarPlaceholder: "热门搜索", didSearch: {(searchViewController,searchBar,SearchText) in
+            let searchVC = SearchVC()
+            searchViewController?.navigationController?.pushViewController(searchVC, animated: true)
+            
+        })
+        //设置风格
+        searchViewController?.hotSearchStyle = .default
+        searchViewController?.searchHistoryStyle = .default
+        searchViewController?.cancelButton.title = "取消"
+        //设置代理
+        searchViewController?.delegate = self
+        searchViewController?.navigationController?.navigationBar.barTintColor=UIColor.black
+        //消除毛玻璃效果
+        searchViewController?.navigationController?.navigationBar.isTranslucent = false;
+        //跳转到搜索控制器
+        let nav = UINavigationController.init(rootViewController: searchViewController!)
+        self.present(nav, animated: true, completion: nil)
+
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

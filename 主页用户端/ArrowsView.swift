@@ -23,7 +23,7 @@ class ArrowsView: UIView {
         path.addLine(to: CGPoint(x: 15, y: 7.5))
         path.addLine(to: CGPoint(x: 10, y: 12.5))
         path.close()
-        path.lineWidth = 2
+        path.lineWidth = 0
         path.stroke()
         
         let shapeLayer = CAShapeLayer()
