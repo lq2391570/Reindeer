@@ -13,6 +13,9 @@ class PositionLongCell: UITableViewCell {
     
     @IBOutlet var searchBar: UISearchBar!
     
+    var searchBtnClickClosure:((_ sender:UIButton) -> ())?
+  //   var viewHeight:((CGFloat) -> ())?
+    @IBOutlet var searchView: UIView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -35,6 +38,15 @@ class PositionLongCell: UITableViewCell {
         }
         
         
+        
+        
+    }
+        @IBAction func searchBtnClick(_ sender: UIButton) {
+        
+           print("点击搜索按钮")
+      
+            searchBtnClickClosure!(sender)
+     
         
         
     }

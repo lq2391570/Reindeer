@@ -26,6 +26,7 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource {
         tableView.delegate=self
         tableView.dataSource=self
         tableView.register(UINib.init(nibName: "CustomerPopCell", bundle: nil), forCellReuseIdentifier: "CustomerPopCell")
+        tableView.register(UINib.init(nibName: "SwitchCell", bundle: nil), forCellReuseIdentifier: "SwitchCell")
         tableView.reloadData()
     }
     required init?(coder aDecoder: NSCoder) {
@@ -41,14 +42,22 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return 3
+        return 4
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomerPopCell") as! CustomerPopCell
-        cell.leftLabel.text = leftNameArray[indexPath.row]
-        cell.rightLabel.text = rightNameArray[indexPath.row]
-        return cell
+        if indexPath.row == 3 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell") as! SwitchCell
+            
+            return cell
+        }else{
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CustomerPopCell") as! CustomerPopCell
+            cell.leftLabel.text = leftNameArray[indexPath.row]
+            cell.rightLabel.text = rightNameArray[indexPath.row]
+            return cell
+
+        }
+        
     }
     
     

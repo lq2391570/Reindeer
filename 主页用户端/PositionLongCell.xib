@@ -136,6 +136,12 @@
                         <color key="textColor" red="0.94117647059999998" green="0.76470588240000004" blue="0.57254901960000004" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dTb-Ag-uMu">
+                        <rect key="frame" x="0.0" y="95" width="375" height="44"/>
+                        <connections>
+                            <action selector="searchBtnClick:" destination="dmF-2X-9tg" eventType="touchUpInside" id="B0Y-ck-Ezw"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                 <constraints>
@@ -143,6 +149,7 @@
                     <constraint firstAttribute="trailingMargin" secondItem="XiI-lI-B9n" secondAttribute="trailing" constant="-8" id="1GQ-SZ-fhS"/>
                     <constraint firstItem="G8o-CP-1hI" firstAttribute="width" secondItem="Iul-5o-WiG" secondAttribute="height" multiplier="50:139" id="1tg-Oh-Rcy"/>
                     <constraint firstItem="8HU-ad-cXp" firstAttribute="leading" secondItem="P4W-c2-s56" secondAttribute="trailing" constant="7" id="3mQ-Cx-F5d"/>
+                    <constraint firstItem="dTb-Ag-uMu" firstAttribute="leading" secondItem="Iul-5o-WiG" secondAttribute="leadingMargin" constant="-8" id="C6p-2a-mNE"/>
                     <constraint firstItem="oyE-KT-1bu" firstAttribute="top" secondItem="Iul-5o-WiG" secondAttribute="topMargin" constant="14" id="Crf-Ug-z3R"/>
                     <constraint firstItem="HEf-uk-PAQ" firstAttribute="leading" secondItem="G8o-CP-1hI" secondAttribute="trailing" constant="8" id="EG6-Uv-3Vy"/>
                     <constraint firstItem="G8o-CP-1hI" firstAttribute="leading" secondItem="Qsc-3L-UFl" secondAttribute="trailing" constant="15" id="ElB-gS-0LN"/>
@@ -150,6 +157,7 @@
                     <constraint firstItem="hQl-lH-tKX" firstAttribute="width" secondItem="Iul-5o-WiG" secondAttribute="height" multiplier="50:139" id="GcM-3r-fUJ"/>
                     <constraint firstItem="P4W-c2-s56" firstAttribute="leading" secondItem="G8o-CP-1hI" secondAttribute="trailing" constant="8" id="HQ8-4E-2Yg"/>
                     <constraint firstItem="HEf-uk-PAQ" firstAttribute="top" secondItem="Iul-5o-WiG" secondAttribute="topMargin" constant="14" id="IAh-f6-RSl"/>
+                    <constraint firstItem="dTb-Ag-uMu" firstAttribute="top" secondItem="XiI-lI-B9n" secondAttribute="bottom" id="OoT-BM-b52"/>
                     <constraint firstItem="P4W-c2-s56" firstAttribute="top" secondItem="HEf-uk-PAQ" secondAttribute="bottom" constant="1" id="PBV-Wx-Fu3"/>
                     <constraint firstItem="jWF-pa-1fe" firstAttribute="leading" secondItem="Iul-5o-WiG" secondAttribute="leadingMargin" constant="-8" id="SFA-0c-pOU"/>
                     <constraint firstAttribute="trailingMargin" secondItem="vOl-me-ZDM" secondAttribute="trailing" constant="20" id="THK-fj-8Ih"/>
@@ -167,6 +175,8 @@
                     <constraint firstItem="hQl-lH-tKX" firstAttribute="top" secondItem="Iul-5o-WiG" secondAttribute="topMargin" constant="14" id="oIB-wc-lAj"/>
                     <constraint firstAttribute="trailingMargin" secondItem="jWF-pa-1fe" secondAttribute="trailing" constant="-8" id="pdo-Us-FBB"/>
                     <constraint firstAttribute="bottomMargin" secondItem="jWF-pa-1fe" secondAttribute="bottom" constant="-7.5" id="peU-oV-c5J"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="dTb-Ag-uMu" secondAttribute="bottom" constant="-8" id="xje-1O-uK3"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="dTb-Ag-uMu" secondAttribute="trailing" constant="-8" id="yRI-eu-qF4"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

@@ -8,7 +8,7 @@
 
 import UIKit
 import PYSearch
-
+import TagListView
 
 class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate {
 
@@ -22,13 +22,20 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     
     var titleBtn:UIButton!
     
+    var searchController:UISearchController!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         confineNavBar()
         confineTableView()
+        
+        
     }
+    
+    
     //设置navBar
     func confineNavBar() -> Void {
         self.navigationController?.navigationBar.barTintColor=UIColor.black
@@ -98,6 +105,17 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         tableView.register(UINib.init(nibName: "PositionLongCell", bundle: nil), forCellReuseIdentifier: "PositionLongCell")
     //    tableView.tableHeaderView?.isUserInteractionEnabled = false
         tableView.separatorStyle = .none
+        
+//        let vc = UIViewController.init()
+//        vc.view.backgroundColor = UIColor.white
+//        searchController = UISearchController(searchResultsController: vc)
+//        searchController.searchBar.sizeToFit()
+//        searchController.dimsBackgroundDuringPresentation = true
+//        searchController.hidesNavigationBarDuringPresentation = true
+//        self.view.addSubview(tableView)
+//        self.tableView.tableHeaderView = searchController.searchBar
+//        self.definesPresentationContext = true
+       
     }
     
     func titleBtnClick() -> Void {
@@ -195,7 +213,16 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 return cell
             }else {
                 let cell:PositionLongCell = tableView.dequeueReusableCell(withIdentifier: "PositionLongCell") as! PositionLongCell
-                 cell.searchBar.delegate = self
+                cell.searchBar.delegate = self
+                
+                cell.searchBtnClickClosure = { (sender) in
+                    print("点击搜索\(sender)")
+                    
+                    let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "SearchVC") as! SearchVC
+                    let nav = UINavigationController.init(rootViewController: vc)
+                    self.present(nav, animated: false, completion: nil)
+                }
+                
                 return cell
             }
         }else
@@ -216,27 +243,32 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
     {
-        print("开始搜索")
-        //创建热门搜索
-        let hotSearchs = ["Java", "Python", "Objective-C", "Swift", "C", "C++", "PHP", "C#", "Perl", "Go", "JavaScript", "R", "Ruby", "MATLAB"]
-        //创建控制器
-        let searchViewController = PYSearchViewController.init(hotSearches: hotSearchs, searchBarPlaceholder: "热门搜索", didSearch: {(searchViewController,searchBar,SearchText) in
-            let searchVC = SearchVC()
-            searchViewController?.navigationController?.pushViewController(searchVC, animated: true)
-            
-        })
-        //设置风格
-        searchViewController?.hotSearchStyle = .default
-        searchViewController?.searchHistoryStyle = .default
-        searchViewController?.cancelButton.title = "取消"
-        //设置代理
-        searchViewController?.delegate = self
-        searchViewController?.navigationController?.navigationBar.barTintColor=UIColor.black
-        //消除毛玻璃效果
-        searchViewController?.navigationController?.navigationBar.isTranslucent = false;
-        //跳转到搜索控制器
-        let nav = UINavigationController.init(rootViewController: searchViewController!)
-        self.present(nav, animated: true, completion: nil)
+//        print("开始搜索")
+//        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "SearchVC") as! SearchVC
+//        let nav = UINavigationController.init(rootViewController: vc)
+//        self.present(nav, animated: false, completion: nil)
+        
+//        //创建热门搜索
+//        let hotSearchs = ["Java", "Python", "Objective-C", "Swift", "C", "C++", "PHP", "C#", "Perl", "Go", "JavaScript", "R", "Ruby", "MATLAB"]
+//        //创建控制器
+//        let searchViewController = PYSearchViewController.init(hotSearches: hotSearchs, searchBarPlaceholder: "搜索职位和企业", didSearch: {(searchViewController,searchBar,SearchText) in
+//            let searchVC = SearchVC()
+//            
+//            searchViewController?.navigationController?.pushViewController(searchVC, animated: true)
+//            
+//        })
+//        //设置风格
+//        searchViewController?.hotSearchStyle = .default
+//        searchViewController?.searchHistoryStyle = .default
+//        searchViewController?.cancelButton.title = "取消"
+//        //设置代理
+//        searchViewController?.delegate = self
+//        searchViewController?.navigationController?.navigationBar.barTintColor=UIColor.black
+//        //消除毛玻璃效果
+//        searchViewController?.navigationController?.navigationBar.isTranslucent = false;
+//        //跳转到搜索控制器
+//        let nav = UINavigationController.init(rootViewController: searchViewController!)
+//        self.present(nav, animated: false, completion: nil)
 
     }
     override func didReceiveMemoryWarning() {
