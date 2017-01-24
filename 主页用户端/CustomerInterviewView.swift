@@ -19,6 +19,9 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource {
     var leftNameArray = ["个人简历","求职意向","联系方式"]
     var rightNameArray = ["王小明|男|本科","研发部经理","187-8989-8989"]
     
+    var cancelBtnClickClosure:((_ sender:UIButton) ->())?
+    var sureBtnClickClosure:((_ sender:UIButton) -> ())?
+    
 //     Only override draw() if you perform custom drawing.
 //     An empty implementation adversely affects performance during animation.
     override func draw(_ rect: CGRect) {
@@ -59,6 +62,19 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource {
         }
         
     }
+    @IBAction func cancelBtnClick(_ sender: UIButton) {
+        
+        print("cancelBtnClick")
+        cancelBtnClickClosure!(sender)
+        
+    }
+    
+    @IBAction func sureBtnClick(_ sender: UIButton) {
+        print("sureBtnClick")
+        sureBtnClickClosure!(sender)
+        
+    }
+    
     
     
 }

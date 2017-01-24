@@ -39,10 +39,17 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     
     var recommendSelect = false
     
+    //是否展开
+    var isOpen = false
+    
     //设置一个secitionheight的colsure
     
     var viewHeight:((CGFloat) -> ())?
     
+    //选择按钮的点击事件闭包
+    var titleBtnClickClosure:((_ sender:UIButton,_ heightOfView:CGFloat) ->())?
+    //背景高度
+    var heightOftransparentView:CGFloat!
     
     override func draw(_ rect: CGRect) {
         // Drawing code
@@ -51,18 +58,16 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
        //第三步：按钮点击后出现一个半透明背景及不透明的背景
        //第四步：底部添加btn
        //第五步：添加各视图(第一个展开视图为两行的tableView)
-        addChoseBtn(rect)
+        if overAllBtn == nil {
+            addChoseBtn(rect)
+        }
        //添加一个半透明的背景，大小为刚好覆盖底层
         if transparentView == nil {
             createTransparentView()
             createBottomView()
             addTap()
         }
-//        let heightOfHeight:CGFloat?
-//        heightOfHeight = (transparentView?.frame.size.height) ?? 0
-//        viewHeight!(heightOfHeight!)
-//        print("viewHeight =\(transparentView?.frame.size.height)")
-//        print("rect=\(rect)")
+        
     }
 //添加按钮
     func addChoseBtn(_ rect:CGRect) -> Void {
@@ -98,12 +103,11 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     }
     func btnClick(btn:UIButton) -> Void {
         print("点击了第\(btn.tag)个按钮")
-        if transparentView?.isHidden == false {
-           
-            transparentView?.isHidden = true
-            
-            
-        }else{
+        print("heightOfsupViewController?.view=\(supViewController?.view.frame.size.height)")
+        print("overAllBtn.frame=\(overAllBtn?.frame)")
+        print("selfOfHeight=\(self.frame)")
+        
+        if isOpen == false{
             switch btn.tag {
             case 1:
                 viewTypeNum = .recommend
@@ -116,29 +120,49 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             default:
                 break
             }
+            transparentView?.isHidden = false
+      //      updatetransparentView()
+            print("heightOftransparentView=\(transparentView?.frame)")
             //重新计算tableView高度
             reCalculateHeight()
+      
+            //闭包传值
+             heightOftransparentView = transparentView?.frame.size.height
+            isOpen = true
+            titleBtnClickClosure?(btn,heightOftransparentView)
+            //transparentView 重新赋值
+        }else{
             
-            tableView.reloadData()
-            transparentView?.isHidden = false
-            
+            transparentView?.isHidden = true
+            isOpen = false
+            //闭包传值
+            titleBtnClickClosure?(btn,0)
         }
-        print("transparentView.subviews=\(transparentView?.subviews)")
-        print("self.subViews=\(self.subviews)")
         
     }
+    //transparentView 重新赋值（bottom应为self.snp.bottom,因为supViewController?.view.snp.bottom的高度不确定）
+    func updatetransparentView() -> Void {
+        transparentView?.snp.makeConstraints({ (make) in
+            make.width.equalToSuperview()
+           make.height.equalTo(ScreenHeight-self.frame.origin.y-60)
+            make.top.equalTo((overAllBtn?.snp.bottom)!).offset(0)
+        })
+    }
+    
     //重新计算tableView高度（选项不同高度不同）
     func reCalculateHeight() -> Void {
         if viewTypeNum == viewType.recommend {
             tableView.snp.updateConstraints({ (make) in
-                make.bottom.equalTo((transparentView?.snp.bottom)!).offset(-240)
+                make.bottom.equalTo((transparentView?.snp.bottom)!).offset(-60)
             })
             }else{
             tableView.snp.updateConstraints({ (make) in
                 make.bottom.equalTo((transparentView?.snp.bottom)!).offset(-60)
-                
             })
         }
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+         print("=heightOftransparentView=\(transparentView?.frame.size.height)")
     }
     //半透明的大背景
     func createTransparentView() -> Void {
@@ -155,17 +179,18 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
        // tableView.isUserInteractionEnabled = false
         tableView.register(UINib.init(nibName: "SelectorCell", bundle: nil), forCellReuseIdentifier: "SelectorCell")
         transparentView?.addSubview(tableView)
+                //需要autoLayout
+        transparentView?.snp.makeConstraints({ (make) in
+            make.width.equalToSuperview()
+          //  make.bottom.equalTo((supViewController?.view.snp.bottom)!).offset(0)
+            make.height.equalTo(ScreenHeight-self.frame.origin.y)
+            make.top.equalTo((overAllBtn?.snp.bottom)!).offset(0)
+        })
         tableView.snp.makeConstraints { (make) in
             make.width.equalToSuperview()
             make.top.equalTo((transparentView?.snp.top)!).offset(0)
             make.bottom.equalTo((transparentView?.snp.bottom)!).offset(-60)
         }
-        //需要autoLayout
-        transparentView?.snp.makeConstraints({ (make) in
-            make.width.equalToSuperview()
-            make.bottom.equalTo((supViewController?.view.snp.bottom)!).offset(0)
-            make.top.equalTo((overAllBtn?.snp.bottom)!).offset(0)
-        })
         transparentView?.isHidden = true
     }
     //背景添加手势
@@ -202,9 +227,17 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             make.top.equalTo(bottomView.snp.top).offset(5)
             make.right.equalTo(bottomView.snp.right).offset(-20)
             make.bottom.equalTo(bottomView.snp.bottom).offset(-20)
-            
         }
     }
+    //底部view重新排布
+    func updateBottomView() -> Void {
+        bottomView.snp.updateConstraints { (make) in
+            make.width.equalToSuperview()
+            make.height.equalTo(60)
+            make.bottom.equalTo((transparentView?.snp.bottom)!).offset(0)
+        }
+    }
+    
     func sureBtnClick() -> Void {
         print("sureBtnClick")
     }
@@ -244,7 +277,7 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             cell.selectorLabel.font = UIFont.systemFont(ofSize: 14)
             cell.selectorLabel.isselect = recommendSelect
             cell.selectorLabel.selectstring = recommendArray[indexPath.row]
-            cell.cellBtn.addTarget(self,action:#selector(recommendCellClick(sender:)), for: .touchUpInside)
+           cell.cellBtn.addTarget(self,action:#selector(recommendCellClick(sender:)), for: .touchUpInside)
             cell.cellBtn.tag = indexPath.row
             return cell
         

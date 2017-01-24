@@ -19,6 +19,9 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     var headView:DropDownView?
     var arrowView:ArrowsView!
     var heightOfSeciton:CGFloat = 0.0
+    var heightOfSectionAll:CGFloat = 0.0
+    //headView是否展开
+    var isOpen = false
     
     var titleBtn:UIButton!
     
@@ -31,7 +34,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         // Do any additional setup after loading the view.
         confineNavBar()
         confineTableView()
-        
         
     }
     
@@ -134,24 +136,47 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         guard section == 1 else {
             return 0
         }
-        return heightOfSeciton + 40
+        if isOpen == true {
+            return heightOfSeciton+40
+        }else{
+            return 40
+        }
+        
     }
        func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
         guard section == 1 else {
             return nil
         }
-        headView = DropDownView()
-        headView!.supViewController = self
-        headView!.backgroundColor = UIColor.white
-        headView?.viewHeight = { (height) in
-        self.heightOfSeciton = height
-        print("self.heightOfSeciton=\(self.heightOfSeciton)")
-        self.tableView.reloadData()
+        if headView == nil {
+             headView = DropDownView()
+             headView!.supViewController = self
+
         }
-        print("headView.frame=\(headView!.frame)")
+        headView!.backgroundColor = UIColor.white
+        
+        headView?.titleBtnClickClosure = { (sender,height) in
+            print("height = \(height)")
+            if self.headView?.isOpen == true {
+                self.heightOfSeciton = height
+                self.isOpen = true
+            }else{
+                self.heightOfSeciton = height
+                self.isOpen = false
+            }
+            
+            
+          //  tableView.isScrollEnabled = false
+//            if self.headView?.isOpen == false {
+//                tableView.isScrollEnabled = true
+//            }else{
+//                 tableView.isScrollEnabled = false
+//            }
+           self.tableView.reloadData()
+         //    print("headView.frame=\(self.headView!.frame)")
+        }
       //  headView?.isUserInteractionEnabled = false
-        return headView
+             return headView
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print("headView.frame=\(headView?.frame)")
