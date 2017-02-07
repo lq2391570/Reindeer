@@ -20,8 +20,9 @@ class ViewController: UIViewController {
     @IBAction func gotoLogin(_ sender: UIButton) {
         
         let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateInitialViewController()
-        self.navigationController?.pushViewController(vc!, animated: true)
-        
+        let nav = UINavigationController(rootViewController: vc!)
+        nav.isNavigationBarHidden = true
+        self.view.window?.rootViewController = nav
         
     }
     
@@ -29,8 +30,7 @@ class ViewController: UIViewController {
         let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateInitialViewController()
         let nav = UINavigationController(rootViewController: vc!)
         self.view.window?.rootViewController = nav
-        
-    //    self.navigationController.roo
+    
     }
     
     

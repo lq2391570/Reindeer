@@ -17,14 +17,25 @@ class SecurityVC: UIViewController {
 
     var phoneNumStr = "13484582565"
     
+    @IBOutlet var bgImageView: UIImageView!
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
+        createAnimationForBGImageView()
         
-        
-        
-        
+    }
+    //背景做动画
+    func createAnimationForBGImageView() -> Void {
+        let scaleAnimation = CABasicAnimation.init(keyPath: "transform.scale")
+        scaleAnimation.fromValue = NSNumber(value: 1)
+        scaleAnimation.toValue = NSNumber(value: 2)
+        scaleAnimation.duration = 10
+        scaleAnimation.repeatCount = MAXFLOAT
+        bgImageView.layer.add(scaleAnimation, forKey: nil)
     }
 
     @IBAction func finishBtnClick(_ sender: UIButton) {

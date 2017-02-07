@@ -7,21 +7,42 @@
 //
 
 import UIKit
+import BLKFlexibleHeightBar
+
 
 class CompanyDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
     
     @IBOutlet var tableView: UITableView!
+    
+    
+    @IBOutlet var flexibleBar: LQFlexibleBar!
+    var delegateSpliter:BLKDelegateSplitter!
+    var myCustomBar:LQFlexibleBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         installTableView()
+        
+        myCustomBar = LQFlexibleBar(frame: CGRect.init(x: 0, y: 0, width: ScreenWidth, height: 100))
+        
+        let behaviorDefiner = SquareCashStyleBehaviorDefiner()
+        behaviorDefiner.addSnappingPositionProgress(0.0, forProgressRangeStart: 0.0, end: 0.5)
+        behaviorDefiner.addSnappingPositionProgress(1.0, forProgressRangeStart: 0.5, end: 1.0)
+        behaviorDefiner.isSnappingEnabled = true
+        myCustomBar.behaviorDefiner = behaviorDefiner
+        self.delegateSpliter = BLKDelegateSplitter(firstDelegate: behaviorDefiner, secondDelegate: self)
+        self.view.addSubview(myCustomBar)
+        self.view.bringSubview(toFront: myCustomBar)
+        
+        
     }
     func installTableView() -> Void {
         tableView.register(UINib.init(nibName: "CompanyTitleCell", bundle: nil), forCellReuseIdentifier: "CompanyTitleCell")
         tableView.register(UINib.init(nibName: "CompanyIntroduceCell", bundle: nil), forCellReuseIdentifier: "CompanyIntroduceCell")
         tableView.estimatedRowHeight = 50
-        
+        tableView.delegate = self.delegateSpliter as! UITableViewDelegate?
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
