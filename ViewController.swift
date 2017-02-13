@@ -21,8 +21,11 @@ class ViewController: UIViewController {
         
         let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateInitialViewController()
         let nav = UINavigationController(rootViewController: vc!)
-        nav.isNavigationBarHidden = true
+    //    nav.isNavigationBarHidden = true
         self.view.window?.rootViewController = nav
+        
+        
+        
         
     }
     
