@@ -14,10 +14,23 @@ class RegisterVC: UIViewController {
  
     @IBOutlet var phoneNumTextFileField: UITextField!
     
+    @IBOutlet var bgImageView: UIImageView!
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+createAnimationForBGImageView()
         // Do any additional setup after loading the view.
+    }
+    //背景做动画
+    func createAnimationForBGImageView() -> Void {
+        let scaleAnimation = CABasicAnimation.init(keyPath: "transform.scale")
+        scaleAnimation.fromValue = NSNumber(value: 1)
+        scaleAnimation.toValue = NSNumber(value: 2)
+        scaleAnimation.duration = 10
+        scaleAnimation.repeatCount = MAXFLOAT
+        bgImageView.layer.add(scaleAnimation, forKey: nil)
     }
 
     @IBAction func nextBtnClick(_ sender: UIButton) {
@@ -37,7 +50,7 @@ class RegisterVC: UIViewController {
             self.navigationController?.pushViewController(vc!, animated: true)
                 
             }else{
-                SVProgressHUD.showError(withStatus: "请求失败")
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].string)
             }
         }, fail: {
              SVProgressHUD.showError(withStatus: "请求失败")
@@ -45,7 +58,9 @@ class RegisterVC: UIViewController {
         
     }
     
-    
+    @IBAction func returnBtnClick(_ sender: UIButton) {
+       _ = self.navigationController?.popViewController(animated: true)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

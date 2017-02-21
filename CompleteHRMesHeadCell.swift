@@ -1,46 +1,36 @@
 //
-//  CompleteUserMesVC.swift
+//  CompleteHRMesHeadCell.swift
 //  Reindeer
 //
-//  Created by shiliuhua on 17/2/7.
+//  Created by shiliuhua on 17/2/9.
 //  Copyright © 2017年 shiliuhua. All rights reserved.
 //
 
 import UIKit
-import SDWebImage
-import SVProgressHUD
-import JVFloatLabeledTextField
-class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
-    
+class CompleteHRMesHeadCell: UITableViewCell,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+
     @IBOutlet var headImageBtn: UIButton!
     
     @IBOutlet var manBtn: UIButton!
     
     @IBOutlet var womanBtn: UIButton!
+    //选择图片回调
+    var choseImageColsure:((String) -> ())?
     
-    @IBOutlet var nameTextField: JVFloatLabeledTextField!
-    
-    @IBOutlet var cityTextField: JVFloatLabeledTextField!
-    
-    @IBOutlet var nextBtn: UIButton!
     //性别
     var sexStr:String!
     //头像字符串
     var headImageStr = ""
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-         installHeadBtn()
-        // Do any additional setup after loading the view.
-        self.navigationController?.navigationBar.barTintColor=UIColor.black
-        //消除毛玻璃效果
-        self.navigationController?.navigationBar.isTranslucent = false;
-        self.title = "完善个人信息"
-        self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.mainColor]
+    var superVC:UIViewController!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+        installHeadBtn()
+        self.selectionStyle = .none
     }
-   //设置头像为圆形,性别选择框边框,textfield
     func installHeadBtn() -> Void {
         headImageBtn.layer.cornerRadius = 50
         headImageBtn.layer.masksToBounds = true
@@ -55,11 +45,7 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         manBtn.isSelected = true
         manBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
         womanBtn.isSelected = false
-        nameTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
-        cityTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
-        
     }
-    //上传头像
     @IBAction func uploadHeadImage(_ sender: UIButton) {
         let actionSheet = UIAlertController.init(title: "设置头像", message: nil, preferredStyle: .actionSheet)
         let chose1 = UIAlertAction(title: "拍一张", style: .default, handler: {(action) in
@@ -74,33 +60,7 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         actionSheet.addAction(chose1)
         actionSheet.addAction(chose2)
         actionSheet.addAction(cancelBtn)
-        self.present(actionSheet, animated: true, completion: nil)
-        
-    }
-    @IBAction func nextBtnClick(_ sender: UIButton) {
-        //判断性别
-        if manBtn.isSelected == true {
-            sexStr = "男"
-        }else if womanBtn.isSelected == true{
-            sexStr = "女"
-        }
-        guard nameTextField.text != nil && nameTextField.text != "" else {
-            SVProgressHUD.showInfo(withStatus: "姓名不能为空")
-            return
-        }
-        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":"1"], actionHandler: {(jsonStr) in
-            if jsonStr["code"] == 0 {
-                SVProgressHUD.showSuccess(withStatus: "完善信息成功")
-                //跳转
-           //     let vc = UIStoryboard(name: "", bundle: <#T##Bundle?#>)
-                
-            }else{
-                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].string)
-            }
-            
-        }, fail: {
-            
-        })
+        self.superVC.present(actionSheet, animated: true, completion: nil)
         
     }
     //拍照
@@ -111,7 +71,7 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
             imagePicker.delegate = self
             imagePicker.sourceType = sourceType
             imagePicker.allowsEditing = true
-            self.present(imagePicker, animated: true, completion: nil)
+            self.superVC.present(imagePicker, animated: true, completion: nil)
         }
     }
     //从相册中选择
@@ -120,7 +80,7 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         imagePicker.allowsEditing = true
-        self.present(imagePicker, animated: true, completion: nil)
+        self.superVC.present(imagePicker, animated: true, completion: nil)
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any])
     {
@@ -142,7 +102,11 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
                 //上传成功获得url
                 print("imageUrl = \(jsonStr["url"])")
                 self.headImageStr = jsonStr["url"].string!
+                
                 self.headImageBtn.sd_setBackgroundImage(with: NSURL.init(string: self.headImageStr) as URL!, for: UIControlState.normal)
+                if self.choseImageColsure != nil {
+                    self.choseImageColsure!(self.headImageStr)
+                }
                 
             }
             
@@ -151,12 +115,8 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         })
         
     }
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController)
-    {
-        picker.dismiss(animated: true, completion: nil)
-    }
     
-    @IBAction func menBtnClick(_ sender: UIButton) {
+    @IBAction func manBtnClick(_ sender: UIButton) {
         
         if manBtn.isSelected == false {
             manBtn.isSelected = true
@@ -164,8 +124,9 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
             womanBtn.backgroundColor = UIColor.clear
             womanBtn.isSelected = false
         }
-        
+
     }
+    
     @IBAction func womanBtnClick(_ sender: UIButton) {
         
         if womanBtn.isSelected == false {
@@ -174,23 +135,19 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
             manBtn.backgroundColor = UIColor.clear
             manBtn.isSelected = false
         }
-        
+
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController)
+    {
+        picker.dismiss(animated: true, completion: nil)
+    }
+
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

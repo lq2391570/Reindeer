@@ -18,18 +18,30 @@ class VerificationVC: UIViewController {
     
     @IBOutlet var countdownTextField: UITextField!
     
+    @IBOutlet var bgImageView: UIImageView!
+    
+    
     var phoneNumStr = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-        promptLabel.text="我们已为您的手机号码+86-\(phoneNumStr)发送了一条验证短信"
+        createAnimationForBGImageView()
+        promptLabel.text="您的手机+86-\(phoneNumStr)将受到一条验证码"
         //创建属性字典
         
-        verificationTextField.attributedPlaceholder = NSAttributedString(string: " 请输入短信验证码", attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 15)])
+        verificationTextField.attributedPlaceholder = NSAttributedString(string: " 请输入验证码", attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 15)])
         
         
+    }
+    //背景做动画
+    func createAnimationForBGImageView() -> Void {
+        let scaleAnimation = CABasicAnimation.init(keyPath: "transform.scale")
+        scaleAnimation.fromValue = NSNumber(value: 1)
+        scaleAnimation.toValue = NSNumber(value: 2)
+        scaleAnimation.duration = 10
+        scaleAnimation.repeatCount = MAXFLOAT
+        bgImageView.layer.add(scaleAnimation, forKey: nil)
     }
 
     @IBAction func nextBtnClick(_ sender: UIButton) {

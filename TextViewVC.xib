@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TextViewVC" customModule="Reindeer" customModuleProvider="target">
+            <connections>
+                <outlet property="saveBtn" destination="IZe-TF-vLP" id="Ckl-Q8-eOw"/>
+                <outlet property="textView" destination="J5V-T0-Mud" id="H4b-9G-Mpt"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dqd-wv-jIz">
+                    <rect key="frame" x="-1" y="0.0" width="377" height="296"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IZe-TF-vLP">
+                    <rect key="frame" x="16" y="303" width="343" height="40"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="VL2-Jx-Ioo"/>
+                        <constraint firstAttribute="width" constant="343" id="yVM-Ud-G6F"/>
+                    </constraints>
+                    <state key="normal" title="保存">
+                        <color key="titleColor" red="0.94117647059999998" green="0.76470588240000004" blue="0.57254901960000004" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                </button>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J5V-T0-Mud" customClass="YYTextView">
+                    <rect key="frame" x="16" y="20" width="343" height="248"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="248" id="7T0-1a-Ly3"/>
+                        <constraint firstAttribute="width" constant="343" id="Yp9-Q3-eFh"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="fontSize_">
+                            <real key="value" value="14"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="placeholderFontSize_">
+                            <real key="value" value="14"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="color" keyPath="placeholderTextColor">
+                            <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="allowsCopyAttributedString" value="YES"/>
+                    </userDefinedRuntimeAttributes>
+                </scrollView>
+            </subviews>
+            <color key="backgroundColor" red="0.97647058823529409" green="0.95686274509803926" blue="0.94901960784313721" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="IZe-TF-vLP" firstAttribute="top" secondItem="J5V-T0-Mud" secondAttribute="bottom" constant="35" id="3ly-Hz-z9d"/>
+                <constraint firstItem="Dqd-wv-jIz" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="-1" id="4oZ-Xs-din"/>
+                <constraint firstItem="Dqd-wv-jIz" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="8tV-Oj-7oS"/>
+                <constraint firstItem="J5V-T0-Mud" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="CXA-tj-Db3"/>
+                <constraint firstAttribute="trailing" secondItem="Dqd-wv-jIz" secondAttribute="trailing" constant="-1" id="Fze-5b-v4W"/>
+                <constraint firstAttribute="trailing" secondItem="J5V-T0-Mud" secondAttribute="trailing" constant="16" id="cGO-ES-tb8"/>
+                <constraint firstItem="J5V-T0-Mud" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="eDv-Ij-JoK"/>
+                <constraint firstItem="IZe-TF-vLP" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="fGl-Bu-bjT"/>
+                <constraint firstAttribute="bottom" secondItem="Dqd-wv-jIz" secondAttribute="bottom" constant="371" id="qQE-27-0PB"/>
+            </constraints>
+            <point key="canvasLocation" x="33.5" y="85.5"/>
+        </view>
+    </objects>
+</document>

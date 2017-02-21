@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CompleteHRMesHeadCell" rowHeight="320" id="KGk-i7-Jjw" customClass="CompleteHRMesHeadCell" customModule="Reindeer" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="319.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DXa-vI-2a6">
+                        <rect key="frame" x="160" y="237" width="90" height="35"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="Xwm-bq-SV2"/>
+                            <constraint firstAttribute="height" constant="35" id="m1I-Uk-C25"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <state key="normal" title="女"/>
+                        <connections>
+                            <action selector="womanBtnClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="opn-gA-Wpc"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zne-S8-Q3V">
+                        <rect key="frame" x="71" y="237" width="90" height="35"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="aSY-kN-DQf"/>
+                            <constraint firstAttribute="height" constant="35" id="ahd-Mb-Lxg"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <state key="normal" title="男"/>
+                        <connections>
+                            <action selector="manBtnClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Pog-1f-R9S"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vJq-Ze-EBX">
+                        <rect key="frame" x="111" y="48" width="100" height="100"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="100" id="POG-fb-qnW"/>
+                            <constraint firstAttribute="width" constant="100" id="srM-R2-qnd"/>
+                        </constraints>
+                        <state key="normal" backgroundImage="hua.png"/>
+                        <connections>
+                            <action selector="uploadHeadImage:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="RDN-hf-ntG"/>
+                        </connections>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="设置头像" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ct0-TP-zul">
+                        <rect key="frame" x="111" y="161" width="100" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="100" id="H9w-y6-3yt"/>
+                            <constraint firstAttribute="height" constant="21" id="YQ9-0a-hxK"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ct0-TP-zul" firstAttribute="top" secondItem="vJq-Ze-EBX" secondAttribute="bottom" constant="12.5" id="A2e-xa-UvI"/>
+                    <constraint firstItem="vJq-Ze-EBX" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="40" id="K3q-8a-d9E"/>
+                    <constraint firstItem="zne-S8-Q3V" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="63" id="RdN-lO-Zp0"/>
+                    <constraint firstItem="DXa-vI-2a6" firstAttribute="leading" secondItem="zne-S8-Q3V" secondAttribute="trailing" constant="-1" id="TDx-GZ-g4q"/>
+                    <constraint firstItem="DXa-vI-2a6" firstAttribute="top" secondItem="ct0-TP-zul" secondAttribute="bottom" constant="55" id="YpA-lp-UHh"/>
+                    <constraint firstItem="zne-S8-Q3V" firstAttribute="top" secondItem="ct0-TP-zul" secondAttribute="bottom" constant="55" id="ZwM-Di-2ie"/>
+                    <constraint firstItem="vJq-Ze-EBX" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" constant="1" id="a6n-Cr-Wiq"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="DXa-vI-2a6" secondAttribute="trailing" constant="62" id="cH3-bC-zJb"/>
+                    <constraint firstItem="ct0-TP-zul" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" constant="1" id="hu3-5v-zPF"/>
+                    <constraint firstItem="DXa-vI-2a6" firstAttribute="width" secondItem="zne-S8-Q3V" secondAttribute="width" id="xsD-fG-4cm"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="headImageBtn" destination="vJq-Ze-EBX" id="38Z-mf-ecg"/>
+                <outlet property="manBtn" destination="zne-S8-Q3V" id="Kc4-yf-bjt"/>
+                <outlet property="womanBtn" destination="DXa-vI-2a6" id="jhY-Ts-Zig"/>
+            </connections>
+            <point key="canvasLocation" x="23" y="-37"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="hua.png" width="120" height="120"/>
+    </resources>
+</document>
