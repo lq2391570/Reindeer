@@ -25,9 +25,16 @@ class ViewController: UIViewController {
         self.view.window?.rootViewController = nav
         
         
+    }
+    
+    @IBAction func userCenter(_ sender: UIButton) {
+        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateInitialViewController()
+        let nav = UINavigationController(rootViewController: vc!)
+        self.view.window?.rootViewController = nav
         
         
     }
+    
     
     @IBAction func gotoHomePage(_ sender: UIButton) {
         let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateInitialViewController()

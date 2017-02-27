@@ -53,13 +53,26 @@
                                     <action selector="gotoHomePage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DfU-3M-P35"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Uw-PN-ifA">
+                                <rect key="frame" x="146" y="515" width="83" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="83" id="wM2-mC-eXC"/>
+                                    <constraint firstAttribute="height" constant="30" id="xyy-rR-iR5"/>
+                                </constraints>
+                                <state key="normal" title="userCenter"/>
+                                <connections>
+                                    <action selector="userCenter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="z8K-LM-lCR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="7Uw-PN-ifA" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="196.5" id="0HB-vT-nts"/>
                             <constraint firstItem="5pQ-hy-uvd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Gm3-ZV-aX2"/>
                             <constraint firstItem="5pQ-hy-uvd" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-137.5" id="KLK-qt-rcG"/>
                             <constraint firstItem="9Qf-uO-Mw6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="MS1-th-7U5"/>
                             <constraint firstItem="5b2-2H-0Hx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="OsC-hB-1Nm"/>
+                            <constraint firstItem="7Uw-PN-ifA" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="T4F-jQ-h7R"/>
                             <constraint firstItem="5b2-2H-0Hx" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="aKr-rP-ql9"/>
                             <constraint firstItem="9Qf-uO-Mw6" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="105.5" id="dxN-yh-3o2"/>
                         </constraints>
@@ -68,7 +81,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="470" y="199"/>
+            <point key="canvasLocation" x="469.60000000000002" y="198.35082458770617"/>
         </scene>
         <!--CodeVC-->
         <scene sceneID="B4j-Ck-yIr">
