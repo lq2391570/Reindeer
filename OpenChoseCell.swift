@@ -18,6 +18,10 @@ class OpenChoseCell: UITableViewCell {
     
     var switchBtnClickColsure :((UIButton) -> ())?
     
+    @IBOutlet var bgView: UIView!
+    
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

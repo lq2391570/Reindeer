@@ -27,8 +27,19 @@ class TextFieldCell: UITableViewCell,UITextFieldDelegate {
 
         // Configure the view for the selected state
     }
+    
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if (textFieldDelegateColsure != nil) {
+            textFieldDelegateColsure!(textField)
+        }
+        return true
+    }
+    
     func textFieldDidEndEditing(_ textField: UITextField)
     {
+        
         if (textFieldDelegateColsure != nil) {
             textFieldDelegateColsure!(textField)
         }
