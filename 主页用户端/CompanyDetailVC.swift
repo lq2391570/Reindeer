@@ -26,7 +26,6 @@ class CompanyDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         installTableView()
         
         myCustomBar = LQFlexibleBar(frame: CGRect.init(x: 0, y: 0, width: ScreenWidth, height: 100))
-        
         let behaviorDefiner = SquareCashStyleBehaviorDefiner()
         behaviorDefiner.addSnappingPositionProgress(0.0, forProgressRangeStart: 0.0, end: 0.5)
         behaviorDefiner.addSnappingPositionProgress(1.0, forProgressRangeStart: 0.5, end: 1.0)
@@ -35,7 +34,6 @@ class CompanyDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         self.delegateSpliter = BLKDelegateSplitter(firstDelegate: behaviorDefiner, secondDelegate: self)
         self.view.addSubview(myCustomBar)
         self.view.bringSubview(toFront: myCustomBar)
-        
         
     }
     func installTableView() -> Void {

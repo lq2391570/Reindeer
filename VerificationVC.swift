@@ -27,7 +27,7 @@ class VerificationVC: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         createAnimationForBGImageView()
-        promptLabel.text="您的手机+86-\(phoneNumStr)将受到一条验证码"
+        promptLabel.text="您的手机+86-\(phoneNumStr)将收到一条验证码"
         //创建属性字典
         
         verificationTextField.attributedPlaceholder = NSAttributedString(string: " 请输入验证码", attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 15)])
@@ -55,6 +55,7 @@ class VerificationVC: UIViewController {
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "成功")
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "SecurityVC") as? SecurityVC
+                vc?.phoneNumStr = self.phoneNumStr
                 
                 self.navigationController?.pushViewController(vc!, animated: true)
                 
@@ -72,6 +73,10 @@ class VerificationVC: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func returnBtnClick(_ sender: UIButton) {
+       _ = self.navigationController?.popViewController(animated: true)
+        
+    }
 
     /*
     // MARK: - Navigation

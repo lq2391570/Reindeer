@@ -55,6 +55,14 @@ class CompanyNameVC: UIViewController,UITableViewDelegate,UITableViewDataSource,
             return
         }
         
+        //判断列表中是否存在输入的公司(若存在则取出model)
+        for companyModel in self.companyArray {
+            let model:CompanyNameList = companyModel as! CompanyNameList
+            if model.name == companyTextField.text {
+                self.companyListModel = model
+            }
+        }
+        
         if (returnClosure != nil) {
             returnClosure!(self.companyListModel,companyTextField.text!)
         }
@@ -77,7 +85,8 @@ class CompanyNameVC: UIViewController,UITableViewDelegate,UITableViewDataSource,
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
     {
         print("textFiled.text = \(textField.text)")
-        
+        //将companyListModel置为nil
+        self.companyListModel = nil
         getCompanyList(string: textField.text!)
         
         return true

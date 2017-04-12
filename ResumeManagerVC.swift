@@ -19,6 +19,7 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     
     @IBOutlet var previewBtn: UIButton!
     var nameArray = ["求职意向","我的优势","社交主页"]
+    var imageNameArray = ["6求职意向","7我的优势","8社交主页"]
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -99,7 +100,7 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCenterCell") as! UserCenterCell
             cell.nameLabel.text = nameArray[indexPath.row]
-            
+            cell.leftImageView.image = UIImage(named: imageNameArray[indexPath.row])
             return cell
         }else if indexPath.section == 1 {
             if indexPath.row == workExperienceArray.count {
@@ -128,8 +129,6 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         }
         
     }
-    
-    
     func numberOfSections(in tableView: UITableView) -> Int
     {
         

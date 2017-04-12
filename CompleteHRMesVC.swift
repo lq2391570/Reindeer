@@ -34,7 +34,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     var isOpenResumeInvite = true
     
     //公司名称TextField
-    var companyTextField:UITextField!
+    var mytextField:UITextField!
     
     
     
@@ -68,6 +68,9 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         return footView
     }
     func nextBtnClick() -> Void {
+       
+        self.view.endEditing(true)
+        
         //判断必要条件
         if trueNameStr == nil || trueNameStr == "" {
             SVProgressHUD.showInfo(withStatus: "请输入您的姓名")
@@ -107,8 +110,18 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         
         completeHRMes(dic: requestDic, actionHandler: { (jsonStr) in
             print("jsonStr=\(jsonStr)")
-            
-            
+            if jsonStr["code"] == 0 {
+                let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteCompanyMesVC") as! CompleteCompanyMesVC
+                
+                let companyid = jsonStr["id"].stringValue
+                                
+                print("companyid = \(companyid)")
+                
+                
+                vc.companyId = companyid
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
             
         }, fail: {
             
@@ -168,13 +181,16 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             return cell
         }else if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell") as! TextFieldCell
+          
             if indexPath.row == 0 {
+                cell.jvTextField.delegate = cell
                 cell.jvTextField.placeholder = "真实姓名"
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("namejvTextField = \(jvTextField.text)")
                     self.trueNameStr = jvTextField.text
                 }
-            }else if indexPath.row == 1 {
+                    }else if indexPath.row == 1 {
+                cell.jvTextField.delegate = cell
                 cell.jvTextField.placeholder = "您的职务"
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("dutyjvTextField = \(jvTextField.text)")
@@ -184,9 +200,12 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             return cell
         }else if indexPath.section == 2{
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell") as! TextFieldCell
+           
+           
             if indexPath.row == 0 {
-                cell.jvTextField.placeholder = "公司名称"
                 cell.jvTextField.delegate = self
+                cell.jvTextField.placeholder = "公司名称"
+                
                 cell.jvTextField.tag = 100
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("companyNameJvTextField = \(jvTextField.text)")
@@ -195,15 +214,22 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 cell.jvTextField.text = self.companyNameStr
                 
             }else if indexPath.row == 1 {
+                
+                cell.jvTextField.delegate = cell
+                cell.jvTextField.tag = 200
                 cell.jvTextField.placeholder = "公司简介"
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("beiefJvTextField = \(jvTextField.text)")
                     self.companyBriefStr = jvTextField.text
                 }
+                
             }
             return cell
         }else if indexPath.section == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell") as! TextFieldCell
+            
+         
+            cell.jvTextField.tag = 300
             cell.jvTextField.placeholder = "接收简历的邮箱"
             cell.textFieldDelegateColsure = { (jvTextField) in
                 print("emailTextField = \(jvTextField.text)")
@@ -269,15 +295,15 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         return 5
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 2 {
-            if indexPath.row == 0 {
-                let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyNameVC") as! CompanyNameVC
-                vc.returnClosure = { (companyModel,companyName) in
-                    print("companyModel = \(companyModel),companyName = \(companyName)")
-                }
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
-        }
+//        if indexPath.section == 2 {
+//            if indexPath.row == 0 {
+//                let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyNameVC") as! CompanyNameVC
+//                vc.returnClosure = { (companyModel,companyName) in
+//                    print("companyModel = \(companyModel),companyName = \(companyName)")
+//                }
+//                self.navigationController?.pushViewController(vc, animated: true)
+//            }
+//        }
     
     }
     

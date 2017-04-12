@@ -19,7 +19,7 @@ class CompanyProductVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     var productNameStr:String = ""
   
     var productIntroduceStr = ""
-    var companyId:NSInteger = 1
+    var companyId:String = ""
  
     //添加成功后回调
     var succeedReturnClosure:((JSON) -> ())?
@@ -40,9 +40,6 @@ class CompanyProductVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         
         tableView.tableFooterView = UIView()
         
-        if companyId == nil {
-            print("公司id不存在")
-        }
         let navBtn = UIBarButtonItem(title: "完成", style: .plain, target: self, action: #selector(addProduct))
         self.navigationItem.rightBarButtonItem = navBtn
         
@@ -134,7 +131,7 @@ class CompanyProductVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     func addProduct() -> Void {
         print("点击完成")
         
-        if companyId == nil {
+        if companyId == "" {
             SVProgressHUD.showInfo(withStatus: "公司id不存在")
             return
         }else if productNameStr == "" {

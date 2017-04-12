@@ -48,12 +48,18 @@ class ImageSelectCell: UITableViewCell,UICollectionViewDelegate,UICollectionView
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! ImageCollectionCell
        
         cell.imageBtn.tag = indexPath.row
+        cell.imageBtn.removeTarget(self, action: #selector(imageBtnClick(btn:)), for: .touchUpInside)
+        cell.imageBtn.removeTarget(self, action: #selector(addImageBtnClick(btn:)), for: .touchUpInside)
+        cell.imageBtn.setBackgroundImage(UIImage.init(named: "上传照片_38.png"), for: .normal)
+        
         if indexPath.row != imagePathArray.count {
-        cell.imageBtn.setBackgroundImage(UIImage.init(data: imagePathArray.object(at: indexPath.row) as! Data), for: .normal)
+//        cell.imageBtn.setBackgroundImage(UIImage.init(data: imagePathArray.object(at: indexPath.row) as! Data), for: .normal)
+     //   cell.imageBtn.setBackgroundImage(UIImage.init(contentsOfFile: imagePathArray.object(at: indexPath.row) as! String), for: .normal)
+         cell.imageBtn.sd_setBackgroundImage(with: imagePathArray.object(at: indexPath.row) as! URL, for: .normal)
+            
         cell.imageBtn.addTarget(self, action: #selector(imageBtnClick(btn:)), for: .touchUpInside)
         }else{
-            cell.imageBtn.addTarget(self, action: #selector(addImageBtnClick(btn:)), for: .touchUpInside)
-            
+        cell.imageBtn.addTarget(self, action: #selector(addImageBtnClick(btn:)), for: .touchUpInside)
         }
         
         return cell

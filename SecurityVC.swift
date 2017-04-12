@@ -15,7 +15,7 @@ class SecurityVC: UIViewController {
     
     @IBOutlet var securityTextField2: UITextField!
 
-    var phoneNumStr = "13484582565"
+    var phoneNumStr = ""
     
     @IBOutlet var bgImageView: UIImageView!
     
@@ -52,8 +52,13 @@ class SecurityVC: UIViewController {
             if jsonStr["code"] == 0 {
                 let token = jsonStr["token"].stringValue
                 SetUser(value: token, key: "token")
-                
                 SVProgressHUD.showSuccess(withStatus: "注册成功")
+                //注册成功后选择是HR或应聘者
+                let vc = UIStoryboard.init(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "ChoseGroupVC") as! ChoseGroupVC
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+                
+
             }else{
                 
                 SVProgressHUD.showInfo(withStatus: "注册失败")

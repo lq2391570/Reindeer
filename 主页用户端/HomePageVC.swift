@@ -9,6 +9,8 @@
 import UIKit
 import PYSearch
 import TagListView
+import SVProgressHUD
+
 
 class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate {
 
@@ -26,6 +28,8 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     var titleBtn:UIButton!
     
     var searchController:UISearchController!
+    var headImageUrlStr = "'"
+    
     
     
     override func viewDidLoad() {
@@ -34,7 +38,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         // Do any additional setup after loading the view.
         confineNavBar()
         confineTableView()
-        
+        getUserMesAndHeadImage()
     }
     
     
@@ -47,13 +51,18 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         let headImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 36, height: 36))
         headImageView.layer.cornerRadius = 18
         headImageView.layer.masksToBounds = true
-        headImageView.backgroundColor = UIColor.green
+     //   headImageView.backgroundColor = UIColor.green
+        headImageView.sd_setImage(with: NSURL.init(string: headImageUrlStr) as URL!, placeholderImage: UIImage.init(named: "默认头像_男.png"))
+        headImageView.isUserInteractionEnabled = true
         let leftBarBtnItem = UIBarButtonItem(customView: headImageView)
         self.navigationItem.leftBarButtonItem = leftBarBtnItem
+        let tapReginzer = UITapGestureRecognizer.init(target: self, action: #selector(headImageViewTap))
+        
+        headImageView.addGestureRecognizer(tapReginzer)
         
     //    let rightBarBtnItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(rightBarBtnClick))
         let installBtn = UIButton(type: .custom)
-        installBtn.setImage(UIImage.init(named: "1设置"), for: UIControlState.normal)
+        installBtn.setImage(UIImage.init(named: "1电脑端登录"), for: UIControlState.normal)
         installBtn.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
         installBtn.addTarget(self, action: #selector(installBtnClick), for: .touchUpInside)
         
@@ -67,9 +76,39 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         self.navigationItem.titleView=createTitleView()
 
     }
+    //个人中心
+    func headImageViewTap() -> Void {
+        print("头像点击")
+        
+        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstVC") as! UserCenterFirstVC
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+        
+    }
+    //获取用户基本信息（头像）
+    func getUserMesAndHeadImage() -> Void {
+        getUserMes(dic: ["token":GetUser(key: TOKEN)], actionHandler: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("jsonStr = \(jsonStr)")
+            }
+        
+        }) { 
+        print("请求失败")
+        }
+    }
+    
+    
+    
     //设置按钮点击
     func installBtnClick() -> Void {
         print("设置")
+        //暂时放完善信息
+        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+        
+        
         
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -160,18 +199,15 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             if self.headView?.isOpen == true {
                 self.heightOfSeciton = height
                 self.isOpen = true
+                self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
+                self.tableView.isScrollEnabled = false
+                
             }else{
                 self.heightOfSeciton = height
                 self.isOpen = false
+                self.tableView.isScrollEnabled = true
+               
             }
-            
-            
-          //  tableView.isScrollEnabled = false
-//            if self.headView?.isOpen == false {
-//                tableView.isScrollEnabled = true
-//            }else{
-//                 tableView.isScrollEnabled = false
-//            }
            self.tableView.reloadData()
          //    print("headView.frame=\(self.headView!.frame)")
         }

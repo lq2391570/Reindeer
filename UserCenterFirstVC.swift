@@ -11,6 +11,9 @@ import UIKit
 class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
    
+    
+    
+    
     @IBOutlet var headImageView: UIImageView!
     
     @IBOutlet var nameLabel: UILabel!
@@ -21,7 +24,15 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     
     @IBOutlet var tableView: UITableView!
     
+    @IBOutlet var returnImage: UIImageView!
+    
      var titleArray = ["简历管理","上传简历附件","积分任务","成就","设置"]
+    
+    var imageNameArray = ["1简历管理","2上传简历附件","3积分任务","4成就","5设置","6求职意向","7我的优势","8社交主页"]
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -30,10 +41,57 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib.init(nibName: "UserCenterCell", bundle: nil), forCellReuseIdentifier: "UserCenterCell")
+        tableView.tableFooterView = UIView()
+      //  tableView.separatorStyle = .none
         
-        headImageView.layer.cornerRadius = 50
+        headImageView.layer.cornerRadius = 40
         headImageView.layer.masksToBounds = true
+      //  headImageView.sizeToFit()
+        let addtap = UITapGestureRecognizer(target: self, action: #selector(headImageClick))
+        headImageView.addGestureRecognizer(addtap)
+        overturnReturnImage()
+        getUserMesAndImage()
+    }
+    //获取个人资料
+    func getUserMesAndImage() -> Void {
+        getUserMes(dic: ["token":GetUser(key: TOKEN)], actionHandler: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("jsonStr = \(jsonStr)")
+                self.nameLabel.text = jsonStr["name"].stringValue
+                self.sexLabel.text = jsonStr["sex"].stringValue
+                
+            }
+            
+        }) {
+            print("请求失败")
+        }
+    }
+    
+    
+    //翻转returnImage
+    func overturnReturnImage() -> Void {
+        returnImage.layer.transform = CATransform3DMakeRotation(self.radians(degress: 180), 0, 0, 1);
+    }
+    func radians(degress:CGFloat) -> CGFloat {
+        return (degress * 3.14159265) / 180.0;
+    }
+    
+    func headImageClick() -> Void {
+        print("dianji touxiang")
+        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteUserMesVC") as! CompleteUserMesVC
+        self.navigationController?.pushViewController(vc, animated: true)
         
+    }
+    @IBAction func returnBtnClick(_ sender: UIButton) {
+        _ = self.navigationController?.popViewController(animated: true)
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+         self.navigationController?.isNavigationBarHidden = true
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+         self.navigationController?.isNavigationBarHidden = false
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -54,7 +112,8 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    {
         return 10
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
@@ -70,15 +129,20 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCenterCell") as! UserCenterCell
         if indexPath.section == 0 {
             cell.nameLabel.text = titleArray[indexPath.row]
+            cell.leftImageView.image = UIImage(named: imageNameArray[indexPath.row])
         }else if indexPath.section == 1 {
             cell.nameLabel.text = titleArray[indexPath.row+2]
+            cell.leftImageView.image = UIImage(named: imageNameArray[indexPath.row+2])
         }else{
             cell.nameLabel.text = titleArray[4]
+            cell.leftImageView.image = UIImage(named: imageNameArray[4])
         }
         
         return cell
         
     }
+    
+    
     func numberOfSections(in tableView: UITableView) -> Int
     {
         return 3

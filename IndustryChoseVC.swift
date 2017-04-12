@@ -96,16 +96,12 @@ class IndustryChoseVC: BaseViewVC,TagListViewDelegate {
         }
         print("industryModelArray = \(industryModelArray)")
         
-       
-        
     }
     func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView) -> Void
     {
         
         
     }
-
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

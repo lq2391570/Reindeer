@@ -166,8 +166,10 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     }
     //半透明的大背景
     func createTransparentView() -> Void {
+        self.backgroundColor = UIColor.clear
         transparentView = UIView()
-        transparentView?.backgroundColor = UIColor(red: 241/255.0, green: 237/255.0, blue: 236/255.0, alpha: 1)
+        transparentView?.backgroundColor = UIColor.black
+       // transparentView?.alpha = 0.1
       //  transparentView?.isUserInteractionEnabled = false
         self.addSubview(transparentView!)
         //tableView
@@ -179,11 +181,11 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
        // tableView.isUserInteractionEnabled = false
         tableView.register(UINib.init(nibName: "SelectorCell", bundle: nil), forCellReuseIdentifier: "SelectorCell")
         transparentView?.addSubview(tableView)
-                //需要autoLayout
+        //需要autoLayout
         transparentView?.snp.makeConstraints({ (make) in
             make.width.equalToSuperview()
           //  make.bottom.equalTo((supViewController?.view.snp.bottom)!).offset(0)
-            make.height.equalTo(ScreenHeight-self.frame.origin.y)
+            make.height.equalTo(ScreenHeight-100)
             make.top.equalTo((overAllBtn?.snp.bottom)!).offset(0)
         })
         tableView.snp.makeConstraints { (make) in
@@ -277,8 +279,9 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             cell.selectorLabel.font = UIFont.systemFont(ofSize: 14)
             cell.selectorLabel.isselect = recommendSelect
             cell.selectorLabel.selectstring = recommendArray[indexPath.row]
-           cell.cellBtn.addTarget(self,action:#selector(recommendCellClick(sender:)), for: .touchUpInside)
+            cell.cellBtn.addTarget(self,action:#selector(recommendCellClick(sender:)), for: .touchUpInside)
             cell.cellBtn.tag = indexPath.row
+        
             return cell
         
     }

@@ -13,8 +13,9 @@ import SVProgressHUD
 
 var ScreenWidth = UIScreen.main.bounds.size.width
 var ScreenHeight = UIScreen.main.bounds.size.height
-
-
+let TOKEN = "token"
+let PHONENUM = "phone"
+let PASSWORD = "password"
 //Userdefault(存)
 func SetUser(value:String,key:String) -> Void {
     return UserDefaults.standard.set(value, forKey: key)
@@ -63,6 +64,33 @@ func createAlertWithTextField(title:String?,message:String?,viewControll:UIViewC
      viewControll.present(alert, animated: true, completion: nil)
     
 }
+//创建一个actionSheet
+func createActionSheet(title:String,message:String,stringArray:[String],viewController:UIViewController,closure:@escaping ((_ indexNum:Int) ->Void))
+{
+    let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+    
+    for str in stringArray {
+   
+        let ac = UIAlertAction(title: str, style: .default, handler: { (action) in
+            //获得字符串索引
+            let index = stringArray.index(of: str)
+            
+            closure (index!)
+        })
+        alert.addAction(ac)
+        
+    }
+    let cancelAc = UIAlertAction(title: "返回", style: .cancel, handler: { (action) in
+        
+    })
+    alert.addAction(cancelAc)
+
+    viewController.present(alert, animated: true, completion: nil)
+    
+}
+
+
+
 
 //func colorWithHexColorString(hexColorString:String) -> UIColor{
 //    if hexColorString.characters.count < 6 { //长度不合法
@@ -123,6 +151,26 @@ extension UIColor {
     }
     
 }
+func typeForImageData(data:NSData) -> String? {
+    var c = uint_fast8_t()
+    
+    data.getBytes(&c, length: 1)
+    switch c {
+    case 0xFF:
+        return "image/jpeg"
+    case 0x89:
+        return "image/png"
+    case 0x47:
+        return "image/gif"
+    case 0x4D:
+        return "image/tiff"
+        
+    default:
+        break
+    }
+    return nil
+}
+
 
 
 

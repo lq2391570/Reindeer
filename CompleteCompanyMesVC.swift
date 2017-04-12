@@ -8,14 +8,11 @@
 
 import UIKit
 import QBImagePickerController
-
-
-class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewDataSource,QBImagePickerControllerDelegate {
+import SVProgressHUD
+import SwiftyJSON
+class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewDataSource,QBImagePickerControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     @IBOutlet var tableView: UITableView!
-    
-    
-    
     
     var imagePickerController:QBImagePickerController!
     
@@ -29,6 +26,32 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     var productArray:[CompanyDetailProductList] = []
     //公司详情model
     var companyDetailModel:CompanyDetailBaseClass?
+    //公司id
+    var companyId:String! = "1"
+    //公司行业modelArray
+    var industryModelArray:[CompanyIndustryListList]?
+    //公司行业String
+    var industryString:String! = ""
+    //公司行业id
+    var industryId:String! = ""
+    
+    //公司规模Bassmodel
+    var scaleBassClass:CompanyScaleBaseClass?
+    //公司规模model
+    var scaleListModel:CompanyScaleCompanyScale?
+    //公司电话String
+    var phoneNumStr:String! = ""
+    
+    //collection是否刷新的标示（bool类型）
+    var isReflashCollection = false
+    
+    //logoImageStr
+    var logoImageStr = ""
+    //公司简介Str
+    var descStr = ""
+    //公司图片Array
+    var companyImageArray:[String] = []
+    
     
     
     override func viewDidLoad() {
@@ -54,18 +77,29 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         tableView.tableFooterView = createFootView()
         tableView.estimatedRowHeight = 100
         companyDetail()
-        
+        companyScale()
     }
-    //获得公司详情
+       //获得公司详情
     func companyDetail() -> Void {
         //获得公司详情
-        getCompanyDetail(dic: ["companyId":1], actionHandler: { (bassClass) in
+        print("companyId = \(self.companyId)")
+        getCompanyDetail(dic: ["companyId":self.companyId], actionHandler: { (bassClass) in
             self.companyDetailModel = bassClass
             self.productArray = bassClass.productList!
             self.tableView.reloadData()
         }, fail: {
             
         })
+    }
+    // 获得公司规模
+    func companyScale() -> Void {
+        getCompanyScale(dic: ["none":""], actionHandler: { (bassClass) in
+            self.scaleBassClass = bassClass
+            print("self.scaleBassClass = \(self.scaleBassClass)")
+        }, fail: {
+            
+        })
+        
     }
     
     //设置QBImagePickerController
@@ -91,6 +125,28 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     func nextBtnClick() -> Void {
         print("保存")
         
+        
+        print("companyId = \(companyId),logo = \(logoImageStr),industryId = \(industryId) scaleId = \(scaleListModel?.id!) tel = \(phoneNumStr), address = 暂无  desc = \(descStr),images = \(self.companyImageArray)")
+        //(地址暂时为空)
+        
+        let dicStr:NSDictionary = ["companyId":companyId,"logo":logoImageStr,"industryId":industryId!,"scaleId":(scaleListModel?.id)!,"tel":phoneNumStr,"address":"","desc":descStr,"images":companyImageArray]
+        let jsonStr = JSON(dicStr)
+        
+        print("jsonStr.dictionaryValue = \(jsonStr.dictionaryValue)")
+        
+        completeCompanyMes(dic: jsonStr.dictionaryValue as NSDictionary, actionHandler: { (jsonStr) in
+            
+            
+            if jsonStr["code"] == 0 {
+                SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
+            }
+            
+        }, fail: {
+            
+        })
+        
+        
+        
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -111,18 +167,29 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         }
        
     }
+    
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "IndustryAndLogoCell") as! IndustryAndLogoCell
                 cell.nameLabel.text = "公司行业"
+                cell.rightLabel.text = self.industryString
+                cell.logoBtn.sd_setBackgroundImage(with: NSURL.init(string: self.logoImageStr) as URL!, for: .normal)
+                if self.logoImageStr != "" {
+                    cell.logoBtn.setTitle("", for: .normal)
+                }
+                cell.logoBtnClickclosure = { (sender) in
+                    self.uploadHeadImage()
+                }
                 return cell
             }else  {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultSelectCell") as! DefaultSelectCell
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司规模"
+                cell.rightLabel.text = self.scaleListModel?.name
                 return cell
             }
         }else if indexPath.section == 1{
@@ -131,6 +198,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司电话"
+                cell.rightLabel.text = phoneNumStr
             }else if indexPath.row == 2{
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
@@ -152,14 +220,18 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ImageSelectCell") as! ImageSelectCell
                     cell.imagePathArray = self.imageFileArray
                     print("cell.imagePathArray.count = \(cell.imagePathArray.count)")
-                    cell.collectionView.reloadData()
+                    if isReflashCollection == false {
+                        isReflashCollection = true
+                        cell.collectionView.reloadData()
+                    }
+                    
                     //判断item是否大于1
                     if cell.collectionView.numberOfItems(inSection: 0) > 1 {
                          itemCount = cell.collectionView.numberOfItems(inSection: 0)
                     }
                   //图片点击
                     cell.imageBtnClickClosure = { (btn) in
-                        print("tupian")
+                          print("tupian")
                     }
                     //添加按钮点击
                     cell.addBtnClickClosure = { (btn) in
@@ -187,11 +259,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                     let cell = tableView.dequeueReusableCell(withIdentifier: "CompanyProductCell") as! CompanyProductCell
                     let productModel:CompanyDetailProductList = productArray[indexPath.row]
                     
-                    cell.headImage.sd_setBackgroundImage(with: NSURL.init(string: productModel.logo!) as URL!, for: UIControlState.normal)
+                    cell.headImage.sd_setBackgroundImage(with: NSURL.init(string: productModel.logo ?? "") as URL!, for: UIControlState.normal)
                     
                     cell.titleLabel.text = productModel.name
                     cell.introLabel.text = productModel.desc
-                    
                     
                     return cell
                 }
@@ -208,7 +279,23 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             if indexPath.row == 0 {
                 //设置公司电话号码
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PhoneNumVC") as! PhoneNumVC
+                vc.placeholderStr = "请输入公司电话"
+                vc.doneClosure = { (str) in
+                    self.phoneNumStr = str
+                    self.tableView.reloadData()
+                }
                 self.navigationController?.pushViewController(vc, animated: true)
+            }else if indexPath.row == 2 {
+                //公司简介
+                let vc = TextViewVC()
+                vc.placeholdText = "请简单描述公司"
+                vc.navTitle = "公司简介"
+                vc.saveBtnClickClosure = { (deacStr) in
+                    self.descStr = deacStr
+                    tableView.reloadData()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+                
             }
         }else if indexPath.section == 2 {
             //判断是否有图片
@@ -229,6 +316,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         }else if indexPath.section == 3{
             if productArray.count == 0{
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyProductVC") as! CompanyProductVC
+                vc.companyId = companyId
                 vc.succeedReturnClosure = { (jsonStr) in
                     self.companyDetail()
                    
@@ -240,15 +328,95 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                     vc.succeedReturnClosure = { (jsonStr) in
                         self.companyDetail()
                     }
-                    
+                    vc.companyId = companyId
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
             
+        }else if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                //选择公司行业
+                let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "IndustryChoseVC") as! IndustryChoseVC
+                
+                vc.sureBtnClickClosure = { (modelArray) in
+                    self.industryModelArray = modelArray
+                    for listModel in modelArray {
+                        let model:CompanyIndustryListList! = listModel
+                        self.industryString.append(model.name!)
+                        self.industryId = "\(listModel.id!)"
+                    }
+                    print("self.industryString = \(self.industryString)")
+                    print("self.industryId = \(self.industryId)")
+                    self.tableView.reloadData()
+                }
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else if indexPath.row == 1 {
+                var stringArray:[String] = []
+                for scaleList in (self.scaleBassClass?.companyScale)! {
+                    let model:CompanyScaleCompanyScale = scaleList 
+                    stringArray.append(model.name!)
+                }
+                createActionSheet(title: "公司规模", message: "请选择公司规模", stringArray: stringArray, viewController: self, closure: { (index) in
+                    print("选择了第\(index)个")
+                    self.scaleListModel = self.scaleBassClass?.companyScale?[index]
+                    self.tableView.reloadData()
+                })
+            
+            }
+            
+            
         }
     }
+    //拍照
+    func takePhoto() -> Void {
+        let sourceType = UIImagePickerControllerSourceType.camera
+        if UIImagePickerController.isSourceTypeAvailable(sourceType) {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = sourceType
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+    }
+    //从相册中选择
+    func localPhoto() -> Void {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true
+        self.present(imagePicker, animated: true, completion: nil)
+    }
+    //上传头像
+    func uploadHeadImage() {
+        let actionSheet = UIAlertController.init(title: "设置头像", message: nil, preferredStyle: .actionSheet)
+        let chose1 = UIAlertAction(title: "拍一张", style: .default, handler: {(action) in
+            self.takePhoto()
+        })
+        let chose2 = UIAlertAction(title: "从相册中选择", style: .default, handler: {(action) in
+            self.localPhoto()
+        })
+        let cancelBtn = UIAlertAction(title: "取消", style: .cancel, handler: {(action) in
+            
+        })
+        actionSheet.addAction(chose1)
+        actionSheet.addAction(chose2)
+        actionSheet.addAction(cancelBtn)
+        self.present(actionSheet, animated: true, completion: nil)
+        
+    }
+
     //imagePickerControllerDelegate
     func qb_imagePickerControllerDidCancel(_ imagePickerController: QBImagePickerController!) {
+        
+        print("imagePickerController.selectedAssets =\(imagePickerController.selectedAssets)")
+        //若无图片则清空集合
+        if imagePickerController.selectedAssets.count == 0 {
+            self.imageFileArray = []
+             self.isReflashCollection = false
+            tableView.reloadData()
+        }
+        
         self.dismiss(animated: true, completion: nil)
     }
     func qb_imagePickerController(_ imagePickerController: QBImagePickerController!, didFinishPickingAssets assets: [Any]!) {
@@ -256,7 +424,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         print("asstes.count=\(assets.count)")
         //因为assets有缓存，所以每次调用需清空数组
         self.imageFileArray = []
-        
+        self.companyImageArray = []
         for asset in assets {
             print("asset=\(asset)")
             index = index + 1
@@ -272,15 +440,47 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             PHImageManager.default().requestImage(for: asset as! PHAsset, targetSize: size, contentMode: PHImageContentMode.aspectFit, options: option, resultHandler: { (result, info) in
                 print("result = \(result) info = \(info)")
                 let image:UIImage = result!
-                let imageData:Data = UIImagePNGRepresentation(image)!
-                self.imageFileArray.add(imageData)
+                
+                var imageData:Data? = UIImageJPEGRepresentation(image, 0.5)
+                
+                if imageData == nil {
+                    imageData = UIImagePNGRepresentation(image)
+                }
+                
+                let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                print("path = \(path)")
+                let url = NSURL.fileURL(withPath: path)
+                do {
+                    try imageData?.write(to: url)
+                } catch {
+                    print("error")
+                }
+                
+                self.imageFileArray.add(url)
                 if self.imageFileArray.count > 0 {
                     self.isHaveImage = true
                 }
-                 self.tableView.reloadData()
+                self.isReflashCollection = false
+                
+                self.tableView.reloadData()
+                
             })
         }
         print("self.imageFileArray.count=\(self.imageFileArray.count)")
+        
+        for imageUrl in self.imageFileArray {
+            uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
+                print("jsonstr = \(jsonStr)")
+                if jsonStr["code"] == 0 {
+                    let imageUrlStr = jsonStr["url"].stringValue
+                    self.companyImageArray.append(imageUrlStr)
+                }
+            }, fail: {
+                
+            })
+        }
+
+        
         self.dismiss(animated: true, completion: nil)
         
     }
@@ -339,6 +539,41 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     {
       return 4
     }
+    //图片选择代理
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        let image = info[UIImagePickerControllerEditedImage] as! UIImage
+        let imageData = UIImageJPEGRepresentation(image, 0.5)
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/logoImage.jpg")
+        print("path =\(path)")
+        let url = NSURL.fileURL(withPath: path)
+        do {
+            try imageData?.write(to: url)
+        } catch  {
+            print("error")
+        }
+        //显示及上传logo
+        uploadImage(fileUrl: url, actionHandler: {(jsonStr) in
+            print("uploadjsonStr = \(jsonStr)")
+            if jsonStr["code"] == 0 {
+                //上传成功获得url
+                print("imageUrl = \(jsonStr["url"])")
+                self.logoImageStr = jsonStr["url"].string!
+                self.tableView.reloadData()
+                
+            }
+            
+        }, fail: {
+            
+        })
+
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController)
+    {
+        picker.dismiss(animated: true, completion: nil)
+    }
+
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

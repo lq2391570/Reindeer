@@ -10,6 +10,7 @@ import UIKit
 import SDWebImage
 import SVProgressHUD
 import JVFloatLabeledTextField
+import JCAlertView
 class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     
@@ -24,6 +25,12 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
     @IBOutlet var cityTextField: JVFloatLabeledTextField!
     
     @IBOutlet var nextBtn: UIButton!
+    
+    @IBOutlet var choseCityBtn: UIButton!
+    
+    //地区id
+    var areaId:String = ""
+    
     //性别
     var sexStr:String!
     //头像字符串
@@ -39,6 +46,30 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         self.title = "完善个人信息"
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.mainColor]
+    }
+    @IBAction func choseCityBtnClick(_ sender: UIButton) {
+        
+        if let customView = LQPickView.newInstance() {
+           
+            let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
+            
+            customAlert?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - customView.frame.size.height/2-20)
+            customView.cancelbtnClickClosure = { (btn) in
+                customAlert?.dismiss(completion: nil)
+                
+            }
+            customView.sureBtnClickclosure = { (btn) in
+                
+                print("cityName = \(customView.cityNameStr) , cityId = \(customView.cityIDStr)")
+                self.cityTextField.text = "\(customView.provinceNameStr)\(customView.cityNameStr)"
+                customAlert?.dismiss(completion: nil)
+                self.areaId = customView.cityIDStr
+                
+            }
+            customAlert?.show()
+            
+        }
+        
     }
    //设置头像为圆形,性别选择框边框,textfield
     func installHeadBtn() -> Void {
@@ -57,8 +88,10 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         womanBtn.isSelected = false
         nameTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
         cityTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
-        
+        cityTextField.isUserInteractionEnabled = false
     }
+    
+
     //上传头像
     @IBAction func uploadHeadImage(_ sender: UIButton) {
         let actionSheet = UIAlertController.init(title: "设置头像", message: nil, preferredStyle: .actionSheet)
@@ -77,6 +110,8 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
         self.present(actionSheet, animated: true, completion: nil)
         
     }
+    
+    
     @IBAction func nextBtnClick(_ sender: UIButton) {
         //判断性别
         if manBtn.isSelected == true {
@@ -88,11 +123,18 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
             SVProgressHUD.showInfo(withStatus: "姓名不能为空")
             return
         }
-        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":"1"], actionHandler: {(jsonStr) in
+        
+        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":areaId], actionHandler: {(jsonStr) in
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "完善信息成功")
-                //跳转
-           //     let vc = UIStoryboard(name: "", bundle: <#T##Bundle?#>)
+                //完善信息后必须填写求职意向，否则无法进入首页（什么鬼需求）
+                let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AddJobIntensionVC") as! AddJobIntensionVC
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+//                //跳转首页
+//                let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateInitialViewController()
+//                let nav = UINavigationController(rootViewController: vc!)
+//                self.view.window?.rootViewController = nav
                 
             }else{
                 SVProgressHUD.showInfo(withStatus: jsonStr["msg"].string)

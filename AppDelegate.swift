@@ -26,6 +26,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SVProgressHUD.setDefaultAnimationType(.native)
         SVProgressHUD.setMinimumDismissTimeInterval(2)
         
+        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateInitialViewController()
+        let nav = UINavigationController(rootViewController: vc!)
+        //    nav.isNavigationBarHidden = true
+        self.window?.rootViewController = nav
+        
         return true
     }
 
