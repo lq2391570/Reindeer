@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import SVProgressHUD
 class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
     
@@ -20,6 +20,9 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     @IBOutlet var previewBtn: UIButton!
     var nameArray = ["求职意向","我的优势","社交主页"]
     var imageNameArray = ["6求职意向","7我的优势","8社交主页"]
+    
+    var resumeBassClass:ResumeBaseClass?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -34,23 +37,88 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         tableView.backgroundColor = UIColor(hexColor: "f9f6f4")
        
         previewBtn.setTitleColor(UIColor.mainColor, for: .normal)
-        
+        getJobIntension()
     }
     @IBAction func previewBtnClick(_ sender: UIButton) {
         print("预览点击")
-        
     }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "JobIntensionVC") as!JobIntensionVC
                 self.navigationController?.pushViewController(vc, animated: true)
+            }else if indexPath.row == 1 {
+                //我的优势（textViewVC）
+                let vc = TextViewVC()
+                vc.placeholdText = "输入你的优势，让HR更好的了解你..."
+                vc.textViewTypeEnum = .typeAdvantage
+                vc.navTitle = "我的优势"
+                vc.resumeBassClass = self.resumeBassClass
+                vc.saveBtnClickClosure = { (text) in
+                    self.getJobIntension()
+                 delay(0.5){
+                        SVProgressHUD.showSuccess(withStatus: "更新成功")
+                 }
+                    
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
             }
+        }else if indexPath.section == 1 {
+            if indexPath.row == self.resumeBassClass?.workExpList?.count {
+                //添加
+                let vc = UIStoryboard.init(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AddJobExeVC") as! AddJobExeVC
+                vc.resumeBassClass = self.resumeBassClass
+                vc.typeOfWorkExpAddOrUpdate = .addWorkExp
+                vc.returnClosure = {
+                    self.getJobIntension()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else{
+                //更新
+                let vc = UIStoryboard.init(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AddJobExeVC") as! AddJobExeVC
+                vc.resumeBassClass = self.resumeBassClass
+                vc.typeOfWorkExpAddOrUpdate = .updateWorkExp
+                vc.workExpId = NSNumber.init(value: (self.resumeBassClass?.workExpList?[indexPath.row].id)!).stringValue
+                vc.returnClosure = {
+                    self.getJobIntension()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+            }
+                
+        }else if indexPath.section == 2 {
+            //添加教育经历
+            if indexPath.row == self.resumeBassClass?.eduExpList?.count {
+                //添加
+                let vc = UIStoryboard.init(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AddEduExpVC") as! AddEduExpVC
+                vc.resumeBassClass = self.resumeBassClass
+                vc.typeOfEduExpAddOrUpdate = .addEduExp
+                vc.returnClosure = {
+                     self.getJobIntension()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+                
+            }
+            
+            
+            
         }
         
-        
     }
+    //获取简历id
+    func getJobIntension() -> Void {
+        searchUserResume(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
+            self.resumeBassClass = bassClass
+            print("self.resumeBassClass = \(self.resumeBassClass)")
+            
+              self.tableView.reloadData()
+        }) {
+          //  SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
+
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         if indexPath.section == 0 {
@@ -88,9 +156,9 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         if section == 0 {
             return 3
         }else if section == 1 {
-            return workExperienceArray.count + 1
+            return (self.resumeBassClass?.workExpList?.count)! + 1
         }else if section == 2 {
-            return eduExperArray.count + 1
+            return (self.resumeBassClass?.eduExpList?.count)! + 1
         }else{
             return 1
         }
@@ -103,23 +171,32 @@ class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             cell.leftImageView.image = UIImage(named: imageNameArray[indexPath.row])
             return cell
         }else if indexPath.section == 1 {
-            if indexPath.row == workExperienceArray.count {
+            if indexPath.row == self.resumeBassClass?.workExpList?.count {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "AddImageCell") as! AddImageCell
                 cell.bgView.backgroundColor = UIColor.white
                 cell.nameLabel.text = "添加工作经验"
                 return cell
             }else{
-                let workExpCell = tableView.dequeueReusableCell(withIdentifier: "cell")
+                var workExpCell = tableView.dequeueReusableCell(withIdentifier: "cell")
+                workExpCell = UITableViewCell.init(style: .value1, reuseIdentifier: "cell")
+                let workExpModel:ResumeWorkExpList = (self.resumeBassClass?.workExpList![indexPath.row])!
+                workExpCell?.textLabel?.text = workExpModel.company
+                workExpCell?.detailTextLabel?.text = workExpModel.times
                 return workExpCell!
             }
         }else if indexPath.section == 2 {
-            if indexPath.row == eduExperArray.count {
+            if indexPath.row == self.resumeBassClass?.eduExpList?.count {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "AddImageCell") as! AddImageCell
                 cell.bgView.backgroundColor = UIColor.white
                 cell.nameLabel.text = "添加教育经历"
                 return cell
             }else{
-                let eduExpCell = tableView.dequeueReusableCell(withIdentifier: "cell")
+                var eduExpCell = tableView.dequeueReusableCell(withIdentifier: "cell")
+                eduExpCell = UITableViewCell.init(style: .value1, reuseIdentifier: "cell")
+                let eduExpModel:ResumeEduExpList = (self.resumeBassClass?.eduExpList![indexPath.row])!
+                
+                eduExpCell?.textLabel?.text = eduExpModel.school
+                eduExpCell?.detailTextLabel?.text = eduExpModel.times
                 return eduExpCell!
             }
         }else{

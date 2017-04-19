@@ -115,6 +115,18 @@ class JobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 
             })
             
+        }else{
+            
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AddJobIntensionVC") as! AddJobIntensionVC
+            vc.enterState = .updateEnterState
+            vc.returnClosure = {
+                self.getJobIntension()
+            }
+            vc.jobIntensionId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList?[indexPath.row].id)!).stringValue
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+            
+            
         }
     }
     
