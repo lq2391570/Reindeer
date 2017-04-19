@@ -14,10 +14,12 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tableView: UITableView!
     
-    //状态（判断是从注册登陆添加的还是从个人中心添加的）
+    //状态 loginEnterState:注册登陆进入的 resumeEnterState:求职意向添加的 updateEnterState 更新进来的
     enum enterStateEnum {
         case loginEnterState
         case resumeEnterState
+        case updateEnterState
+        
     }
     var returnClosure:(() -> ())?
     
@@ -40,13 +42,16 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var compensationModel:PositionList?
     //个人技能
     var skillsStr = ""
+    //求职意向的id
+    var jobIntensionId = ""
+    //传递的dic
+    var saveOrUpdateDic:NSDictionary!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         self.title = "求职意向"
-        
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "cell1")
@@ -94,9 +99,18 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }
         
        print("resumeId = \(self.resumeModel?.id),jobId = \(positionModel?.id) industryId =\(industryList[0].id),cityId = \(areaId),skills = \(skillsStr),salaryId = \(compensationModel?.id)")
+       //如果是添加则不传id,如果是更新则传id
+        let noIdDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0 ] as NSDictionary
+        let idDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0,"id":self.jobIntensionId] as NSDictionary
+        if self.enterState == .resumeEnterState || self.enterState == .loginEnterState  {
+            saveOrUpdateDic = noIdDic
+        }else if self.enterState == .updateEnterState
+        {
+            saveOrUpdateDic = idDic
+        }
         
         
-        saveOrUpdateJobIntent(dic: ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0 ], actionHander: { (jsonStr) in
+        saveOrUpdateJobIntent(dic: saveOrUpdateDic, actionHander: { (jsonStr) in
             if jsonStr["code"] == 0{
               print("保存成功")
                 //判断添加是从哪里进入的添加求职意向（enterState）,若是简历中则传一个闭包
@@ -109,11 +123,18 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 _ = self.navigationController?.popViewController(animated: true)
                     
                     
-                }else{
+                }else if self.enterState == .loginEnterState{
                     //首次保存求职意向成功后进入首页
                     let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
                     let nav = UINavigationController.init(rootViewController: vc)
                     self.view.window?.rootViewController = nav
+                }else if self.enterState == .updateEnterState {
+                    if self.returnClosure != nil
+                    {
+                        self.returnClosure!()
+                    }
+                    _ = self.navigationController?.popViewController(animated: true)
+
                 }
                 
                 

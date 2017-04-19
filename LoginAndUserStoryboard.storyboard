@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vdj-Az-Y7O">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1421" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="y2g-1C-o2Z">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -101,7 +101,7 @@
                                 </constraints>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="placeholderColor">
                                         <color key="value" red="0.46274509800000002" green="0.46274509800000002" blue="0.46274509800000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -187,7 +187,7 @@
         <!--CompleteHR MesVC-->
         <scene sceneID="SNG-Vb-zOB">
             <objects>
-                <viewController id="6vz-bU-tQo" customClass="CompleteHRMesVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CompleteHRMesVC" id="6vz-bU-tQo" customClass="CompleteHRMesVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3BX-lv-jco"/>
                         <viewControllerLayoutGuide type="bottom" id="9Fy-kp-Ac8"/>
@@ -220,7 +220,7 @@
         <!--Complete Company MesVC-->
         <scene sceneID="gD2-cP-523">
             <objects>
-                <viewController id="vdj-Az-Y7O" customClass="CompleteCompanyMesVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CompleteCompanyMesVC" id="vdj-Az-Y7O" customClass="CompleteCompanyMesVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4c1-NS-pDQ"/>
                         <viewControllerLayoutGuide type="bottom" id="4at-nq-N65"/>
@@ -413,6 +413,93 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SBM-Ap-0N8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3269.5999999999999" y="814.54272863568224"/>
+        </scene>
+        <!--Industry ChoseVC-->
+        <scene sceneID="gTA-Fn-nTZ">
+            <objects>
+                <viewController storyboardIdentifier="IndustryChoseVC" id="5m6-LH-WzJ" customClass="IndustryChoseVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XFE-EB-AWA"/>
+                        <viewControllerLayoutGuide type="bottom" id="5Es-Lf-Kdx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="tCN-gw-ltb">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="czi-G6-2VB" customClass="TagListView" customModule="TagListView">
+                                <rect key="frame" x="16" y="60" width="343" height="543"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="543" id="BQM-d8-i9g"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="paddingY">
+                                        <real key="value" value="7"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="paddingX">
+                                        <real key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="marginY">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="marginX">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="textColor">
+                                        <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="selectedTextColor">
+                                        <color key="value" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="tagBackgroundColor">
+                                        <color key="value" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="tagSelectedBackgroundColor">
+                                        <color key="value" red="0.94117647059999998" green="0.76470588240000004" blue="0.57254901960000004" alpha="1" colorSpace="calibratedRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="3"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="selectedBorderColor">
+                                        <color key="value" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="选择行业(最多选择3个)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8L8-4v-JEC">
+                                <rect key="frame" x="64" y="20" width="246" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="Zp6-oa-ZuD"/>
+                                    <constraint firstAttribute="width" constant="246" id="rbK-Oa-sl4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="czi-G6-2VB" firstAttribute="top" secondItem="8L8-4v-JEC" secondAttribute="bottom" constant="19" id="KWm-1Y-YIR"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="czi-G6-2VB" secondAttribute="trailing" id="UU9-bg-vXQ"/>
+                            <constraint firstItem="8L8-4v-JEC" firstAttribute="centerX" secondItem="tCN-gw-ltb" secondAttribute="centerX" id="evh-D9-f4K"/>
+                            <constraint firstItem="czi-G6-2VB" firstAttribute="leading" secondItem="tCN-gw-ltb" secondAttribute="leadingMargin" id="g2U-43-D0U"/>
+                            <constraint firstItem="8L8-4v-JEC" firstAttribute="top" secondItem="XFE-EB-AWA" secondAttribute="bottom" constant="20" id="pfW-1v-ZPk"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tagListView" destination="czi-G6-2VB" id="pbE-L7-bgv"/>
+                        <outlet property="titleLabel" destination="8L8-4v-JEC" id="lHt-Vc-WvR"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rC3-bx-ZiR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3976.8000000000002" y="817.24137931034488"/>
         </scene>
         <!--RegisterVC-->
         <scene sceneID="lcf-wG-Hgb">
@@ -628,7 +715,7 @@
                                     <color key="titleColor" red="0.86274509799999999" green="0.69803921570000005" blue="0.52549019610000003" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="returnBtnClick:" destination="PDv-1p-7C9" eventType="touchUpInside" id="6F9-po-OxK"/>
+                                    <action selector="returnBtnClick:" destination="lfT-kW-E3Y" eventType="touchUpInside" id="UyZ-si-szp"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -685,7 +772,7 @@
                                         </constraints>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                     </textField>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -715,7 +802,7 @@
                                         </constraints>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                     </textField>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -961,7 +1048,7 @@
                                     <constraint firstAttribute="width" constant="100" id="6oa-hp-zwK"/>
                                     <constraint firstAttribute="height" constant="100" id="f8d-Ia-CE0"/>
                                 </constraints>
-                                <state key="normal" backgroundImage="hua.png"/>
+                                <state key="normal" backgroundImage="默认头像_男.png"/>
                                 <connections>
                                     <action selector="uploadHeadImage:" destination="YsM-gQ-zfP" eventType="touchUpInside" id="AaQ-ow-PrP"/>
                                 </connections>
@@ -1037,14 +1124,24 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Epr-jA-yES">
+                                        <rect key="frame" x="8" y="0.0" width="360" height="70"/>
+                                        <connections>
+                                            <action selector="choseCityBtnClick:" destination="YsM-gQ-zfP" eventType="touchUpInside" id="w7K-h9-E2R"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.97647058819999999" green="0.95686274510000002" blue="0.94901960780000005" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstItem="Epr-jA-yES" firstAttribute="top" secondItem="kln-jp-Lt5" secondAttribute="top" id="51f-ry-uZc"/>
                                     <constraint firstItem="hT9-9m-AYD" firstAttribute="centerX" secondItem="kln-jp-Lt5" secondAttribute="centerX" id="6d7-bL-ARY"/>
                                     <constraint firstAttribute="height" constant="70" id="9B0-1r-SyL"/>
                                     <constraint firstItem="hT9-9m-AYD" firstAttribute="centerY" secondItem="kln-jp-Lt5" secondAttribute="centerY" id="ABN-C9-BUt"/>
+                                    <constraint firstItem="Epr-jA-yES" firstAttribute="leading" secondItem="kln-jp-Lt5" secondAttribute="leading" constant="8" id="Ak0-UO-AhA"/>
                                     <constraint firstItem="JhO-7h-qD9" firstAttribute="top" secondItem="kln-jp-Lt5" secondAttribute="top" id="Nwz-PN-asc"/>
+                                    <constraint firstAttribute="bottom" secondItem="Epr-jA-yES" secondAttribute="bottom" id="QFK-rj-6F0"/>
                                     <constraint firstItem="JhO-7h-qD9" firstAttribute="centerX" secondItem="kln-jp-Lt5" secondAttribute="centerX" id="TLX-ye-VeS"/>
+                                    <constraint firstAttribute="trailing" secondItem="Epr-jA-yES" secondAttribute="trailing" constant="8" id="ikl-pE-lUC"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UTU-Wy-5IR">
@@ -1114,10 +1211,12 @@
                             <constraint firstItem="qlc-hx-49t" firstAttribute="leading" secondItem="DVs-A8-DkU" secondAttribute="leadingMargin" constant="-16" id="lOZ-Rc-JBx"/>
                             <constraint firstItem="wPg-6a-rhL" firstAttribute="top" secondItem="EA4-AK-9Js" secondAttribute="bottom" constant="12.5" id="mxz-HN-7O1"/>
                             <constraint firstItem="qlc-hx-49t" firstAttribute="top" secondItem="IgV-Nw-ngp" secondAttribute="bottom" constant="34" id="u5I-H5-MH1"/>
+                            <constraint firstItem="IgV-Nw-ngp" firstAttribute="width" secondItem="hIy-hV-4HC" secondAttribute="width" id="uDg-Zx-0zJ"/>
                         </constraints>
                     </view>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
                     <connections>
+                        <outlet property="choseCityBtn" destination="Epr-jA-yES" id="9d8-EO-5Gx"/>
                         <outlet property="cityTextField" destination="hT9-9m-AYD" id="zJg-2y-dXp"/>
                         <outlet property="headImageBtn" destination="EA4-AK-9Js" id="2bX-vf-vnx"/>
                         <outlet property="manBtn" destination="IgV-Nw-ngp" id="tVF-i2-A1W"/>
@@ -1132,9 +1231,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="hua.png" width="120" height="120"/>
         <image name="login_bg.png" width="751" height="1335"/>
         <image name="密码" width="30" height="30"/>
         <image name="手机号" width="30" height="30"/>
+        <image name="默认头像_男.png" width="200" height="200"/>
     </resources>
 </document>

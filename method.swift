@@ -170,7 +170,67 @@ func typeForImageData(data:NSData) -> String? {
     }
     return nil
 }
+//延迟执行
 
+typealias Task = (_ cancel : Bool) -> Void
 
+func delay(_ time: TimeInterval, task: @escaping ()->()) ->  Task? {
+    
+    func dispatch_later(block: @escaping ()->()) {
+        let t = DispatchTime.now() + time
+        DispatchQueue.main.asyncAfter(deadline: t, execute: block)
+    }
+    var closure: (()->Void)? = task
+    var result: Task?
+    
+    let delayedClosure: Task = {
+        cancel in
+        if let internalClosure = closure {
+            if (cancel == false) {
+                DispatchQueue.main.async(execute: internalClosure)
+            }
+        }
+        closure = nil
+        result = nil
+    }
+    
+    result = delayedClosure
+    
+    dispatch_later {
+        if let delayedClosure = result {
+            delayedClosure(false)
+        }
+    }
+    return result
+}
+
+func cancel(_ task: Task?) {
+    task?(true)
+}
+
+//时间转化为时间戳
+func dateTransformUnixStr(date:Date) ->String
+{
+    let timeInterval:TimeInterval = date.timeIntervalSince1970*1000
+    let timeString:String = String(format: "%0.f",timeInterval)
+    print("timeString = \(timeString)")
+    return timeString
+}
+
+//创建底部Btn(保存按钮)
+func createBottomBtn(supView:UIView,title:String,actionHander:(_ sender:UIButton) -> Void) -> UIView {
+    let view = UIView(frame: CGRect.init(x: 0, y: 0, width: supView.frame.size.width, height: 60))
+    view.backgroundColor = UIColor.clear
+    let btn = UIButton(type: .custom)
+    btn.frame = CGRect.init(x: 20, y: 10, width: supView.frame.size.width - 40, height: 40)
+    btn.backgroundColor = UIColor.black
+    btn.setTitle(title, for: .normal)
+  
+    btn.setTitleColor(UIColor.mainColor, for: .normal)
+    view.addSubview(btn)
+    actionHander(btn)
+    
+    return view
+}
 
 

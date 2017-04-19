@@ -26,6 +26,8 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     
     @IBOutlet var returnImage: UIImageView!
     
+    var resumeBassClass:ResumeBaseClass?
+    
      var titleArray = ["简历管理","上传简历附件","积分任务","成就","设置"]
     
     var imageNameArray = ["1简历管理","2上传简历附件","3积分任务","4成就","5设置","6求职意向","7我的优势","8社交主页"]
@@ -51,6 +53,7 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         headImageView.addGestureRecognizer(addtap)
         overturnReturnImage()
         getUserMesAndImage()
+        getJobIntension()
     }
     //获取个人资料
     func getUserMesAndImage() -> Void {
@@ -66,6 +69,17 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             print("请求失败")
         }
     }
+    //（首次）获取简历id
+    func getJobIntension() -> Void {
+        searchUserResume(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
+            self.resumeBassClass = bassClass
+            print("self.resumeBassClass = \(self.resumeBassClass)")
+            //  self.tableView.reloadData()
+        }) {
+            //  SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
+
     
     
     //翻转returnImage
@@ -106,6 +120,7 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "ResumeManagerVC") as! ResumeManagerVC
+            vc.resumeBassClass = self.resumeBassClass
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
