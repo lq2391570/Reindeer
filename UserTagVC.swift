@@ -14,17 +14,34 @@ class UserTagVC: BaseViewVC,TagListViewDelegate {
     
     @IBOutlet var taglistSelectView: TagListView!
     var tagNameArray = ["UI","电商美工","交互","手绘","APP设计","多媒体","用户体验"]
+    //完成闭包回调
+    var completeclosure:(([TagView])->())?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
     // Do any additional setup after loading the view.
-        self.title = "个人标签"
+    //    self.title = "个人标签"
         for name in tagNameArray {
             taglistSelectView.addTag(name)
         }
        taglistSelectView.delegate = self
         
+        let rightBarBtnItem = UIBarButtonItem.init(title: "完成", style: .plain, target: self, action: #selector(rightBarBtnItemClick))
+        self.navigationItem.rightBarButtonItem = rightBarBtnItem
+        
+        
     }
+    func rightBarBtnItemClick() -> Void {
+        print("完成")
+        print("选择了\(taglistSelectView.selectedTags())")
+        if completeclosure != nil {
+            completeclosure!(taglistSelectView.selectedTags())
+        }
+        _ = self.navigationController?.popViewController(animated: true)
+    }
+    
+    
     func tagPressed(_ title: String, tagView: TagView, sender: TagListView) -> Void
     {
         print("title = \(title),tagView = \(tagView) , sender = \(sender)")

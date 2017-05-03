@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="aU4-pU-zLY">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="aU4-pU-zLY">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -477,6 +477,74 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TzL-LA-FRR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5469.6000000000004" y="99.400299850074973"/>
+        </scene>
+        <!--SettingVC-->
+        <scene sceneID="FOn-Jp-dta">
+            <objects>
+                <viewController storyboardIdentifier="SettingVC" id="zCo-T6-RAM" customClass="SettingVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1Dr-cP-Wfg"/>
+                        <viewControllerLayoutGuide type="bottom" id="zpF-CQ-GYq"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="end-dv-Wtf">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9SE-eH-El4">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="9SE-eH-El4" firstAttribute="leading" secondItem="end-dv-Wtf" secondAttribute="leadingMargin" constant="-16" id="7Nh-Ah-vPC"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="9SE-eH-El4" secondAttribute="trailing" constant="-16" id="8jT-65-nZk"/>
+                            <constraint firstItem="zpF-CQ-GYq" firstAttribute="top" secondItem="9SE-eH-El4" secondAttribute="bottom" id="BbM-gQ-IeQ"/>
+                            <constraint firstItem="9SE-eH-El4" firstAttribute="top" secondItem="1Dr-cP-Wfg" secondAttribute="bottom" id="vaX-p2-kMR"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="9SE-eH-El4" id="Q4h-f4-IBJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G0n-fk-fP7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6165.6000000000004" y="100.29985007496252"/>
+        </scene>
+        <!--Add JobVC-->
+        <scene sceneID="h9h-hH-qAV">
+            <objects>
+                <viewController storyboardIdentifier="HRAddJobVC" id="FbT-Eb-N0J" customClass="HRAddJobVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="yOi-MD-HcR"/>
+                        <viewControllerLayoutGuide type="bottom" id="CH4-LJ-eWg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="khb-St-sxk">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="pPC-DV-DMc">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="pPC-DV-DMc" firstAttribute="leading" secondItem="khb-St-sxk" secondAttribute="leadingMargin" constant="-16" id="0c4-Br-dzM"/>
+                            <constraint firstItem="CH4-LJ-eWg" firstAttribute="top" secondItem="pPC-DV-DMc" secondAttribute="bottom" id="6b3-PE-Urc"/>
+                            <constraint firstItem="pPC-DV-DMc" firstAttribute="top" secondItem="yOi-MD-HcR" secondAttribute="bottom" id="c5u-Q5-cqv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="pPC-DV-DMc" secondAttribute="trailing" constant="-16" id="dle-yI-fLI"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="pPC-DV-DMc" id="HRN-RV-VTE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nsd-1e-D1U" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6828" y="98.50074962518741"/>
         </scene>
     </scenes>
     <resources>

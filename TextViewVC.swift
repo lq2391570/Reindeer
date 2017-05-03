@@ -16,7 +16,7 @@ class TextViewVC: UIViewController,YYTextViewDelegate {
     enum textViewType {
         //我的优势
         case typeAdvantage
-        //工作内容
+        //工作内容及其他
         case typeWorkContent
         //在校经历
         case typeSchoolExp
@@ -25,7 +25,7 @@ class TextViewVC: UIViewController,YYTextViewDelegate {
     @IBOutlet var saveBtn: UIButton!
     
     @IBOutlet var textView: YYTextView!
-    var textViewTypeEnum:textViewType!
+    var textViewTypeEnum:textViewType = .typeWorkContent
     var placeholdText = ""
     var navTitle = ""
     //简历id（更新我的优势时可以用到）

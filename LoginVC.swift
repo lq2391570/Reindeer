@@ -43,7 +43,7 @@ class LoginVC: UIViewController {
                     let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "ChoseGroupVC") as! ChoseGroupVC
                     self.navigationController?.pushViewController(vc, animated: true)
                 }else if jsonStr["group"] == 1{
-                    //找工作
+                       //找工作
                        //判断是否完善了信息若没完善则去完善，若完善了则进入首页
                     if jsonStr["hasIntent"] == 0 && jsonStr["perfectInfo"] == 0 {
                         //既完善了个人信息也发布了求职意向则跳转首页
@@ -67,6 +67,22 @@ class LoginVC: UIViewController {
                     }
                 
                 }else if jsonStr["group"] == 2{
+                    //HR 端
+                    //第一步判断是否完善了个人信息,没有则去完善个人信息
+                    if jsonStr["perfectInfo"] == 0
+                    {
+//                        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
+//                        
+//                        self.navigationController?.pushViewController(vc, animated: true)
+//                        return
+                        
+                        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
+                        
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        return
+
+                    }
+                    
                     let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
                     let nav = UINavigationController.init(rootViewController: vc)
                     self.view.window?.rootViewController = nav

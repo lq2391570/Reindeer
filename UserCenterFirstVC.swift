@@ -122,6 +122,10 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "ResumeManagerVC") as! ResumeManagerVC
             vc.resumeBassClass = self.resumeBassClass
             self.navigationController?.pushViewController(vc, animated: true)
+        }else if indexPath.section == 2 {
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "SettingVC") as! SettingVC
+            self.navigationController?.pushViewController(vc, animated: true)
+            
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

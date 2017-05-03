@@ -10,11 +10,29 @@ import UIKit
 
 class CompanyCell: UITableViewCell {
 
+    @IBOutlet var publishJobNumLabel: UILabel!
+    
+    @IBOutlet var companyImageView: UIImageView!
+    
+    @IBOutlet var companyNameLabel: UILabel!
+    
+    @IBOutlet var companyMesLabel: UILabel!
+    
+    @IBOutlet var companyAreaLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    func installCell(publishJobNum:String,companyName:String,companyMes:String,companyArea:String) -> Void {
+        self.publishJobNumLabel.text = "共发布了\(publishJobNum)个职位"
+        self.companyNameLabel.text = companyName
+        self.companyMesLabel.text = companyMes
+        self.companyAreaLabel.text = companyArea
+        
+    }
+    
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

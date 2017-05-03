@@ -76,9 +76,18 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         
         tableView.tableFooterView = createFootView()
         tableView.estimatedRowHeight = 100
+        
+        let rightBarItem = UIBarButtonItem.init(title: "跳过", style: .plain, target: self, action: #selector(rightBarItemClick))
+        self.navigationItem.rightBarButtonItem = rightBarItem
+        
         companyDetail()
         companyScale()
     }
+    func rightBarItemClick() -> Void {
+        print("跳过")
+        
+    }
+    
        //获得公司详情
     func companyDetail() -> Void {
         //获得公司详情
@@ -139,6 +148,13 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
+                
+                
+                
+                
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                
             }
             
         }, fail: {
@@ -290,6 +306,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 let vc = TextViewVC()
                 vc.placeholdText = "请简单描述公司"
                 vc.navTitle = "公司简介"
+                vc.textViewTypeEnum = .typeWorkContent
                 vc.saveBtnClickClosure = { (deacStr) in
                     self.descStr = deacStr
                     tableView.reloadData()

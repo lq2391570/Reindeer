@@ -29,9 +29,9 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     //emailStr
     var emailStr:String?
     //是否开通视频面试
-    var isOpenVideoInvite = true
+    var isOpenVideoInvite = 1
     //是否开通简历招聘
-    var isOpenResumeInvite = true
+    var isOpenResumeInvite = 1
     
     //公司名称TextField
     var mytextField:UITextField!
@@ -162,7 +162,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         case 3:
             return 1
         case 4:
-            return 2
+            return 0
         default:
             return 0
         }
@@ -185,6 +185,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             if indexPath.row == 0 {
                 cell.jvTextField.delegate = cell
                 cell.jvTextField.placeholder = "真实姓名"
+                cell.jvTextField.setPlaceholder("真实姓名", floatingTitle: "姓名")
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("namejvTextField = \(jvTextField.text)")
                     self.trueNameStr = jvTextField.text
@@ -192,6 +193,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
                     }else if indexPath.row == 1 {
                 cell.jvTextField.delegate = cell
                 cell.jvTextField.placeholder = "您的职务"
+                cell.jvTextField.setPlaceholder("您的职务", floatingTitle: "职务")
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("dutyjvTextField = \(jvTextField.text)")
                     self.dutyNameStr = jvTextField.text
@@ -205,7 +207,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             if indexPath.row == 0 {
                 cell.jvTextField.delegate = self
                 cell.jvTextField.placeholder = "公司名称"
-                
+                cell.jvTextField.setPlaceholder("公司名称", floatingTitle: "公司")
                 cell.jvTextField.tag = 100
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("companyNameJvTextField = \(jvTextField.text)")
@@ -218,6 +220,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 cell.jvTextField.delegate = cell
                 cell.jvTextField.tag = 200
                 cell.jvTextField.placeholder = "公司简介"
+                cell.jvTextField.setPlaceholder("公司简介", floatingTitle: "简介")
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("beiefJvTextField = \(jvTextField.text)")
                     self.companyBriefStr = jvTextField.text
@@ -231,6 +234,7 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
          
             cell.jvTextField.tag = 300
             cell.jvTextField.placeholder = "接收简历的邮箱"
+            cell.jvTextField.setPlaceholder("接收简历的邮箱", floatingTitle: "邮箱")
             cell.textFieldDelegateColsure = { (jvTextField) in
                 print("emailTextField = \(jvTextField.text)")
                 self.emailStr = jvTextField.text
@@ -242,12 +246,12 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             if indexPath.row == 0 {
                 cell.nameLabel.text = "开通视频招聘"
                 cell.switchBtnClickColsure = { (sender) in
-                    self.isOpenVideoInvite = sender.isSelected
+                  //  self.isOpenVideoInvite = sender.isSelected
                 }
             }else if indexPath.row == 1 {
                 cell.nameLabel.text = "开通简历招聘"
                 cell.switchBtnClickColsure = { (sender) in
-                    self.isOpenResumeInvite = sender.isSelected
+               //     self.isOpenResumeInvite = sender.isSelected
                 }
             }
             return cell

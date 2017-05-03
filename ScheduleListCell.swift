@@ -1,18 +1,19 @@
 //
-//  PublisherCell.swift
+//  ScheduleListCell.swift
 //  Reindeer
 //
-//  Created by shiliuhua on 17/1/9.
+//  Created by shiliuhua on 2017/4/27.
 //  Copyright © 2017年 shiliuhua. All rights reserved.
 //
 
 import UIKit
 
-class PublisherCell: UITableViewCell {
+class ScheduleListCell: UITableViewCell {
 
-    @IBOutlet var hrHeadImageView: UIImageView!
     
-    @IBOutlet var hrNameLabel: UILabel!
+    @IBOutlet var timeLabel: UILabel!
+    
+    @IBOutlet var numOfPeopleLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

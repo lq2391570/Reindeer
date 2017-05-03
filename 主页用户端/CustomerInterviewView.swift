@@ -16,20 +16,33 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource {
     
     @IBOutlet var sendBtn: UIButton!
 
+    var name = ""
+    var sex = ""
+    var eduExp = ""
+    var jobName = ""
+    var phoneNum = ""
+    
+    
     var leftNameArray = ["个人简历","求职意向","联系方式"]
     var rightNameArray = ["王小明|男|本科","研发部经理","187-8989-8989"]
+    var isOpenEmail = true
     
     var cancelBtnClickClosure:((_ sender:UIButton) ->())?
     var sureBtnClickClosure:((_ sender:UIButton) -> ())?
     
 //     Only override draw() if you perform custom drawing.
 //     An empty implementation adversely affects performance during animation.
+    
+    
+    
     override func draw(_ rect: CGRect) {
        
         tableView.delegate=self
         tableView.dataSource=self
         tableView.register(UINib.init(nibName: "CustomerPopCell", bundle: nil), forCellReuseIdentifier: "CustomerPopCell")
         tableView.register(UINib.init(nibName: "SwitchCell", bundle: nil), forCellReuseIdentifier: "SwitchCell")
+        rightNameArray = ["\(name)|\(sex)|\(eduExp)","\(jobName)","\(phoneNum)"]
+        
         tableView.reloadData()
     }
     required init?(coder aDecoder: NSCoder) {
@@ -51,6 +64,17 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource {
     {
         if indexPath.row == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell") as! SwitchCell
+            cell.switchbtnClickClosure = { (btn) in
+                if btn.isSelected == true {
+                    btn.isSelected = false
+                }else{
+                    btn.isSelected = true
+                }
+                self.isOpenEmail = !btn.isSelected
+                print("self.isOpenEmail = \(self.isOpenEmail)")
+                    btn.setImage(UIImage.init(named: "开"), for: .normal)
+                    btn.setImage(UIImage.init(named: "关"), for: .selected)
+            }
             
             return cell
         }else{

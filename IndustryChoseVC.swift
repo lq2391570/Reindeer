@@ -53,7 +53,6 @@ class IndustryChoseVC: BaseViewVC,TagListViewDelegate {
         }
        _ = self.navigationController?.popViewController(animated: true)
         
-        
     }
     
     //获得所有行业

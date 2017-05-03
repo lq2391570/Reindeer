@@ -23,10 +23,10 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     var overAllBtn:UIButton?
     //页面类型(枚举)
     enum viewType {
-        case recommend
-        case area
-        case InterviewTime
-        case filter
+        case recommend //推荐
+        case area      //地区
+        case InterviewTime  //面试时间
+        case filter     //筛选
     }
     // 全局类型
     var viewTypeNum:viewType?
@@ -50,6 +50,10 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     var titleBtnClickClosure:((_ sender:UIButton,_ heightOfView:CGFloat) ->())?
     //背景高度
     var heightOftransparentView:CGFloat!
+    //面试时间model
+    var interViewModel:PositionBaseClass?
+    
+    
     
     override func draw(_ rect: CGRect) {
         // Drawing code
@@ -64,11 +68,20 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
        //添加一个半透明的背景，大小为刚好覆盖底层
         if transparentView == nil {
             createTransparentView()
-            createBottomView()
-            addTap()
+    
+       //     addTap()
         }
-        
+        createBottomView()
+        getInterViewList()
     }
+    
+    //获取面试时间分类
+    
+    func getInterViewList() -> Void {
+          self.interViewModel = getInterViewTypePath()
+    }
+    
+    
 //添加按钮
     func addChoseBtn(_ rect:CGRect) -> Void {
         
@@ -115,8 +128,16 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
                 viewTypeNum = .area
             case 3:
                 viewTypeNum = .InterviewTime
+                
+                
+                
+                self.tableView.reloadData()
+                
+                
+                
             case 4:
                 viewTypeNum = .filter
+                self.tableView.reloadData()
             default:
                 break
             }
@@ -180,6 +201,12 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
         tableView.separatorStyle = .none
        // tableView.isUserInteractionEnabled = false
         tableView.register(UINib.init(nibName: "SelectorCell", bundle: nil), forCellReuseIdentifier: "SelectorCell")
+        tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "timeCell")
+        tableView.register(UINib.init(nibName: "InterViewTimeCell", bundle: nil), forCellReuseIdentifier: "InterViewTimeCell")
+        tableView.register(UINib.init(nibName: "FilterCell", bundle: nil), forCellReuseIdentifier: "FilterCell")
+        
+        
+        
         transparentView?.addSubview(tableView)
         //需要autoLayout
         transparentView?.snp.makeConstraints({ (make) in
@@ -246,16 +273,35 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if viewTypeNum == viewType.recommend {
             return 40
+        }else if viewTypeNum == viewType.InterviewTime
+        {
+            return 60
+        }else if viewTypeNum == viewType.filter
+        {
+            return 120
         }
         return 44
+    }
+    func numberOfSections(in tableView: UITableView) -> Int
+    {
+        
+        return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if viewTypeNum == viewType.recommend {
             return 2
+        }else if viewTypeNum == viewType.InterviewTime
+        {
+            return (self.interViewModel?.list?.count)!
+        }else if viewTypeNum == viewType.filter
+        {
+            return 3
+        
         }
         return 0
     }
+   
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if viewTypeNum == viewType.recommend {
@@ -267,12 +313,44 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             tableView.reloadData()
             transparentView?.isHidden = true
             print("点击第\(indexPath.row)行")
+        }else if viewTypeNum == viewType.InterviewTime
+        {
+            
+             print("点击第\(indexPath.row)行")
         }
+        
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+        if viewTypeNum == viewType.InterviewTime {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "InterViewTimeCell") as! InterViewTimeCell
+            let model:PositionList = (self.interViewModel?.list?[indexPath.row])!
+            
+            cell.nameLable.text = model.name
+            
+            return cell
+        }else if viewTypeNum == viewType.filter {
+            
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FilterCell") as! FilterCell
+            cell.recommendView.removeAllTags()
+            let tagArray = ["百度","阿里巴巴","腾讯","中软国际","美团","京东","同纳信息","软通动力"]
+            for str in tagArray {
+                cell.recommendView.addTag(str)
+            }
+            if indexPath.row == 0 {
+                cell.nameLabel.text = "学历"
+            }else if indexPath.row == 1 {
+                cell.nameLabel.text = "工作经验"
+            }else if indexPath.row == 2 {
+                cell.nameLabel.text = "薪资要求"
+            }
+            
+            return cell
+            
+        }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectorCell") as! SelectorCell
             cell.selectorLabel.backgroundColor = UIColor.clear

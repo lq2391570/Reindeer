@@ -10,13 +10,12 @@ import UIKit
 import PYSearch
 import TagListView
 import SVProgressHUD
-
-
-class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate {
+import AKPickerView
+import SwiftyJSON
+class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate,AKPickerViewDelegate,AKPickerViewDataSource {
 
     
     @IBOutlet var tableView: UITableView!
-    
     
     var headView:DropDownView?
     var arrowView:ArrowsView!
@@ -28,20 +27,76 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     var titleBtn:UIButton!
     
     var searchController:UISearchController!
-    var headImageUrlStr = "'"
+    var headImageUrlStr = ""
+//    //求职意向Array
+//    var jobIntensionArray = ["22","33","44"]
     
+    var resumeBassClass:ResumeBaseClass?
+    var akPickView:AKPickerView?
     
+    var filterDic:NSDictionary = [:]
+    //首页职位列表model
+    var homePageJobBassClass:FirstJobBaseClass?
+    //个人信息json
+    var userMesJson:JSON?
+    var jobName = ""
+    
+        var jobId = ""
+        var recommend = ""
+        var areaId = ""
+        var date = ""
+        var eduId = ""
+        var expId = ""
+        var salaryId = ""
+        
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        confineNavBar()
-        confineTableView()
-        getUserMesAndHeadImage()
+        self.confineTableView()
+        self.confineNavBar()
+        self.getUserMesAndHeadImage()
+        getJobIntension()
     }
     
+    //获得求职意向列表
+    func getJobIntension() -> Void {
+        searchUserResume(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
+            self.resumeBassClass = bassClass
+            
+            self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![0].id)!).stringValue
+            
+            self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
+            
+            print("self.resumeBassClass = \(String(describing: self.resumeBassClass))")
+            self.navigationItem.titleView = self.createTitleViewOfAKPickView()
+            if self.akPickView?.selectedItem == 0 {
+                self.akPickView?.reloadData()
+            }
+            self.tableView.reloadData()
+        }) {
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
+    //获得首页职位列表（根据搜索条件）
+    func getHomePageJobList(dic:NSDictionary) -> Void {
+      getFirstList(dic: dic, actionHander: { (bassClass) in
+          
+        self.homePageJobBassClass = bassClass
+        print("self.homePageJobBassClass = \(String(describing: self.homePageJobBassClass))")
+        if (bassClass.list?.count)! > 0{
+            self.jobName = (bassClass.list?[0].jobName!)!
+
+        }
+              self.tableView.reloadData()
+        
+      }) { 
+        SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
     
+
     //设置navBar
     func confineNavBar() -> Void {
         self.navigationController?.navigationBar.barTintColor=UIColor.black
@@ -73,7 +128,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         titleBtn.setTitle("产品经理", for: .normal)
         titleBtn.setTitleColor(UIColor.init(hexColor: "f4cda2"), for: .normal)
         titleBtn.addTarget(self, action: #selector(titleBtnClick), for: .touchUpInside)
-        self.navigationItem.titleView=createTitleView()
+        
 
     }
     //个人中心
@@ -81,6 +136,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         print("头像点击")
         
         let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstVC") as! UserCenterFirstVC
+        vc.resumeBassClass = self.resumeBassClass
         self.navigationController?.pushViewController(vc, animated: true)
         
         
@@ -90,35 +146,26 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         getUserMes(dic: ["token":GetUser(key: TOKEN)], actionHandler: { (jsonStr) in
             if jsonStr["code"] == 0 {
                 print("jsonStr = \(jsonStr)")
+                self.userMesJson = jsonStr
             }
+            
         
         }) { 
         print("请求失败")
         }
     }
     
-    
-    
     //设置按钮点击
     func installBtnClick() -> Void {
         print("设置")
+        
         //暂时放完善信息
         let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
         
         self.navigationController?.pushViewController(vc, animated: true)
         
-        
-        
-        
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("点击22")
-        if tableView.tag == 100 {
-            print("点击33")
-        }
-        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "StationDetailVC")
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
+    
     //titleView
     func createTitleView() -> UIView {
         
@@ -137,6 +184,40 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         titleView.addSubview(arrowView)
         return titleView
     }
+    //titleView(AKPickView)
+    func createTitleViewOfAKPickView() -> UIView {
+        akPickView = AKPickerView.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 30))
+        akPickView?.delegate = self
+        akPickView?.dataSource = self
+        akPickView?.interitemSpacing = 15
+        akPickView?.highlightedTextColor = UIColor.mainColor
+        akPickView?.font = UIFont.systemFont(ofSize: 16)
+        akPickView?.highlightedFont = UIFont.systemFont(ofSize: 20)
+        
+        return akPickView!
+        
+    }
+    //AKPickViewDatasource
+    func numberOfItems(in pickerView: AKPickerView!) -> UInt
+    {
+        
+        return UInt((self.resumeBassClass?.jobIntentList!.count)!)
+    }
+    func pickerView(_ pickerView: AKPickerView!, titleForItem item: Int) -> String!
+    {
+        
+        return self.resumeBassClass?.jobIntentList![item].name
+    }
+    func pickerView(_ pickerView: AKPickerView!, didSelectItem item: Int)
+    {
+      //  pickerView.reloadData()
+        print("选中了\(String(describing: self.resumeBassClass?.jobIntentList![item].name))")
+        self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![item].id)!).stringValue
+        
+        
+        self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
+        
+    }
     
     //设置tableView
     func confineTableView() -> Void {
@@ -147,16 +228,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     //    tableView.tableHeaderView?.isUserInteractionEnabled = false
         tableView.separatorStyle = .none
         
-//        let vc = UIViewController.init()
-//        vc.view.backgroundColor = UIColor.white
-//        searchController = UISearchController(searchResultsController: vc)
-//        searchController.searchBar.sizeToFit()
-//        searchController.dimsBackgroundDuringPresentation = true
-//        searchController.hidesNavigationBarDuringPresentation = true
-//        self.view.addSubview(tableView)
-//        self.tableView.tableHeaderView = searchController.searchBar
-//        self.definesPresentationContext = true
-       
     }
     
     func titleBtnClick() -> Void {
@@ -215,10 +286,11 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
              return headView
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("headView.frame=\(headView?.frame)")
+       // print("headView.frame=\(headView?.frame)")
     }
     func btnClick(btn:UIButton) -> Void {
         print("点击了第\(btn.tag)个按钮")
+        
     }
     //rightBarBtnClick
     func rightBarBtnClick() -> Void {
@@ -240,11 +312,11 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         case 0:
             return 140
         case 1:
-            if indexPath.row == 0 {
-                return 225
-            }else{
+//            if indexPath.row == 0 {
+//                return 225
+//            }else{
                 return 90
-            }
+         //   }
         default:
             return 0
         }
@@ -256,7 +328,11 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         case 0:
             return 1
         case 1:
-            return 10
+            if self.homePageJobBassClass == nil {
+                return 0
+            }else{
+                return (self.homePageJobBassClass?.list?.count)!
+            }
         default:
             return 0
         }
@@ -288,51 +364,38 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             }
         }else
         {
-            if indexPath.row == 0 {
-                let cell:Position2Cell = tableView.dequeueReusableCell(withIdentifier: "Position2Cell") as! Position2Cell
-                return cell
-            }else{
+//            if indexPath.row == 0 {
+//                let cell:Position2Cell = tableView.dequeueReusableCell(withIdentifier: "Position2Cell") as! Position2Cell
+//                return cell
+//            }else{
                 let cell:PositionCell = tableView.dequeueReusableCell(withIdentifier: "PositionCell") as! PositionCell
+            guard self.homePageJobBassClass != nil else {
                 return cell
             }
+               let model:FirstJobList = (self.homePageJobBassClass?.list![indexPath.row])!
+           
+              cell.installPositionCell(jobName: model.jobName!, companyName: model.companyName!, payRange: model.salary!, area: model.city!, yearRange: model.experience!, edu: model.qualification!)
+            
+                return cell
+         //   }
         }
     }
-    //searchBar代理
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool
-    {
-        return true
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("点击22")
+        if tableView.tag == 100 {
+            print("点击33")
+        }
+        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "StationDetailVC") as! StationDetailVC
+        let model = self.homePageJobBassClass?.list?[indexPath.row]
+        vc.userMesJson = self.userMesJson
+        vc.intentName = self.jobName
+        //求职意向id
+        vc.intentId = self.jobId
+        //职位id
+        vc.jobId = NSNumber.init(value: (model?.id)!).stringValue
+        self.navigationController?.pushViewController(vc, animated: true)
     }
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
-    {
-//        print("开始搜索")
-//        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "SearchVC") as! SearchVC
-//        let nav = UINavigationController.init(rootViewController: vc)
-//        self.present(nav, animated: false, completion: nil)
-        
-//        //创建热门搜索
-//        let hotSearchs = ["Java", "Python", "Objective-C", "Swift", "C", "C++", "PHP", "C#", "Perl", "Go", "JavaScript", "R", "Ruby", "MATLAB"]
-//        //创建控制器
-//        let searchViewController = PYSearchViewController.init(hotSearches: hotSearchs, searchBarPlaceholder: "搜索职位和企业", didSearch: {(searchViewController,searchBar,SearchText) in
-//            let searchVC = SearchVC()
-//            
-//            searchViewController?.navigationController?.pushViewController(searchVC, animated: true)
-//            
-//        })
-//        //设置风格
-//        searchViewController?.hotSearchStyle = .default
-//        searchViewController?.searchHistoryStyle = .default
-//        searchViewController?.cancelButton.title = "取消"
-//        //设置代理
-//        searchViewController?.delegate = self
-//        searchViewController?.navigationController?.navigationBar.barTintColor=UIColor.black
-//        //消除毛玻璃效果
-//        searchViewController?.navigationController?.navigationBar.isTranslucent = false;
-//        //跳转到搜索控制器
-//        let nav = UINavigationController.init(rootViewController: searchViewController!)
-//        self.present(nav, animated: false, completion: nil)
-
-    }
-    override func didReceiveMemoryWarning() {
+       override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
