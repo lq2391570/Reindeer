@@ -239,8 +239,6 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     self.tableView.reloadData()
                 })
                 
-                
-                
             }
         }else if indexPath.section == 2 {
             if indexPath.row == 0 {
