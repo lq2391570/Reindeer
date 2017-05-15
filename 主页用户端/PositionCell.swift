@@ -28,13 +28,13 @@ class PositionCell: UITableViewCell {
         self.selectionStyle = .none
     }
     //设置列表信息
-    func installPositionCell(jobName:String,companyName:String,payRange:String,area:String,yearRange:String,edu:String) -> Void {
-        self.jobNameLabel.text = jobName
-        self.companyNameLabel.text = companyName
-        self.payRangeLabel.text = payRange
-        self.areaLabel.text = area
-        self.yearRangeLabel.text = yearRange
-        self.eduLabel.text = edu
+    func installPositionCell(jobName:String?,companyName:String?,payRange:String?,area:String?,yearRange:String?,edu:String?) -> Void {
+        self.jobNameLabel.text = jobName ?? ""
+        self.companyNameLabel.text = companyName ?? ""
+        self.payRangeLabel.text = payRange ?? ""
+        self.areaLabel.text = area ?? ""
+        self.yearRangeLabel.text = yearRange ?? ""
+        self.eduLabel.text = edu ?? ""
     }
     
 

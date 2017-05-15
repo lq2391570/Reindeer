@@ -18,6 +18,8 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     
     @IBOutlet var rightBtn: UIButton!
     
+      
+    
     var jobId = ""
     //职位详情model
     var jobDetailBassClass:JobDetailBaseClass?
@@ -34,7 +36,6 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         installTableView()
         getJobDetail()
     }
-    
     //根据职位id获取职位详情
     
     func getJobDetail() -> Void {
@@ -165,15 +166,11 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
                             
                         })
                         
-                       
                     }
                     
                 }, fail: { 
                     SVProgressHUD.showInfo(withStatus: "请求失败")
                 })
-                
-                
-                
                 
             }
             

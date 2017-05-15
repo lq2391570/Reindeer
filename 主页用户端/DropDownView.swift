@@ -331,6 +331,17 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             cell.nameLable.text = model.name
             
             return cell
+            
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "SelectorCell") as! SelectorCell
+//            cell.selectorLabel.backgroundColor = UIColor.clear
+//            cell.selectorLabel.font = UIFont.systemFont(ofSize: 14)
+//            cell.selectorLabel.isselect = recommendSelect
+//            cell.selectorLabel.selectstring = recommendArray[indexPath.row]
+//            cell.cellBtn.addTarget(self,action:#selector(recommendCellClick(sender:)), for: .touchUpInside)
+//            cell.cellBtn.tag = indexPath.row
+//            
+//            return cell
+            
         }else if viewTypeNum == viewType.filter {
             
             

@@ -151,6 +151,28 @@ extension UIColor {
     }
     
 }
+
+
+//    - (NSDate *)dateByAddingDays:(NSInteger)days {
+//    NSTimeInterval aTimeInterval = [self timeIntervalSinceReferenceDate] + 86400 * days;
+//    NSDate *newDate = [NSDate dateWithTimeIntervalSinceReferenceDate:aTimeInterval];
+//    return newDate;
+//    }
+
+    
+//时间增加
+func dateByAddingDays(days:NSInteger) -> NSDate {
+    let date = NSDate()
+    
+    let aTimeInterval:TimeInterval = date.timeIntervalSinceReferenceDate + (86400*Double(days))
+    let newDate = NSDate.init(timeIntervalSinceReferenceDate: aTimeInterval)
+    
+    return newDate
+    
+}
+
+
+
 func typeForImageData(data:NSData) -> String? {
     var c = uint_fast8_t()
     
@@ -216,6 +238,20 @@ func dateTransformUnixStr(date:Date) ->String
     print("timeString = \(timeString)")
     return timeString
 }
+//时间戳转化为时间(格式自定义)
+func unixTransformtimeStr(unixStr:NSNumber,dateStyle:String) ->String
+{
+    let unixTimeStamp:Double = Double.init(unixStr)/1000
+    let interval:TimeInterval = unixTimeStamp
+    let date:Date = Date.init(timeIntervalSince1970: interval)
+    let formatter = DateFormatter()
+    formatter.locale = NSLocale.current
+    formatter.dateFormat = dateStyle
+    let dateStr = formatter.string(from: date)
+    return dateStr
+    
+}
+
 
 //创建底部Btn(保存按钮)
 func createBottomBtn(supView:UIView,title:String,actionHander:(_ sender:UIButton) -> Void) -> UIView {
@@ -233,7 +269,14 @@ func createBottomBtn(supView:UIView,title:String,actionHander:(_ sender:UIButton
     return view
 }
 
-
+//时间转化（时间的字符串转化为时间戳）
+func timeStrTransformUnix(timeStr:String) ->String
+{
+    let inputFormatter = DateFormatter()
+    inputFormatter.dateFormat = "yyyyMMddHHmm"
+    let inputDate:Date = inputFormatter.date(from: timeStr)!
+    return dateTransformUnixStr(date: inputDate)
+}
 
 
 

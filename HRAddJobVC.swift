@@ -8,6 +8,8 @@
 
 import UIKit
 import SVProgressHUD
+import JCAlertView
+import SwiftyJSON
 class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tableView: UITableView!
@@ -15,6 +17,10 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var titleArray1 = ["职位类型","职位名称","技能要求"]
     var titleArray2 = ["薪资范围","经验要求","学历要求"]
     var titleArray3 = ["工作城市","工作地点"]
+    
+    //公司id
+    var companyId = ""
+    
     //职位类型model
     var positionModel:PositionList?
     //职位名称
@@ -34,6 +40,20 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var eduExpModelArray:[PositionList] = []
     //学历范围model
     var eduExpModel:PositionList?
+    //地区名称
+    var areaName = ""
+    //地区id
+    var areaId = ""
+    //职位描述
+    var descOfJobStr = ""
+    //经度
+    var lat:Double = 0
+    //纬度
+    var lng:Double = 0
+    //工作地址
+    var address = ""
+    //招聘人数
+    var recruitingNum = 1
     
     
     
@@ -79,7 +99,85 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     
     func completeBtnClick() -> Void {
         print("完成")
+        if companyId == "" {
+            SVProgressHUD.showInfo(withStatus: "公司不存在")
+            return
+        }else if positionModel == nil {
+            SVProgressHUD.showInfo(withStatus: "请选择职位")
+            return
+        }else if compensationModel == nil {
+            SVProgressHUD.showInfo(withStatus: "请选择薪资范围")
+            return
+        }else if jobExpModel == nil {
+            SVProgressHUD.showInfo(withStatus: "请选择工作经验")
+            return
+        }else if eduExpModel == nil {
+            SVProgressHUD.showInfo(withStatus: "请选择学历范围")
+            return
+        }else if areaId == "" {
+            SVProgressHUD.showInfo(withStatus: "请选择工作地区")
+            return
+        }else if descOfJobStr == "" {
+            SVProgressHUD.showInfo(withStatus: "请描述职位")
+            return
+        }
+    //    print("companyId = \(companyId),positionModel.id=\(positionModel?.id! as Any),positionModel?.name=\(positionModel?.name! as Any),tags =\(skillArray),salary =\(compensationModel?.id as Any),experience = \(jobExpModel?.id as Any),qualification = \(eduExpModel?.id as Any),area = \(areaId),district = \(areaName),address = \(address),note = \(descOfJobStr) ")
+        
+        
+        addJonPosition()
+        
+        
+        
     }
+    
+    //添加职位
+    func addJonPosition() -> Void {
+        let dic:NSDictionary = [
+            "companyId":companyId,            //公司id
+            "kind":positionModel?.id! as Any , //职位类型id
+            "name":positionModel?.name! as Any ,//职位名称
+            "tags":skillArray,                 //技能要求
+            "salary":compensationModel?.id as Any ,    //薪资范围id
+            "experience":jobExpModel?.id as Any ,      //工作经验id
+            "qualification":eduExpModel?.id as Any ,   //学历范围id
+            "area":areaId,                     //工作地区id
+            "district":areaName,               //地区名称
+            "lat":lat,                         //经度
+            "lng":lng,                         //纬度
+            "address":address,                 //地址名称
+            "note":descOfJobStr,               //职位描述
+            "nums":recruitingNum,               //招聘人数
+            "token":GetUser(key: TOKEN)
+        ]
+        
+        print("dic = \(dic)")
+        
+        let jsondic = JSON(dic)
+        print ("jsondic = \(jsondic)")
+        
+        let newDic:NSDictionary = jsondic.dictionary! as NSDictionary
+        
+        print("newDic = \(newDic)")
+        
+        HRAddPositionInterface(dic: newDic, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].stringValue)
+                print("添加成功")
+                
+                let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
+                let nav = UINavigationController.init(rootViewController: vc)
+                vc.homeType = .HRHomePage
+                
+                self.view.window?.rootViewController = nav
+                
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+        }) { 
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
+    
     
     func rightBarBtnItemClick() -> Void {
         //跳过
@@ -147,8 +245,15 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             
         }else if indexPath.section == 2 {
             cell?.textLabel?.text = titleArray3[indexPath.row]
+            if indexPath.row == 0 {
+                cell?.detailTextLabel?.text = self.areaName
+            }
+            
+            
         }else if indexPath.section == 3 {
             cell?.textLabel?.text = "职位描述"
+           cell?.detailTextLabel?.text = self.descOfJobStr
+            
         }
         
         return cell!
@@ -243,11 +348,49 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }else if indexPath.section == 2 {
             if indexPath.row == 0 {
                 //工作城市
+                if let customView = LQPickView.newInstance() {
+                    
+                    let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
+                    
+                    customAlert?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - customView.frame.size.height/2-20)
+                    customView.cancelbtnClickClosure = { (btn) in
+                        customAlert?.dismiss(completion: nil)
+                        
+                    }
+                    customView.sureBtnClickclosure = { (btn) in
+                        
+                        print("cityName = \(customView.cityNameStr) , cityId = \(customView.cityIDStr)")
+                        self.areaName = customView.cityNameStr
+                        self.areaId = customView.cityIDStr
+                        //  self.cityTextField.text = "\(customView.provinceNameStr)\(customView.cityNameStr)"
+                        customAlert?.dismiss(completion: nil)
+                        self.tableView.reloadData()
+                        //    self.areaId = customView.cityIDStr
+                    }
+                    
+                    customAlert?.show()
+                    
+                }
+
+                
+                
+                
             }else if indexPath.row == 1 {
                 //工作地点
             }
         }else if indexPath.section == 3 {
             //职位描述
+            let vc = TextViewVC()
+            vc.textViewTypeEnum = .typeWorkContent
+            vc.saveBtnClickClosure = { (str) in
+                self.descOfJobStr = str
+                self.tableView.reloadData()
+            }
+            
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+
+            
         }
     }
     func numberOfSections(in tableView: UITableView) -> Int

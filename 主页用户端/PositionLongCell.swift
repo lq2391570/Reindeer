@@ -14,6 +14,11 @@ class PositionLongCell: UITableViewCell {
     @IBOutlet var searchBar: UISearchBar!
     
     var searchBtnClickClosure:((_ sender:UIButton) -> ())?
+    
+    var videoInterFaceListClosure:((_ sender:UIButton) -> ())?
+    var commonInterFaceListClosure:((_ sender:UIButton) -> ())?
+    var notiListClosure:((_ sender:UIButton) -> ())?
+    
   //   var viewHeight:((CGFloat) -> ())?
     @IBOutlet var searchView: UIView!
     override func awakeFromNib() {
@@ -47,9 +52,32 @@ class PositionLongCell: UITableViewCell {
       
             searchBtnClickClosure!(sender)
      
+    }
+    
+    @IBAction func videoInterFaceBtnClick(_ sender: UIButton) {
         
+        if videoInterFaceListClosure != nil {
+            videoInterFaceListClosure!(sender)
+        }
+
+    }
+    
+    @IBAction func commonInterViewBtnClick(_ sender: UIButton) {
+        print("点击")
+        if commonInterFaceListClosure != nil {
+            commonInterFaceListClosure!(sender)
+        }
+
+    }
+    
+    @IBAction func notiBtnClick(_ sender: UIButton) {
+        if notiListClosure != nil {
+            notiListClosure!(sender)
+        }
         
     }
+    
+    
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

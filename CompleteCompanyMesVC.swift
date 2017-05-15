@@ -50,7 +50,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     //公司简介Str
     var descStr = ""
     //公司图片Array
-    var companyImageArray:[String] = []
+    var companyImageArray:[String] = [""]
     
     
     
@@ -148,7 +148,11 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
+                //添加职位
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
+             vc.companyId = self.companyId
                 
+            self.navigationController?.pushViewController(vc, animated: true)
                 
                 
                 

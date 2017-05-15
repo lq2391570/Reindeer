@@ -69,22 +69,25 @@ class LoginVC: UIViewController {
                 }else if jsonStr["group"] == 2{
                     //HR 端
                     //第一步判断是否完善了个人信息,没有则去完善个人信息
-                    if jsonStr["perfectInfo"] == 0
+                    if jsonStr["perfectInfo"] == -1
                     {
-//                        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
-//                        
-//                        self.navigationController?.pushViewController(vc, animated: true)
-//                        return
-                        
-                        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
+                        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
                         
                         self.navigationController?.pushViewController(vc, animated: true)
                         return
+                        
+//                        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
+//                        vc.companyId = "58"
+//                        self.navigationController?.pushViewController(vc, animated: true)
+//                        return
 
                     }
                     
                     let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
                     let nav = UINavigationController.init(rootViewController: vc)
+                    vc.homeType = .HRHomePage
+                    
+                    
                     self.view.window?.rootViewController = nav
                 }
             }else{
@@ -92,7 +95,7 @@ class LoginVC: UIViewController {
             }
             
         }, fail: {
-            
+            SVProgressHUD.showError(withStatus: "登录超时")
         })
         
     }

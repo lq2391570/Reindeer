@@ -10,6 +10,10 @@ import UIKit
 
 class SucceedView: UIView {
 
+    
+    
+    @IBOutlet var mesLabel: UILabel!
+    
     var cancelBtnClickClsure:((_ sender:UIButton) -> ())?
     
     /*

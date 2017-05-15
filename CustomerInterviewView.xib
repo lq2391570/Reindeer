@@ -87,6 +87,7 @@
                 <outlet property="cancelBtn" destination="FzQ-qO-oAR" id="Xso-r8-SJg"/>
                 <outlet property="sendBtn" destination="Q8w-q1-2tz" id="jpE-HW-Q3H"/>
                 <outlet property="tableView" destination="703-3L-vdf" id="ZHd-ga-Va0"/>
+                <outlet property="titlelabel" destination="bIp-hq-0HU" id="4F3-qc-Ifa"/>
             </connections>
             <point key="canvasLocation" x="-21" y="-92"/>
         </view>

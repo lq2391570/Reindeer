@@ -17,6 +17,13 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     
     @IBOutlet var tableView: UITableView!
     
+    //首页类型（HR或应聘者）
+    enum HomepageType {
+        case userHomePage //普通用户
+        case HRHomePage   //HR
+    }
+    
+    var homeType:HomepageType = .userHomePage
     var headView:DropDownView?
     var arrowView:ArrowsView!
     var heightOfSeciton:CGFloat = 0.0
@@ -37,18 +44,26 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     var filterDic:NSDictionary = [:]
     //首页职位列表model
     var homePageJobBassClass:FirstJobBaseClass?
+    
+    //首页HR发布的职位model
+    var HRPostjobBassClass:HRPostJobBaseClass?
+    
+    //首页简历列表model
+    var HRresumeHomePageBaseClass:HRFirstResumeBaseClass?
+    
     //个人信息json
     var userMesJson:JSON?
+    //职位名称
     var jobName = ""
     
-        var jobId = ""
+        var jobId = ""    // 职位id
         var recommend = ""
         var areaId = ""
         var date = ""
         var eduId = ""
         var expId = ""
         var salaryId = ""
-        
+        var jobStyleID = "" // 职位类型id
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,8 +72,29 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         self.confineTableView()
         self.confineNavBar()
         self.getUserMesAndHeadImage()
-        getJobIntension()
+        
+        if homeType == .userHomePage {
+            //应聘者
+             getJobIntension()
+        }else if homeType == .HRHomePage {
+            //HR
+            getHRPostJobs()
+        }
+       
     }
+    
+    //获得简历列表（HR模式）
+    func getResumeList() -> Void {
+        HRResumeList(dic: ["token":GetUser(key: TOKEN),"jobId":jobStyleID], actionHander: { (bassClass) in
+            
+            self.HRresumeHomePageBaseClass = bassClass
+            self.tableView.reloadData()
+            
+        }) { 
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
+    
     
     //获得求职意向列表
     func getJobIntension() -> Void {
@@ -79,6 +115,28 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
     }
+    
+    //获得HR发布的职位列表（HR端）
+    func getHRPostJobs() -> Void {
+        HRPostJobsInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
+            
+            self.HRPostjobBassClass = bassClass
+            
+            self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[0].id)!).stringValue
+            self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list![0].jobId)!).stringValue
+            print("self.jobId =\(self.jobId)")
+            self.getResumeList()
+            self.navigationItem.titleView = self.createTitleViewOfAKPickView()
+            if self.akPickView?.selectedItem == 0 {
+                self.akPickView?.reloadData()
+            }
+            self.tableView.reloadData()
+        }) {
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+    }
+    
+    
     //获得首页职位列表（根据搜索条件）
     func getHomePageJobList(dic:NSDictionary) -> Void {
       getFirstList(dic: dic, actionHander: { (bassClass) in
@@ -200,22 +258,44 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     //AKPickViewDatasource
     func numberOfItems(in pickerView: AKPickerView!) -> UInt
     {
-        
-        return UInt((self.resumeBassClass?.jobIntentList!.count)!)
+        if homeType == .userHomePage {
+            //应聘者
+             return UInt((self.resumeBassClass?.jobIntentList!.count)!)
+        }else if homeType == .HRHomePage {
+            return UInt((self.HRPostjobBassClass?.list?.count)!)
+            
+        }else{
+            return 0
+        }
+       
     }
+    
     func pickerView(_ pickerView: AKPickerView!, titleForItem item: Int) -> String!
     {
+        if homeType == .userHomePage {
+            return self.resumeBassClass?.jobIntentList![item].name
+        }else if homeType == .HRHomePage {
+            return self.HRPostjobBassClass?.list![item].name
+        }else{
+            return ""
+        }
         
-        return self.resumeBassClass?.jobIntentList![item].name
     }
     func pickerView(_ pickerView: AKPickerView!, didSelectItem item: Int)
     {
       //  pickerView.reloadData()
-        print("选中了\(String(describing: self.resumeBassClass?.jobIntentList![item].name))")
-        self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![item].id)!).stringValue
+        if homeType == .userHomePage {
+            print("选中了\(String(describing: self.resumeBassClass?.jobIntentList![item].name))")
+            self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![item].id)!).stringValue
+            
+            self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
+        }else if homeType == .HRHomePage {
+            print("选中了\(String(describing: self.HRPostjobBassClass?.list?[item].name))")
+            self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].id)!).stringValue
+            
+        }
         
         
-        self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
         
     }
     
@@ -225,6 +305,8 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         tableView.register(UINib.init(nibName: "Position2Cell", bundle: nil), forCellReuseIdentifier: "Position2Cell")
         tableView.register(UINib.init(nibName: "Position3Cell", bundle: nil), forCellReuseIdentifier: "Position3Cell")
         tableView.register(UINib.init(nibName: "PositionLongCell", bundle: nil), forCellReuseIdentifier: "PositionLongCell")
+        
+        tableView.register(UINib.init(nibName: "HRHomePageCell", bundle: nil), forCellReuseIdentifier: "HRHomePageCell")
     //    tableView.tableHeaderView?.isUserInteractionEnabled = false
         tableView.separatorStyle = .none
         
@@ -308,34 +390,71 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        switch indexPath.section {
-        case 0:
-            return 140
-        case 1:
-//            if indexPath.row == 0 {
-//                return 225
-//            }else{
+        if homeType == .userHomePage {
+            switch indexPath.section {
+            case 0:
+                return 140
+            case 1:
                 return 90
-         //   }
-        default:
+            default:
+                return 0
+            }
+
+        }else if homeType == .HRHomePage {
+            switch indexPath.section {
+            case 0:
+                return 140
+            case 1 :
+                return 120
+            default:
+                return 0
+            }
+            
+        }else{
             return 0
         }
+        
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        switch section {
-        case 0:
-            return 1
-        case 1:
-            if self.homePageJobBassClass == nil {
+        if homeType == .userHomePage {
+            switch section {
+            case 0:
+                return 1
+            case 1:
+                if self.homePageJobBassClass == nil {
+                    return 0
+                }else{
+                    return (self.homePageJobBassClass?.list?.count)!
+                }
+            default:
                 return 0
-            }else{
-                return (self.homePageJobBassClass?.list?.count)!
             }
-        default:
+ 
+        }else if homeType == .HRHomePage {
+            //HR
+            switch section {
+            case 0:
+                return 1
+            case 1:
+                if HRresumeHomePageBaseClass == nil {
+                    return 0
+                }else{
+                    return (HRresumeHomePageBaseClass?.list?.count)!
+                }
+            default:
+                return 0
+            }
+            
+            
+            
+            
+            
+        }else{
             return 0
         }
+        
     }
     func recommendCellClick(sender:UIButton) -> Void {
         print("sender.tag = \(sender.tag)")
@@ -346,6 +465,24 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         if indexPath.section == 0 {
             if ScreenWidth == 320{
                 let cell:Position3Cell = tableView.dequeueReusableCell(withIdentifier: "Position3Cell") as! Position3Cell
+                
+                cell.commonInterFaceListClosure = { (btn) in
+                    //普通面试列表
+                    print("普通面试列表")
+                    let vc = InterFaceNotiVC()
+                    vc.title = "普通面试"
+                    vc.userMesJson = self.userMesJson
+                    
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+                cell.videoInterFaceListClosure = { (btn) in
+                    //视频面试列表
+                    
+                }
+                cell.notiListClosure = { (btn) in
+                    //通知列表
+                }
+                
                 cell.searchBar.delegate = self
                 return cell
             }else {
@@ -359,25 +496,59 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                     let nav = UINavigationController.init(rootViewController: vc)
                     self.present(nav, animated: false, completion: nil)
                 }
+                cell.commonInterFaceListClosure = { (btn) in
+                    //普通面试列表
+                    print("普通面试列表")
+                    let vc = InterFaceNotiVC()
+                    vc.title = "普通面试"
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+                cell.videoInterFaceListClosure = { (btn) in
+                    //视频面试列表
+                    
+                }
+                cell.notiListClosure = { (btn) in
+                    //通知列表
+                }
+
                 
                 return cell
             }
         }else
         {
-//            if indexPath.row == 0 {
-//                let cell:Position2Cell = tableView.dequeueReusableCell(withIdentifier: "Position2Cell") as! Position2Cell
-//                return cell
-//            }else{
-                let cell:PositionCell = tableView.dequeueReusableCell(withIdentifier: "PositionCell") as! PositionCell
-            guard self.homePageJobBassClass != nil else {
-                return cell
-            }
-               let model:FirstJobList = (self.homePageJobBassClass?.list![indexPath.row])!
-           
-              cell.installPositionCell(jobName: model.jobName!, companyName: model.companyName!, payRange: model.salary!, area: model.city!, yearRange: model.experience!, edu: model.qualification!)
             
+            if homeType == .userHomePage {
+                //应聘者
+                let cell:PositionCell = tableView.dequeueReusableCell(withIdentifier: "PositionCell") as! PositionCell
+                
+                
+                
+                guard self.homePageJobBassClass != nil else {
+                    return cell
+                }
+                let model:FirstJobList = (self.homePageJobBassClass?.list![indexPath.row])!
+                
+                cell.installPositionCell(jobName: model.jobName!, companyName: model.companyName!, payRange: model.salary!, area: model.city!, yearRange: model.experience!, edu: model.qualification!)
+                
                 return cell
-         //   }
+            }else if homeType == .HRHomePage
+            {
+                //HR
+                let cell = tableView.dequeueReusableCell(withIdentifier: "HRHomePageCell") as! HRHomePageCell
+                guard self.HRresumeHomePageBaseClass != nil else {
+                    return cell
+                }
+                let model:HRFirstResumeList = (self.HRresumeHomePageBaseClass?.list![indexPath.row])!
+                
+                cell.installHRHomePageCell(headImageStr: model.avatar, nameAndJob: model.job, area: model.area, year: model.exp, edu: model.edu, recentjob:model.recentJob,recentCompany:model.recentCompany)
+                
+                return cell
+                
+            }else{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
+                return cell!
+            }
+            
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -385,16 +556,40 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         if tableView.tag == 100 {
             print("点击33")
         }
-        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "StationDetailVC") as! StationDetailVC
-        let model = self.homePageJobBassClass?.list?[indexPath.row]
-        vc.userMesJson = self.userMesJson
-        vc.intentName = self.jobName
-        //求职意向id
-        vc.intentId = self.jobId
-        //职位id
-        vc.jobId = NSNumber.init(value: (model?.id)!).stringValue
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
+        guard indexPath.section != 0 else {
+            return
+        }
+        
+        if homeType == .userHomePage {
+            //应聘者进入职位详情
+            let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "StationDetailVC") as! StationDetailVC
+            let model = self.homePageJobBassClass?.list?[indexPath.row]
+            vc.userMesJson = self.userMesJson
+            vc.intentName = self.jobName
+            //求职意向id
+            vc.intentId = self.jobId
+            //职位id
+            vc.jobId = NSNumber.init(value: (model?.id)!).stringValue
+            self.navigationController?.pushViewController(vc, animated: true)
+
+        }else if homeType == .HRHomePage {
+            //HR进入简历详情
+            let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "ResumeDetailVC") as! ResumeDetailVC
+            let model = HRresumeHomePageBaseClass?.list?[indexPath.row]
+            
+            vc.intentId = NSNumber.init(value: (model?.intentId)!).stringValue
+            
+            vc.jobId = self.jobId
+            
+            vc.resumeId = NSNumber.init(value: (model?.id)!).stringValue
+            //这个json是存储个人信息的，下个页面取到公司id使用
+            vc.userMesJson = self.userMesJson
+            
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        
+}
        override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

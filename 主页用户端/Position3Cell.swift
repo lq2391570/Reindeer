@@ -17,8 +17,9 @@ class Position3Cell: UITableViewCell {
     
     @IBOutlet var searchBar: UISearchBar!
 
-    
-    
+    var videoInterFaceListClosure:((_ sender:UIButton) -> ())?
+    var commonInterFaceListClosure:((_ sender:UIButton) -> ())?
+    var notiListClosure:((_ sender:UIButton) -> ())?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,9 +34,31 @@ class Position3Cell: UITableViewCell {
             searchTextField.textColor = UIColor.blue
             
         }
-
+    }
+   
+    @IBAction func videoInterFaceBtnClick(_ sender: UIButton) {
+        if videoInterFaceListClosure != nil {
+            videoInterFaceListClosure!(sender)
+        }
         
     }
+    
+    @IBAction func commonInterViewBtnClick(_ sender: UIButton) {
+        if commonInterFaceListClosure != nil {
+            commonInterFaceListClosure!(sender)
+        }
+    }
+    
+    @IBAction func notiBtnClick(_ sender: UIButton) {
+        if notiListClosure != nil {
+            notiListClosure!(sender)
+        }
+        
+    }
+    
+    
+    
+    
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
