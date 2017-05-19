@@ -36,6 +36,7 @@ class LoginVC: UIViewController {
                 SetUser(value: jsonStr["token"].string!, key: TOKEN)
                 SetUser(value: self.phoneNumTextField.text!, key: PHONENUM)
                 SetUser(value: self.passwordTextField.text!, key: PASSWORD)
+                SetUser(value: jsonStr["cmpanyId"].stringValue, key: COMPANYID)
                 
                 //判断group（找工作 1 或HR 2 或 未选择 -1）
                 if jsonStr["group"] == -1{

@@ -13,10 +13,26 @@ class InterFaceNotiVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource {
 
     var magController:VTMagicController?
     var jobId = ""
+    
+    var intentId = ""
     //个人信息json
     var userMesJson:JSON?
+    //应聘者或HR
+//    enum HROrUserTypeEnum {
+//        case HRType
+//        case UserType
+//    }
+    //首页类型（HR或应聘者）
+    enum HomepageType:Int {
+        case userHomePage = 1 //普通用户
+        case HRHomePage   //HR
+    }
+    
+    var homeType:HomepageType = .userHomePage
+ //   var roleType:HROrUserTypeEnum = .HRType
     
     var titleArray = ["待处理","待面试","已结束"]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,9 +78,12 @@ class InterFaceNotiVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource {
             vc = TableViewVC()
             vc?.jobId = self.jobId
             vc?.userMesJson = self.userMesJson
+            vc?.homeType = TableViewVC.HomepageType(rawValue: self.homeType.rawValue)!
+            vc?.intentId = self.intentId
         }
+       
         if pageIndex == 0 {
-            vc?.view.backgroundColor = UIColor.red
+         //   vc?.view.backgroundColor = UIColor.red
             vc?.dataType = .waittingHandle
         }else if pageIndex == 1 {
             vc?.dataType = .waittingInterFace

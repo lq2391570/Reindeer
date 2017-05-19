@@ -546,6 +546,74 @@
             </objects>
             <point key="canvasLocation" x="6828" y="98.50074962518741"/>
         </scene>
+        <!--User CenterVC-->
+        <scene sceneID="IwE-nV-EBQ">
+            <objects>
+                <viewController storyboardIdentifier="HRUserCenterVC" id="0WI-Mw-ohx" customClass="HRUserCenterVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="aYP-y4-pfy"/>
+                        <viewControllerLayoutGuide type="bottom" id="bF1-gU-rsO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="mke-3E-E3I">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="AC2-iZ-zTC">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="AC2-iZ-zTC" firstAttribute="leading" secondItem="mke-3E-E3I" secondAttribute="leadingMargin" constant="-16" id="Har-hy-djB"/>
+                            <constraint firstItem="AC2-iZ-zTC" firstAttribute="top" secondItem="aYP-y4-pfy" secondAttribute="bottom" id="Ltm-WN-YwV"/>
+                            <constraint firstItem="bF1-gU-rsO" firstAttribute="top" secondItem="AC2-iZ-zTC" secondAttribute="bottom" id="qVd-CH-dz3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="AC2-iZ-zTC" secondAttribute="trailing" constant="-16" id="xCG-e9-VTG"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="AC2-iZ-zTC" id="Cis-m9-2tJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EYt-gK-Qoj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7504.8000000000002" y="97.601199400299862"/>
+        </scene>
+        <!--Position ManagerVC-->
+        <scene sceneID="oQq-Rd-DYv">
+            <objects>
+                <viewController storyboardIdentifier="HRPositionManagerVC" id="IhS-fk-HTx" customClass="HRPositionManagerVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="v4y-gf-KeE"/>
+                        <viewControllerLayoutGuide type="bottom" id="MHS-B8-f6R"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="lLK-e6-pmT">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="9kJ-6T-bQu">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="9kJ-6T-bQu" secondAttribute="trailing" constant="-16" id="W8Y-wj-p1d"/>
+                            <constraint firstItem="9kJ-6T-bQu" firstAttribute="leading" secondItem="lLK-e6-pmT" secondAttribute="leadingMargin" constant="-16" id="XS3-0R-tsO"/>
+                            <constraint firstItem="9kJ-6T-bQu" firstAttribute="top" secondItem="v4y-gf-KeE" secondAttribute="bottom" id="m9W-RE-13x"/>
+                            <constraint firstItem="MHS-B8-f6R" firstAttribute="top" secondItem="9kJ-6T-bQu" secondAttribute="bottom" id="ovw-8J-fvd"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="9kJ-6T-bQu" id="nwt-hu-iko"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="R2R-1D-I6R" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8165.6000000000004" y="100.29985007496252"/>
+        </scene>
     </scenes>
     <resources>
         <image name="箭头" width="30" height="30"/>

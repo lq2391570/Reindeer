@@ -13,10 +13,20 @@ import SwiftyJSON
 class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tableView: UITableView!
+    //进入添加职位的模式
+    enum AddPositionWay {
+        case loginWayToAddPosition //通过登录入口添加
+        case positionManagerToAddPosition //通过职位管理添加
+    }
+    
     
     var titleArray1 = ["职位类型","职位名称","技能要求"]
     var titleArray2 = ["薪资范围","经验要求","学历要求"]
     var titleArray3 = ["工作城市","工作地点"]
+    
+    var positionAddEnum:AddPositionWay = .loginWayToAddPosition
+    //主要是职位管理添加后的返回回调
+    var returnClosure:(() -> ())?
     
     //公司id
     var companyId = ""
@@ -58,6 +68,8 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "新增职位"
@@ -71,8 +83,8 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }
         
         // Do any additional setup after loading the view.
-        let rightBarBtnItem = UIBarButtonItem.init(title: "跳过", style: .plain, target: self, action: #selector(rightBarBtnItemClick))
-        self.navigationItem.rightBarButtonItem = rightBarBtnItem
+//        let rightBarBtnItem = UIBarButtonItem.init(title: "跳过", style: .plain, target: self, action: #selector(rightBarBtnItemClick))
+//        self.navigationItem.rightBarButtonItem = rightBarBtnItem
         getCompensation {}
         getJobExp()
         getEdu()
@@ -163,12 +175,23 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].stringValue)
                 print("添加成功")
-                
-                let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
-                let nav = UINavigationController.init(rootViewController: vc)
-                vc.homeType = .HRHomePage
-                
-                self.view.window?.rootViewController = nav
+                if self.positionAddEnum == .loginWayToAddPosition
+                {
+                    //登录时添加职位
+                    let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
+                    let nav = UINavigationController.init(rootViewController: vc)
+                    vc.homeType = .HRHomePage
+                    
+                    self.view.window?.rootViewController = nav
+
+                }else{
+                    //职位管理页面添加
+                    
+                    self.returnClosure!()
+                    
+                    _ = self.navigationController?.popViewController(animated: true)
+                    
+                }
                 
             }else{
                 SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
@@ -388,9 +411,7 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             }
             
             self.navigationController?.pushViewController(vc, animated: true)
-            
-
-            
+        
         }
     }
     func numberOfSections(in tableView: UITableView) -> Int

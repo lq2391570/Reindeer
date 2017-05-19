@@ -14,11 +14,14 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
 
     @IBOutlet var tableView: UITableView!
     
-    @IBOutlet var leftBtn: UIButton!
-    
-    @IBOutlet var rightBtn: UIButton!
-    
-      
+   //职位详情枚举（职位列表还是职位申请进入）
+    enum StationEnterTypeNum {
+        case stationListType //首页职位列表进入
+        case userCommonInterViewListType //普通面试列表进入(待处理状态)
+        case userCommonInterViewListApplyType  //普通面试列表进入（申请状态）
+        case userCommonInterViewListWaitType  //普通面试等待中 （等待普通面试状态）
+    }
+    var stationEnterType:StationEnterTypeNum = .stationListType
     
     var jobId = ""
     //职位详情model
@@ -55,9 +58,114 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         tableView.register(UINib.init(nibName: "PublisherCell", bundle: nil), forCellReuseIdentifier: "PublisherCell")
         tableView.register(UINib.init(nibName: "CompanyCell", bundle: nil), forCellReuseIdentifier: "CompanyCell")
         tableView.estimatedRowHeight = 80
+        if self.stationEnterType == .stationListType {
+            tableView.tableFooterView = bottomBtnForInterView()
+        }else if self.stationEnterType == .userCommonInterViewListType {
+            tableView.tableFooterView = bottomBtnForAgreeAndRefuse()
+        }else if self.stationEnterType == .userCommonInterViewListApplyType {
+            tableView.tableFooterView = bottomViewForApply(typeNum: 1)
+        }else if self.stationEnterType == .userCommonInterViewListWaitType
+        {
+            tableView.tableFooterView = bottomViewForApply(typeNum: 2)
+        }
+        
+        
     }
+    
+    //底部按钮（普通面试，视频面试）
+    func bottomBtnForInterView() -> UIView {
+        let view = UIView()
+        view.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50)
+        //创建底部按钮（普通面试和视频面试）
+        let leftBtn = UIButton(type: .custom)
+        leftBtn.backgroundColor = UIColor.init(red: 223/255.0, green: 212/255.0, blue: 203/255.0, alpha: 1)
+        leftBtn.addTarget(self, action: #selector(btnClick(_:)), for: .touchUpInside)
+        leftBtn.setTitle("普通申请", for: .normal)
+        leftBtn.setTitleColor(UIColor.black, for: .normal)
+        leftBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        view.addSubview(leftBtn)
+        let rightBtn = UIButton(type: .custom)
+        rightBtn.backgroundColor = UIColor.black
+        rightBtn.addTarget(self, action: #selector(videoInterviewClick(_:)), for: .touchUpInside)
+        rightBtn.setTitle("视频申请", for: .normal)
+        rightBtn.setTitleColor(UIColor.mainColor, for: .normal)
+        rightBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        view.addSubview(rightBtn)
+        leftBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(view.snp.left).offset(0)
+            make.top.equalTo(view.snp.top).offset(0)
+            make.width.equalTo(view.frame.width/2)
+            make.bottom.equalTo(view.snp.bottom).offset(0)
+        }
+        rightBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(leftBtn.snp.right).offset(0)
+            make.right.equalTo(view.snp.right).offset(0)
+            make.bottom.equalTo(view.snp.bottom).offset(0)
+            make.top.equalTo(view.snp.top).offset(0)
+        }
+        return view
+    }
+    //底部按钮（同意拒绝）
+    func bottomBtnForAgreeAndRefuse() -> UIView {
+        let view = UIView()
+        view.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50)
+        //创建底部按钮（普通面试和视频面试）
+        let leftBtn = UIButton(type: .custom)
+        leftBtn.backgroundColor = UIColor.init(red: 223/255.0, green: 212/255.0, blue: 203/255.0, alpha: 1)
+        leftBtn.addTarget(self, action: #selector(agreeBtnClick), for: .touchUpInside)
+        leftBtn.setTitle("拒绝", for: .normal)
+        leftBtn.setTitleColor(UIColor.black, for: .normal)
+        leftBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        view.addSubview(leftBtn)
+        let rightBtn = UIButton(type: .custom)
+        rightBtn.backgroundColor = UIColor.black
+        rightBtn.addTarget(self, action: #selector(refuseBtnClick), for: .touchUpInside)
+        rightBtn.setTitle("同意", for: .normal)
+        rightBtn.setTitleColor(UIColor.mainColor, for: .normal)
+        rightBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        view.addSubview(rightBtn)
+        leftBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(view.snp.left).offset(0)
+            make.top.equalTo(view.snp.top).offset(0)
+            make.width.equalTo(view.frame.width/2)
+            make.bottom.equalTo(view.snp.bottom).offset(0)
+        }
+        rightBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(leftBtn.snp.right).offset(0)
+            make.right.equalTo(view.snp.right).offset(0)
+            make.bottom.equalTo(view.snp.bottom).offset(0)
+            make.top.equalTo(view.snp.top).offset(0)
+        }
+        return view
+    }
+    //申请中
+    func bottomViewForApply(typeNum:Int) -> UIView {
+        let view = UIView()
+        view.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50)
+        view.backgroundColor = UIColor.black
+        let label = UILabel(frame: CGRect.init(x: tableView.frame.size.width/2 - 100, y: 10, width: 200, height: 30))
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = UIColor.lightGray
+        if typeNum == 1 {
+            label.text = "等待面试申请中"
+        }else if typeNum == 2 {
+            label.text = "等待普通面试中"
+        }
+        
+        label.textAlignment = .center
+        view.addSubview(label)
+        return view
+    }
+    
+    func agreeBtnClick() -> Void {
+        print("同意")
+    }
+    func refuseBtnClick() -> Void {
+        print("拒绝")
+    }
+
     //普通面试
-    @IBAction func btnClick(_ sender: UIButton) {
+    func btnClick(_ sender: UIButton) {
         if let customView = CustomerInterviewView.newInstance() {
             customView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 280)
             let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: true)
@@ -67,7 +175,6 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             customView.eduExp = (self.userMesJson?["edu"].stringValue)!
             customView.jobName = self.intentName
             customView.phoneNum = (self.userMesJson?["phone"].stringValue)!
-            
             customView.cancelBtnClickClosure = { (sender) in
                 print("点击了取消")
                 customAlert?.dismiss(completion: nil)
@@ -115,7 +222,7 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     }
     //视频面试
     
-    @IBAction func videoInterviewClick(_ sender: UIButton) {
+     func videoInterviewClick(_ sender: UIButton) {
         print("视频面试")
         if let interFaceView = VideoInterfacePopView.newInstance() {
             interFaceView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 280)

@@ -67,7 +67,6 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oyi-aj-AcD">
                         <rect key="frame" x="17" y="46" width="295" height="21"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="295" id="VXA-Xk-c3Q"/>
                             <constraint firstAttribute="height" constant="21" id="w0g-91-mrh"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -77,16 +76,17 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="y8Q-iY-Kaq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="9" id="5DP-Ud-Vby"/>
+                    <constraint firstItem="oyi-aj-AcD" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="9" id="5p9-Nk-fHk"/>
                     <constraint firstItem="UU2-Dw-G1I" firstAttribute="top" secondItem="GY4-py-icc" secondAttribute="bottom" constant="8" id="6VG-dD-Dbx"/>
                     <constraint firstAttribute="trailingMargin" secondItem="M4P-SY-pRp" secondAttribute="trailing" id="GOf-Zx-Xlp"/>
                     <constraint firstAttribute="bottomMargin" secondItem="wBV-ug-6oI" secondAttribute="bottom" constant="0.5" id="Ilg-cA-TkF"/>
                     <constraint firstItem="GY4-py-icc" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="9" id="Kln-Of-U7d"/>
                     <constraint firstItem="oyi-aj-AcD" firstAttribute="top" secondItem="M4P-SY-pRp" secondAttribute="bottom" constant="8" id="P31-bt-Vi8"/>
                     <constraint firstItem="wBV-ug-6oI" firstAttribute="top" secondItem="UU2-Dw-G1I" secondAttribute="bottom" constant="12" id="U96-7Y-0Fr"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="oyi-aj-AcD" secondAttribute="trailing" id="VyG-G2-Th4"/>
                     <constraint firstAttribute="leadingMargin" secondItem="M4P-SY-pRp" secondAttribute="leading" id="eek-0w-5Tb"/>
                     <constraint firstItem="wBV-ug-6oI" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="fuh-9l-5Wo"/>
                     <constraint firstAttribute="trailingMargin" secondItem="GY4-py-icc" secondAttribute="trailing" id="kHr-oy-sKa"/>
-                    <constraint firstItem="oyi-aj-AcD" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" constant="4.5" id="n8t-3y-SwA"/>
                     <constraint firstAttribute="topMargin" secondItem="y8Q-iY-Kaq" secondAttribute="top" id="pPr-8D-1oX"/>
                     <constraint firstItem="GY4-py-icc" firstAttribute="top" secondItem="oyi-aj-AcD" secondAttribute="bottom" constant="5" id="psm-pB-wP1"/>
                     <constraint firstAttribute="leadingMargin" secondItem="UU2-Dw-G1I" secondAttribute="leading" id="ucM-Qd-xGh"/>
@@ -94,6 +94,10 @@
                     <constraint firstAttribute="trailingMargin" secondItem="UU2-Dw-G1I" secondAttribute="trailing" id="yg0-yL-DAx"/>
                 </constraints>
             </tableViewCellContentView>
+            <connections>
+                <outlet property="interViewAreaLabel" destination="GY4-py-icc" id="QB9-PH-Wna"/>
+                <outlet property="interViewTimeLabel" destination="oyi-aj-AcD" id="FLI-L0-Boo"/>
+            </connections>
             <point key="canvasLocation" x="32" y="133"/>
         </tableViewCell>
     </objects>

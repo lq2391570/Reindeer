@@ -18,8 +18,8 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     @IBOutlet var tableView: UITableView!
     
     //首页类型（HR或应聘者）
-    enum HomepageType {
-        case userHomePage //普通用户
+    enum HomepageType:Int {
+        case userHomePage = 1 //普通用户
         case HRHomePage   //HR
     }
     
@@ -79,10 +79,16 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }else if homeType == .HRHomePage {
             //HR
             getHRPostJobs()
+            NotificationCenter.default.addObserver(self, selector: #selector(addPositionNoti), name: NSNotification.Name(rawValue: "ADDPOSITION"), object: nil)
+            
         }
        
     }
-    
+    func addPositionNoti() -> Void {
+        print("收到通知")
+        getHRPostJobs()
+        
+    }
     //获得简历列表（HR模式）
     func getResumeList() -> Void {
         HRResumeList(dic: ["token":GetUser(key: TOKEN),"jobId":jobStyleID], actionHander: { (bassClass) in
@@ -135,8 +141,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
     }
-    
-    
     //获得首页职位列表（根据搜索条件）
     func getHomePageJobList(dic:NSDictionary) -> Void {
       getFirstList(dic: dic, actionHander: { (bassClass) in
@@ -153,8 +157,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         SVProgressHUD.showInfo(withStatus: "请求失败")
         }
     }
-    
-
     //设置navBar
     func confineNavBar() -> Void {
         self.navigationController?.navigationBar.barTintColor=UIColor.black
@@ -192,10 +194,20 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     //个人中心
     func headImageViewTap() -> Void {
         print("头像点击")
+        if self.homeType == .userHomePage {
+            //应聘者端的个人中心
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstVC") as! UserCenterFirstVC
+            vc.resumeBassClass = self.resumeBassClass
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            //hr端的个人中心
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRUserCenterVC") as! HRUserCenterVC
+            
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+        }
         
-        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstVC") as! UserCenterFirstVC
-        vc.resumeBassClass = self.resumeBassClass
-        self.navigationController?.pushViewController(vc, animated: true)
+       
         
         
     }
@@ -291,8 +303,9 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
         }else if homeType == .HRHomePage {
             print("选中了\(String(describing: self.HRPostjobBassClass?.list?[item].name))")
-            self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].id)!).stringValue
+            self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].id)!).stringValue
             
+            self.getResumeList()
         }
         
         
@@ -447,10 +460,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 return 0
             }
             
-            
-            
-            
-            
         }else{
             return 0
         }
@@ -472,7 +481,14 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                     let vc = InterFaceNotiVC()
                     vc.title = "普通面试"
                     vc.userMesJson = self.userMesJson
+                    vc.jobId = self.jobId
                     
+                    
+                     vc.intentId = self.jobId
+                    
+                   
+                    
+                    vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
                 cell.videoInterFaceListClosure = { (btn) in
@@ -501,6 +517,10 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                     print("普通面试列表")
                     let vc = InterFaceNotiVC()
                     vc.title = "普通面试"
+                    vc.intentId = self.jobId
+                    vc.jobId = self.jobId
+                    vc.userMesJson = self.userMesJson
+                    vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
                 cell.videoInterFaceListClosure = { (btn) in
@@ -589,7 +609,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }
         
         
-}
+    }
        override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

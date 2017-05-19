@@ -16,6 +16,7 @@ var ScreenHeight = UIScreen.main.bounds.size.height
 let TOKEN = "token"
 let PHONENUM = "phone"
 let PASSWORD = "password"
+let COMPANYID = "companyId"
 //Userdefault(存)
 func SetUser(value:String,key:String) -> Void {
     return UserDefaults.standard.set(value, forKey: key)
@@ -35,13 +36,16 @@ func GetUser(key:String) -> String {
 }
 
 //创建一个alertView
-func createAlert(title:String?,message:String?,viewControll:ViewController,closure:@escaping ()->Void){
+func createAlert(title:String?,message:String?,viewControll:UIViewController,closure:@escaping ()->Void){
     let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
     let ac1 = UIAlertAction(title: "确定", style: .default, handler:{ action in
         closure()
     })
-    
     alert.addAction(ac1)
+    let ac2 = UIAlertAction(title: "取消", style: .cancel) { (action) in
+        
+    }
+    alert.addAction(ac2)
     viewControll.present(alert, animated: true, completion: nil)
 }
 //创建一个带一个输入框的alertView

@@ -1,19 +1,15 @@
 //
-//  ResumeStateCell2.swift
+//  HRUserCenterFirstCell.swift
 //  Reindeer
 //
-//  Created by shiliuhua on 2017/5/15.
+//  Created by shiliuhua on 2017/5/16.
 //  Copyright © 2017年 shiliuhua. All rights reserved.
 //
 
 import UIKit
 
-class ResumeStateCell2: UITableViewCell {
+class HRUserCenterFirstCell: UITableViewCell {
 
-    @IBOutlet var interViewTimeLabel: UILabel!
-    
-    @IBOutlet var interViewAreaLabel: UILabel!
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

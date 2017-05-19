@@ -63,6 +63,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="vAg-c2-QP2">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="sectionIndexBackgroundColor" red="0.95708149671554565" green="0.94518226385116577" blue="0.94076156616210938" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <outlet property="dataSource" destination="f3n-wh-m05" id="rZb-Fa-u26"/>
                                     <outlet property="delegate" destination="f3n-wh-m05" id="seG-DA-F1a"/>
@@ -101,50 +102,24 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="d0Q-1n-uFo">
-                                <rect key="frame" x="0.0" y="64" width="375" height="548"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="i6L-jO-Ux6" id="1eI-Ks-YH0"/>
                                     <outlet property="delegate" destination="i6L-jO-Ux6" id="1uY-w5-AhI"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cu6-ux-kDF">
-                                <rect key="frame" x="0.0" y="610" width="182" height="57"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="57" id="AFd-Xi-l9a"/>
-                                </constraints>
-                                <state key="normal" title="普通面试"/>
-                                <connections>
-                                    <action selector="btnClick:" destination="i6L-jO-Ux6" eventType="touchUpInside" id="YB6-pY-A3c"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DX1-uL-MSk">
-                                <rect key="frame" x="193" y="610" width="182" height="57"/>
-                                <state key="normal" title="视频面试"/>
-                                <connections>
-                                    <action selector="videoInterviewClick:" destination="i6L-jO-Ux6" eventType="touchUpInside" id="5Qg-L2-3bP"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="d0Q-1n-uFo" firstAttribute="top" secondItem="oL3-Qp-qzW" secondAttribute="bottom" id="2zn-QM-1Tq"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="DX1-uL-MSk" secondAttribute="trailing" constant="-16" id="FSW-Ra-VZx"/>
-                            <constraint firstItem="DX1-uL-MSk" firstAttribute="leading" secondItem="Cu6-ux-kDF" secondAttribute="trailing" constant="11" id="G2W-1u-hT9"/>
-                            <constraint firstItem="DX1-uL-MSk" firstAttribute="width" secondItem="Cu6-ux-kDF" secondAttribute="width" id="GxD-Ly-OM1"/>
                             <constraint firstItem="d0Q-1n-uFo" firstAttribute="leading" secondItem="Wdz-ur-5De" secondAttribute="leadingMargin" constant="-16" id="Jid-qp-kUs"/>
-                            <constraint firstItem="R2z-mN-zPg" firstAttribute="top" secondItem="DX1-uL-MSk" secondAttribute="bottom" id="Kmu-YH-BXy"/>
-                            <constraint firstItem="Cu6-ux-kDF" firstAttribute="top" secondItem="d0Q-1n-uFo" secondAttribute="bottom" constant="-2" id="VZh-BM-A8D"/>
-                            <constraint firstItem="DX1-uL-MSk" firstAttribute="height" secondItem="Cu6-ux-kDF" secondAttribute="height" id="b32-Zj-6V4"/>
-                            <constraint firstItem="R2z-mN-zPg" firstAttribute="top" secondItem="Cu6-ux-kDF" secondAttribute="bottom" id="cVV-3i-eRb"/>
-                            <constraint firstItem="Cu6-ux-kDF" firstAttribute="leading" secondItem="Wdz-ur-5De" secondAttribute="leadingMargin" constant="-16" id="deT-dG-sZh"/>
+                            <constraint firstItem="R2z-mN-zPg" firstAttribute="top" secondItem="d0Q-1n-uFo" secondAttribute="bottom" id="feT-Ts-oRD"/>
                             <constraint firstAttribute="trailingMargin" secondItem="d0Q-1n-uFo" secondAttribute="trailing" constant="-16" id="jBy-Im-8v8"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="v1g-X3-ayq"/>
                     <connections>
-                        <outlet property="leftBtn" destination="Cu6-ux-kDF" id="MS0-lG-psP"/>
-                        <outlet property="rightBtn" destination="DX1-uL-MSk" id="mve-4k-MCo"/>
                         <outlet property="tableView" destination="d0Q-1n-uFo" id="XjU-xZ-KVO"/>
                         <segue destination="hzU-IT-Ycg" kind="push" id="AQh-2l-EU8"/>
                     </connections>

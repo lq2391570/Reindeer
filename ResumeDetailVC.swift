@@ -19,6 +19,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         case custom //普通
         case applyIng //收到申请中（底部按钮为拒绝和同意）
         case pending //邀约中 （底部为等待求职者处理状态）
+        case alreadyAgree //求职者已同意面试 （底部为等待求职者面试）
     }
     
     //简历详情类型
@@ -51,6 +52,10 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //职位详情model
     var jobDetailBassClass:JobDetailBaseClass?
     
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "简历详情"
@@ -62,8 +67,16 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.register(UINib.init(nibName: "EduExpCell", bundle: nil), forCellReuseIdentifier: "EduExpCell")
         tableView.register(UINib.init(nibName: "ResumeStateCell", bundle: nil), forCellReuseIdentifier: "ResumeStateCell")
         tableView.register(UINib.init(nibName: "ResumeStateCell2", bundle: nil), forCellReuseIdentifier: "ResumeStateCell2")
+        if self.resumeDetailType == .custom {
+            tableView.tableFooterView = createBottomBtn()
+        }else if self.resumeDetailType == .pending {
+            tableView.tableFooterView = createBottomViewPending(typeNum: 1)
+        }else if self.resumeDetailType == .applyIng {
+            tableView.tableFooterView = createAgreeBtnAndFefuseBtn()
+        }else if self.resumeDetailType == .alreadyAgree {
+            tableView.tableFooterView = createBottomViewPending(typeNum: 2)
+        }
         
-        tableView.tableFooterView = createBottomBtn()
         // Do any additional setup after loading the view.
         getResumeDetail()
         companyDetail()
@@ -85,11 +98,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }
     }
 
-    
-    
-    
-    
-    
     //普通邀约
     func commonInvite(succeed:@escaping () ->Void,fail:@escaping (_ failReson:String) ->Void) -> Void {
         if self.interFaceTime != "" {
@@ -172,7 +180,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }
     }
     
-    //底部按钮
+    //底部按钮（custom情况）
     func createBottomBtn() -> UIView {
         let view = UIView()
         view.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50)
@@ -204,9 +212,144 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             make.top.equalTo(view.snp.top).offset(0)
         }
         return view
+    }
+    //底部状态（等待求职者处理）
+    func createBottomViewPending(typeNum:Int) -> UIView {
+        let view = UIView(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50))
+        view.backgroundColor = UIColor.init(red: 223/255.0, green: 212/255.0, blue: 203/255.0, alpha: 1)
+        let label = UILabel(frame: CGRect.init(x: tableView.frame.size.width/2-100, y: 10, width: 200, height: 30))
+        if typeNum == 1 {
+            label.text = "等待求职者处理"
+        }else if typeNum == 2 {
+            label.text = "等待求职者面试"
+        }
+        
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = UIColor.black
+        label.textAlignment = .center
+        view.addSubview(label)
+        return view
+    }
+    //底部状态（收到申请中，底部为同意或拒绝）
+    func createAgreeBtnAndFefuseBtn() -> UIView {
+        let view = UIView(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50))
+        let refuseBtn = UIButton(type: .custom)
+        refuseBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        refuseBtn.setTitle("拒绝", for: .normal)
+        refuseBtn.backgroundColor = UIColor.init(red: 223/255.0, green: 212/255.0, blue: 203/255.0, alpha: 1)
+        refuseBtn.setTitleColor(UIColor.black, for: .normal)
+        refuseBtn.addTarget(self, action: #selector(refuseBtnClick), for: .touchUpInside)
+        
+        view.addSubview(refuseBtn)
+        let agreeBtn = UIButton(type: .custom)
+        agreeBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        agreeBtn.setTitle("同意", for: .normal)
+        agreeBtn.addTarget(self, action: #selector(agreeBtnClick), for: .touchUpInside)
+        agreeBtn.backgroundColor = UIColor.init(red: 195/255.0, green: 174/255.0, blue: 158/255.0, alpha: 1)
+        agreeBtn.setTitleColor(UIColor.black, for: .normal)
+        view.addSubview(agreeBtn)
+        refuseBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(view.snp.left).offset(0)
+            make.top.equalTo(view.snp.top).offset(0)
+            make.bottom.equalTo(view.snp.bottom).offset(0)
+            make.width.equalTo(150)
+        }
+        agreeBtn.snp.makeConstraints { (make) in
+            make.left.equalTo(refuseBtn.snp.right).offset(0)
+            make.top.equalTo(view.snp.top).offset(0)
+            make.bottom.equalTo(view.snp.bottom).offset(0)
+            make.right.equalTo(view.snp.right).offset(0)
+        }
+        
+        return view
+        
+    }
+    func refuseBtnClick() -> Void {
+        print("点击拒绝")
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "jobId":self.jobId!,
+            "resumeId":self.resumeId!,
+            "type":1,   //1拒绝 0 同意
+            "datetime":self.interFaceTimeAll, //面试时间
+            "phone":self.phoneNumStr,   //联系方式
+            "address":self.companyArea
+        ]
+        let jsonDic = JSON(dic)
+        let newDic:NSDictionary = jsonDic.dictionary! as NSDictionary
+        
+        commonInterViewAgreeOfRefuseInterface(dic: newDic, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                SVProgressHUD.showSuccess(withStatus: "拒绝成功")
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+            
+            
+        }) { 
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+        
+    }
+    func agreeBtnClick() -> Void {
+        //同意后弹框
+        print("点击同意")
+        
+        if let customView = CustomerInterviewView.newInstance() {
+            customView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 280)
+            let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: true)
+            customAlert?.show()
+            
+            customView.viewTypeStyle = .interViewInvite
+            customView.interfaceArea = (self.companyDetailModel?.address)!
+            customView.phoneNum = (self.companyDetailModel?.tel)!
+            customView.timeStr = self.interFaceTime
+            customView.pickViewDelegateClosure = { (timeChoseStr) in
+                self.interFaceTime = timeChoseStr
+            }
+            customView.textFieldChangeClosure = { (textfield) in
+                self.phoneNumStr = textfield.text!
+            }
+            customView.cancelBtnClickClosure = { (sender) in
+                print("点击了取消")
+                customAlert?.dismiss(completion: nil)
+            }
+            customView.sureBtnClickClosure = { (sender) in
+                print("点击了确定")
+                
+                customAlert?.dismiss(completion: {
+                    //出现成功或失败（根据业务逻辑）
+                    
+                    
+                    self.commonInvite(succeed: {
+                        let succeedView = Bundle.main.loadNibNamed("SucceedView", owner: self, options: nil)?.last as! SucceedView
+                        succeedView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 320)
+                        succeedView.mesLabel.text = "邀约成功，请耐心等待回应"
+                        let succeedAlert = JCAlertView.init(customView: succeedView, dismissWhenTouchedBackground: true)
+                        succeedAlert?.show()
+                        succeedView.cancelBtnClickClsure = { (sender) in
+                            print("取消")
+                            succeedAlert?.dismiss(completion: nil)
+                            SVProgressHUD.dismiss()
+                        }
+                        
+                    }, fail: { (failResonStr) in
+                        SVProgressHUD.showInfo(withStatus: failResonStr)
+                    })
+                    
+                    
+                })
+            }
+            
+        }
+
+        
+        
         
         
     }
+    
+    
     func leftBtnClick() -> Void {
         //普通邀约
         if let customView = CustomerInterviewView.newInstance() {
@@ -307,43 +450,24 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if self.resumeDetailType == .custom {
+        
             switch section {
             case 0:
                 return 1
             case 1:
-                return 1
-            case 2:
-                if self.resumeDetailBassClass == nil {
-                    return 1
+                if self.resumeDetailType == .custom {
+                    return 0
                 }
-                return (self.resumeDetailBassClass?.exps?.count)!
-            case 3:
-                if self.resumeDetailBassClass == nil {
-                    return 1
-                }
-                return (self.resumeDetailBassClass?.edus?.count)!
-            default:
-                break
-            }
-            return 0
-
-        }else{
-            
-            switch section {
-            case 0:
-                return 1
-            case 1:
                 return 1
             case 2:
                 return 1
             case 3:
-                if self.resumeDetailBassClass == nil {
+                if self.resumeDetailBassClass == nil || (self.resumeDetailBassClass?.exps?.count)! == 0 {
                     return 1
                 }
                 return (self.resumeDetailBassClass?.exps?.count)!
             case 4:
-                if self.resumeDetailBassClass == nil {
+                if self.resumeDetailBassClass == nil || (self.resumeDetailBassClass?.edus?.count)! == 0 {
                     return 1
                 }
                 return (self.resumeDetailBassClass?.edus?.count)!
@@ -354,7 +478,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
             
             
-        }
+        
         
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -375,21 +499,20 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 if self.resumeDetailType == .applyIng {
                     //收到申请中
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ResumeStateCell") as! ResumeStateCell
+                    cell.contactWayLabel.text = "联系电话:\(self.phoneNumStr)"
                     
                     return cell
                 }else if self.resumeDetailType == .pending{
                     //邀约中
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ResumeStateCell2") as! ResumeStateCell2
+                    cell.interViewTimeLabel.text = "面试时间:"
+                    cell.interViewAreaLabel.text = "面试地点:\(companyArea)"
                     return cell
                    
                 }else{
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ResumeStateCell2") as! ResumeStateCell2
                     return cell
-                    
                 }
-                
-                
-                
             }else if indexPath.section == 2{
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ResumeDetailCell") as! ResumeDetailCell
                 cell.neiRongLabel.text = model?.advantage
@@ -397,10 +520,14 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 return cell
             }else if indexPath.section == 3 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "WorkExpCell") as! WorkExpCell
-                let expModel = model?.exps?[indexPath.row]
-                guard expModel != nil else {
+                
+                guard model != nil else {
                     return cell
                 }
+                guard model?.exps?.count != 0 else {
+                    return cell
+                }
+                let expModel = model?.exps?[indexPath.row]
                 let dateStr = unixTransformtimeStr(unixStr: NSNumber.init(value: (expModel?.startDate)!), dateStyle: "yyyy.mm")
                 var endDateStr = ""
                 if expModel?.endDate == nil {
@@ -415,10 +542,14 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 
             }else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "EduExpCell") as! EduExpCell
-                let eduModel = model?.edus?[indexPath.row]
-                guard eduModel != nil else {
+                
+                guard model != nil else {
                     return cell
                 }
+                guard model?.edus?.count != 0 else {
+                    return cell
+                }
+                let eduModel = model?.edus?[indexPath.row]
                 let dateStr = unixTransformtimeStr(unixStr: NSNumber.init(value: (eduModel?.startDate)!), dateStyle: "yyyy.mm")
                 var endDateStr = ""
                 if eduModel?.endDate == nil {
@@ -442,12 +573,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     }
     func numberOfSections(in tableView: UITableView) -> Int
     {
-        if self.resumeDetailType == .custom {
-            return 4
-        }else{
             return 5
-        }
-        
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
