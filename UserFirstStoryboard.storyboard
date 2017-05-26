@@ -183,10 +183,10 @@
             </objects>
             <point key="canvasLocation" x="2056.8000000000002" y="79.610194902548727"/>
         </scene>
-        <!--View Controller-->
+        <!--Pai Qi ListVC-->
         <scene sceneID="J0t-gf-WCE">
             <objects>
-                <viewController id="Y7X-Hq-w1A" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PaiQiListVC" id="Y7X-Hq-w1A" customClass="PaiQiListVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="BWb-Sj-0Bv"/>
                         <viewControllerLayoutGuide type="bottom" id="u9f-xd-xKD"/>
@@ -194,13 +194,130 @@
                     <view key="view" contentMode="scaleToFill" id="tJz-mb-HRt">
                         <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="DVq-zD-DP1">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="DVq-zD-DP1" secondAttribute="trailing" constant="-16" id="3Y2-FB-ddr"/>
+                            <constraint firstItem="DVq-zD-DP1" firstAttribute="top" secondItem="BWb-Sj-0Bv" secondAttribute="bottom" id="HyC-aL-JEk"/>
+                            <constraint firstItem="DVq-zD-DP1" firstAttribute="leading" secondItem="tJz-mb-HRt" secondAttribute="leadingMargin" constant="-16" id="NTy-oY-cAl"/>
+                            <constraint firstItem="u9f-xd-xKD" firstAttribute="top" secondItem="DVq-zD-DP1" secondAttribute="bottom" id="nI8-2f-GjP"/>
+                        </constraints>
                     </view>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="DVq-zD-DP1" id="yTW-Bc-dh9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i7q-dq-b60" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2728.8000000000002" y="80.50974512743629"/>
+        </scene>
+        <!--Pai Qi DetailVC-->
+        <scene sceneID="DkJ-4a-HXr">
+            <objects>
+                <viewController storyboardIdentifier="PaiQiDetailVC" id="EQo-f8-Wgm" customClass="PaiQiDetailVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="VFY-1P-52G"/>
+                        <viewControllerLayoutGuide type="bottom" id="4Tw-An-7wG"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8F9-tw-NlR">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="BHs-ep-cBR">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="BHs-ep-cBR" firstAttribute="leading" secondItem="8F9-tw-NlR" secondAttribute="leadingMargin" constant="-16" id="5Io-vU-flD"/>
+                            <constraint firstItem="BHs-ep-cBR" firstAttribute="top" secondItem="VFY-1P-52G" secondAttribute="bottom" id="IYr-uo-PPi"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="BHs-ep-cBR" secondAttribute="trailing" constant="-16" id="OAM-Cs-PvV"/>
+                            <constraint firstItem="4Tw-An-7wG" firstAttribute="top" secondItem="BHs-ep-cBR" secondAttribute="bottom" id="drr-CE-c3I"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="BHs-ep-cBR" id="tEk-uk-K3A"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vg9-ni-hbN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3695" y="81"/>
+        </scene>
+        <!--Pai Qi AddVC-->
+        <scene sceneID="hxD-UY-260">
+            <objects>
+                <viewController storyboardIdentifier="PaiQiAddVC" id="Cwy-6l-GfX" customClass="PaiQiAddVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GL3-Lg-uDQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="cza-Qp-n26"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gFr-Wc-IYe">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="jAq-m4-c8G">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="jAq-m4-c8G" firstAttribute="leading" secondItem="gFr-Wc-IYe" secondAttribute="leadingMargin" constant="-16" id="3z6-gn-z3h"/>
+                            <constraint firstItem="jAq-m4-c8G" firstAttribute="top" secondItem="GL3-Lg-uDQ" secondAttribute="bottom" id="5ch-us-iaY"/>
+                            <constraint firstItem="cza-Qp-n26" firstAttribute="top" secondItem="jAq-m4-c8G" secondAttribute="bottom" id="6At-59-N7V"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="jAq-m4-c8G" secondAttribute="trailing" constant="-16" id="ozM-Mu-Np6"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="jAq-m4-c8G" id="M9w-bC-KcP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wHS-qt-DFL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4375.1999999999998" y="80.50974512743629"/>
+        </scene>
+        <!--Pai Qi RepeatVC-->
+        <scene sceneID="nig-HK-FpJ">
+            <objects>
+                <viewController storyboardIdentifier="PaiQiRepeatVC" id="prj-J7-4Hd" customClass="PaiQiRepeatVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="RI1-zM-pMh"/>
+                        <viewControllerLayoutGuide type="bottom" id="zi2-g6-jA1"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gv9-8o-H0Y">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="n2e-ot-xL1">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="n2e-ot-xL1" secondAttribute="trailing" constant="-16" id="7Ne-lz-rxN"/>
+                            <constraint firstItem="n2e-ot-xL1" firstAttribute="leading" secondItem="gv9-8o-H0Y" secondAttribute="leadingMargin" constant="-16" id="Eut-xW-4pO"/>
+                            <constraint firstItem="n2e-ot-xL1" firstAttribute="top" secondItem="RI1-zM-pMh" secondAttribute="bottom" id="mf3-z7-cDT"/>
+                            <constraint firstItem="zi2-g6-jA1" firstAttribute="top" secondItem="n2e-ot-xL1" secondAttribute="bottom" id="v00-xl-hgk"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="n2e-ot-xL1" id="jfD-ix-lzO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mi5-Pv-Zgy" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5079.1999999999998" y="79.610194902548727"/>
         </scene>
     </scenes>
 </document>

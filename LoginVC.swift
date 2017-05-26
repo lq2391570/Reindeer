@@ -112,8 +112,8 @@ class LoginVC: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         createAnimationForBGImageView()
-        phoneNumTextField.text = GetUser(key: "phone")
-        passwordTextField.text = GetUser(key: "password")
+        phoneNumTextField.text = GetUser(key: "phone") as? String
+        passwordTextField.text = GetUser(key: "password") as? String
         self.navigationController?.isNavigationBarHidden = true
     }
     //背景做动画

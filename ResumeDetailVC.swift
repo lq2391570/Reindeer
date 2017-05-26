@@ -113,9 +113,9 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         
         let dic = [
             "token":GetUser(key: TOKEN),
-            "jobId":self.jobId,
-            "resumeId":self.resumeId,
-            "intentId":self.intentId,
+            "jobId":self.jobId as Any,
+            "resumeId":self.resumeId as Any,
+            "intentId":self.intentId as Any,
             "datetime":self.interFaceTimeAll,
             "address":self.companyArea,
             "phone":self.phoneNumStr
@@ -476,10 +476,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             }
             return 0
 
-            
-            
-        
-        
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
@@ -492,8 +488,15 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     return cell
                 }
                 cell.installCell(headImageStr: model?.avatar, nameAndJobStr:model?.name , moneyStr: model?.salary, areaStr: model?.area, expYearStr: model?.exp, eduStr: model?.edu)
+                cell.tagListView.removeAllTags()
                 
-                
+                for tagName in (model?.tags)! {
+                    if tagName != "" {
+                        cell.tagListView.addTag(tagName)
+                    }
+                    
+                }
+               
                 return cell
             }else if indexPath.section == 1 {
                 if self.resumeDetailType == .applyIng {
@@ -566,7 +569,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
    }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return 240
+            return 250
         }else{
             return 140
         }

@@ -9,14 +9,25 @@
 import UIKit
 import IQKeyboardManagerSwift
 import SVProgressHUD
+
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var _mapManager:BMKMapManager?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        //注册百度地图
+        _mapManager = BMKMapManager()
+        let ret:Bool = (_mapManager?.start("jlHoVGhl344MIRM5QHHi6C0Lfr2YODYt", generalDelegate: nil))!
+        if ret == false {
+            print("manager start failed!")
+        }else{
+            print("启动百度地图成功")
+        }
+        
         //IQKeyboardManager 开关
         IQKeyboardManager.sharedManager().enable = true
         
@@ -31,8 +42,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //    nav.isNavigationBarHidden = true
         self.window?.rootViewController = nav
         
+        
         return true
     }
+    
+    
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

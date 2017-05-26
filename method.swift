@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import SVProgressHUD
-
+import JCAlertView
 
 var ScreenWidth = UIScreen.main.bounds.size.width
 var ScreenHeight = UIScreen.main.bounds.size.height
@@ -17,12 +17,15 @@ let TOKEN = "token"
 let PHONENUM = "phone"
 let PASSWORD = "password"
 let COMPANYID = "companyId"
+let HRPOSITION = "HRPosition"
+
 //Userdefault(存)
-func SetUser(value:String,key:String) -> Void {
-    return UserDefaults.standard.set(value, forKey: key)
+func SetUser(value:Any,key:String) -> Void {
+    UserDefaults.standard.set(value, forKey: key)
+    UserDefaults.standard.synchronize()
 }
 //Userdefault(取)
-func GetUser(key:String) -> String {
+func GetUser(key:String) -> Any {
 //    if (UserDefaults.standard.value(forKey: key) != nil) {
 //        return UserDefaults.standard.value(forKey: key) as! String
 //    }else{
@@ -267,6 +270,7 @@ func createBottomBtn(supView:UIView,title:String,actionHander:(_ sender:UIButton
     btn.setTitle(title, for: .normal)
   
     btn.setTitleColor(UIColor.mainColor, for: .normal)
+    
     view.addSubview(btn)
     actionHander(btn)
     
@@ -281,7 +285,32 @@ func timeStrTransformUnix(timeStr:String) ->String
     let inputDate:Date = inputFormatter.date(from: timeStr)!
     return dateTransformUnixStr(date: inputDate)
 }
-
+//创建一个自定义pickView
+func createLQPickView(dataArray1:[String],dataArray2:[String]?,numOfComponents:Int,title:String?,sureBtnClickClosure:((UIButton,_ selectNum1:Int?,_ selectNum2:Int?) -> ())?,cancelBtnClickClosure:((UIButton) -> ())?) -> JCAlertView
+{
+     let customView = LQPickCustomView.newInstance()
+        customView?.dataArray1.removeAll()
+        let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
+        customView?.dataArray1 = dataArray1
+        customView?.dataArray2 = dataArray2 ?? ["无"]
+        customView?.numOfComponents = numOfComponents
+        customAlert?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - (customView?.frame.size.height)!/2-20)
+        customView?.titleLabel.text = title
+        customView?.cancelbtnClickClosure = cancelBtnClickClosure
+//        customView.cancelbtnClickClosure = { (btn) in
+//            customAlert?.dismiss(completion: nil)
+//        }
+        customView?.sureBtnClickclosure = sureBtnClickClosure
+//        customView.sureBtnClickclosure = { (btn,selectNum1,selectNum2) in
+//            customAlert?.dismiss(completion: nil)
+//        }
+        
+        customAlert?.show()
+       
+    
+    return customAlert!
+    
+}
 
 
 

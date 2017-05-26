@@ -42,6 +42,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     var akPickView:AKPickerView?
     
     var filterDic:NSDictionary = [:]
+    
     //首页职位列表model
     var homePageJobBassClass:FirstJobBaseClass?
     
@@ -53,6 +54,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     
     //个人信息json
     var userMesJson:JSON?
+    
     //职位名称
     var jobName = ""
     
@@ -128,6 +130,11 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             
             self.HRPostjobBassClass = bassClass
             
+            //得到职位列表后存起来，排期选择职位时使用
+            let data:Data = NSKeyedArchiver.archivedData(withRootObject: self.HRPostjobBassClass!)
+            SetUser(value: data, key: HRPOSITION)
+            
+            
             self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[0].id)!).stringValue
             self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list![0].jobId)!).stringValue
             print("self.jobId =\(self.jobId)")
@@ -175,22 +182,39 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         
         headImageView.addGestureRecognizer(tapReginzer)
         
-    //    let rightBarBtnItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(rightBarBtnClick))
-        let installBtn = UIButton(type: .custom)
-        installBtn.setImage(UIImage.init(named: "1电脑端登录"), for: UIControlState.normal)
-        installBtn.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
-        installBtn.addTarget(self, action: #selector(installBtnClick), for: .touchUpInside)
-        
-        let rightBarItem = UIBarButtonItem(customView: installBtn)
-        self.navigationItem.rightBarButtonItem = rightBarItem
+        if homeType == .userHomePage {
+            let installBtn = UIButton(type: .custom)
+            installBtn.setImage(UIImage.init(named: "1电脑端登录"), for: UIControlState.normal)
+            installBtn.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
+            installBtn.addTarget(self, action: #selector(installBtnClick), for: .touchUpInside)
+            let rightBarItem = UIBarButtonItem(customView: installBtn)
+            self.navigationItem.rightBarButtonItem = rightBarItem
+
+        }else{
+            let paiqiBtn = UIButton(type: .custom)
+            paiqiBtn.setImage(UIImage.init(named: "1排期"), for: .normal)
+            paiqiBtn.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            paiqiBtn.addTarget(self, action: #selector(paiqiBtnClick(_:)), for: .touchUpInside)
+            let rightBarItem = UIBarButtonItem(customView: paiqiBtn)
+            self.navigationItem.rightBarButtonItem = rightBarItem
+            
+        }
         
         let titleBtn = UIButton(type: .custom)
         titleBtn.setTitle("产品经理", for: .normal)
         titleBtn.setTitleColor(UIColor.init(hexColor: "f4cda2"), for: .normal)
         titleBtn.addTarget(self, action: #selector(titleBtnClick), for: .touchUpInside)
         
-
     }
+    func paiqiBtnClick(_ btn:UIButton) -> Void {
+        print("排期")
+        let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PaiQiListVC") as! PaiQiListVC
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+        
+    }
+    
     //个人中心
     func headImageViewTap() -> Void {
         print("头像点击")
@@ -474,7 +498,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         if indexPath.section == 0 {
             if ScreenWidth == 320{
                 let cell:Position3Cell = tableView.dequeueReusableCell(withIdentifier: "Position3Cell") as! Position3Cell
-                
                 cell.commonInterFaceListClosure = { (btn) in
                     //普通面试列表
                     print("普通面试列表")
@@ -482,18 +505,20 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                     vc.title = "普通面试"
                     vc.userMesJson = self.userMesJson
                     vc.jobId = self.jobId
-                    
-                    
-                     vc.intentId = self.jobId
-                    
-                   
-                    
+                    vc.intentId = self.jobId
                     vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
                 cell.videoInterFaceListClosure = { (btn) in
                     //视频面试列表
+                    let vc = VideoInterViewListVC()
+                    vc.userMesJson = self.userMesJson
+                    vc.jobId = self.jobId
+                    vc.intentId = self.jobId
+                    vc.homeType = VideoInterViewListVC.HomepageType(rawValue: self.homeType.rawValue)!
                     
+                    vc.title = "视频面试"
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
                 cell.notiListClosure = { (btn) in
                     //通知列表
@@ -525,7 +550,13 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 }
                 cell.videoInterFaceListClosure = { (btn) in
                     //视频面试列表
-                    
+                    let vc = VideoInterViewListVC()
+                    vc.title = "视频面试"
+                    vc.userMesJson = self.userMesJson
+                    vc.jobId = self.jobId
+                    vc.intentId = self.jobId
+                    vc.homeType = VideoInterViewListVC.HomepageType(rawValue: self.homeType.rawValue)!
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
                 cell.notiListClosure = { (btn) in
                     //通知列表

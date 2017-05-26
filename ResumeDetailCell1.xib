@@ -11,11 +11,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ResumeDetailCell1" rowHeight="240" id="KGk-i7-Jjw" customClass="ResumeDetailCell1" customModule="Reindeer" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="240"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ResumeDetailCell1" rowHeight="250" id="KGk-i7-Jjw" customClass="ResumeDetailCell1" customModule="Reindeer" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="250"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="239.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="249.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="hua.png" translatesAutoresizingMaskIntoConstraints="NO" id="FOL-7d-CtU">
@@ -93,14 +93,6 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p2z-mL-kc4" customClass="LQTagListView" customModule="Reindeer" customModuleProvider="target">
-                        <rect key="frame" x="8" y="187" width="304" height="39"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="304" id="In3-jx-EZn"/>
-                            <constraint firstAttribute="height" constant="39" id="pZa-87-WQP"/>
-                        </constraints>
-                    </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8K - 10K" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WN0-Fa-8h3">
                         <rect key="frame" x="106" y="115" width="108" height="21"/>
                         <constraints>
@@ -111,6 +103,34 @@
                         <color key="textColor" red="0.92156862750000001" green="0.58039215690000001" blue="0.22352941179999999" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p2z-mL-kc4" customClass="TagListView" customModule="TagListView">
+                        <rect key="frame" x="57" y="190" width="207" height="42"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="207" id="In3-jx-EZn"/>
+                            <constraint firstAttribute="height" constant="42" id="pZa-87-WQP"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="textColor">
+                                <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="tagBackgroundColor">
+                                <color key="value" red="0.97286850214004517" green="0.95693153142929077" blue="0.95247751474380493" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="paddingY">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="paddingX">
+                                <real key="value" value="10"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="marginY">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="marginX">
+                                <real key="value" value="10"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="LQa-pS-88V" firstAttribute="top" secondItem="WN0-Fa-8h3" secondAttribute="bottom" constant="25" id="2SX-da-xqg"/>
@@ -122,20 +142,20 @@
                     <constraint firstItem="FOL-7d-CtU" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="Dhd-1Y-rfl"/>
                     <constraint firstItem="WdD-tk-ffG" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" constant="11" id="HRO-3g-ZJT"/>
                     <constraint firstItem="KTQ-Rh-pnK" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="Hqa-rh-UmV"/>
-                    <constraint firstAttribute="leadingMargin" secondItem="p2z-mL-kc4" secondAttribute="leading" id="Ivr-b8-kTk"/>
+                    <constraint firstAttribute="leadingMargin" secondItem="p2z-mL-kc4" secondAttribute="leading" constant="-49" id="Ivr-b8-kTk"/>
                     <constraint firstItem="xt1-Q6-CBo" firstAttribute="leading" secondItem="LQa-pS-88V" secondAttribute="trailing" constant="8" id="Jxk-MK-R0x"/>
                     <constraint firstItem="WdD-tk-ffG" firstAttribute="top" secondItem="WN0-Fa-8h3" secondAttribute="bottom" constant="23" id="Sjc-xL-3wH"/>
                     <constraint firstItem="KTQ-Rh-pnK" firstAttribute="top" secondItem="FOL-7d-CtU" secondAttribute="bottom" constant="8" id="Tkk-d8-lRu"/>
                     <constraint firstItem="WdD-tk-ffG" firstAttribute="leading" secondItem="ZSk-5t-IJJ" secondAttribute="trailing" constant="8" id="TsD-hR-Hai"/>
                     <constraint firstItem="LQa-pS-88V" firstAttribute="centerY" secondItem="xt1-Q6-CBo" secondAttribute="centerY" constant="-1.5" id="XcZ-Z5-2qn"/>
-                    <constraint firstItem="p2z-mL-kc4" firstAttribute="top" secondItem="WdD-tk-ffG" secondAttribute="bottom" constant="7" id="Zvd-3e-dJh"/>
+                    <constraint firstItem="p2z-mL-kc4" firstAttribute="top" secondItem="WdD-tk-ffG" secondAttribute="bottom" constant="10" id="Zvd-3e-dJh"/>
                     <constraint firstItem="WN0-Fa-8h3" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="g4j-Id-0lx"/>
                     <constraint firstItem="GX4-ng-chh" firstAttribute="centerY" secondItem="WdD-tk-ffG" secondAttribute="centerY" id="ghx-Ex-YJn"/>
                     <constraint firstItem="GX4-ng-chh" firstAttribute="leading" secondItem="WdD-tk-ffG" secondAttribute="trailing" constant="12" id="jTN-oT-Hlc"/>
                     <constraint firstItem="7j3-ne-HNg" firstAttribute="leading" secondItem="GX4-ng-chh" secondAttribute="trailing" constant="8" id="lLr-bZ-Idr"/>
                     <constraint firstItem="ZSk-5t-IJJ" firstAttribute="centerY" secondItem="WdD-tk-ffG" secondAttribute="centerY" id="nSO-k2-HdK"/>
                     <constraint firstItem="r9L-Uh-JZv" firstAttribute="top" secondItem="WN0-Fa-8h3" secondAttribute="bottom" constant="8" id="oab-u3-8V1"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="p2z-mL-kc4" secondAttribute="trailing" id="q4R-XZ-bcH"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="p2z-mL-kc4" secondAttribute="trailing" constant="48" id="q4R-XZ-bcH"/>
                     <constraint firstAttribute="trailingMargin" secondItem="r9L-Uh-JZv" secondAttribute="trailing" id="qg8-vc-R3v"/>
                     <constraint firstItem="FOL-7d-CtU" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="14" id="wyR-kI-T9o"/>
                 </constraints>
@@ -147,8 +167,9 @@
                 <outlet property="headImageView" destination="FOL-7d-CtU" id="llQ-Be-g3G"/>
                 <outlet property="moneyLabel" destination="WN0-Fa-8h3" id="gwz-mF-ifw"/>
                 <outlet property="nameAndJobLabel" destination="KTQ-Rh-pnK" id="RCP-uZ-XCL"/>
+                <outlet property="tagListView" destination="p2z-mL-kc4" id="DNq-i8-qwk"/>
             </connections>
-            <point key="canvasLocation" x="32" y="201"/>
+            <point key="canvasLocation" x="32" y="206"/>
         </tableViewCell>
     </objects>
     <resources>

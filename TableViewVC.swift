@@ -39,7 +39,6 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
     var homeType:HomepageType = .userHomePage
     
-    
     //列表分类
     enum TableViewDataType:Int {
         case waittingHandle = 1  //待处理
@@ -105,7 +104,7 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         let dic:NSDictionary = [
             "token":GetUser(key: TOKEN),
             "no":pageNum,
-            "size":10,
+            "size":100,
             "jobId":self.jobId,
             "type":type
         ]

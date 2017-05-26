@@ -29,7 +29,7 @@ class HRPositionManagerVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource 
     func addBtnClick() -> Void {
         print("添加职位")
         let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
-        vc.companyId = GetUser(key: COMPANYID)
+        vc.companyId = GetUser(key: COMPANYID) as! String
         vc.positionAddEnum = .positionManagerToAddPosition
         vc.returnClosure = {
             self.getHRJobPositionManagerList()

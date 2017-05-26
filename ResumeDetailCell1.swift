@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import TagListView
 class ResumeDetailCell1: UITableViewCell {
 
     @IBOutlet var headImageView: UIImageView!
@@ -22,20 +22,25 @@ class ResumeDetailCell1: UITableViewCell {
     
     @IBOutlet var eduLabel: UILabel!
     
+   
+    @IBOutlet var tagListView: TagListView!
+    
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
     func installCell(headImageStr:String?,nameAndJobStr:String?,moneyStr:String?,areaStr:String?,expYearStr:String?,eduStr:String?) -> Void {
-        
-        
+
         self.headImageView.sd_setImage(with: URL.init(string: headImageStr ?? ""), placeholderImage: UIImage.init(named: "hua"))
         self.nameAndJobLabel.text = nameAndJobStr
         self.moneyLabel.text = moneyStr
         self.areaLabel.text = areaStr ?? "不限"
         self.expYearLabel.text = expYearStr ?? "不限"
         self.eduLabel.text = eduStr ?? "不限"
+        self.tagListView.alignment = .center
+       
         
     }
     
