@@ -8,6 +8,7 @@
 
 import UIKit
 import SVProgressHUD
+//import NIMSDK
 class LoginVC: UIViewController {
 
     
@@ -32,11 +33,26 @@ class LoginVC: UIViewController {
         loginWithPhoneNumAndSecurityNum(dic: ["phone":phoneNumTextField.text!,"password":passwordTextField.text!], actionHandler: { (jsonStr) in
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "登陆成功")
+          
+                
                 //登陆成功后存储token,用户名及密码
                 SetUser(value: jsonStr["token"].string!, key: TOKEN)
                 SetUser(value: self.phoneNumTextField.text!, key: PHONENUM)
                 SetUser(value: self.passwordTextField.text!, key: PASSWORD)
                 SetUser(value: jsonStr["cmpanyId"].stringValue, key: COMPANYID)
+                SetUser(value: jsonStr["netToken"].stringValue, key: NETTOKEN)
+                //登陆成功后登陆网易云
+                
+                NIMSDK.shared().loginManager.login("lq2391570", token: "e10adc3949ba59abbe56e057f20f883e", completion: { (error) in
+                     print("error = \(error)")
+                    if error == nil{
+                        print("登陆成功")
+                    }else{
+                        print("登录失败")
+                    }
+                })
+                
+                
                 
                 //判断group（找工作 1 或HR 2 或 未选择 -1）
                 if jsonStr["group"] == -1{
@@ -77,11 +93,6 @@ class LoginVC: UIViewController {
                         self.navigationController?.pushViewController(vc, animated: true)
                         return
                         
-//                        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
-//                        vc.companyId = "58"
-//                        self.navigationController?.pushViewController(vc, animated: true)
-//                        return
-
                     }
                     
                     let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC

@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+//import NIMSDK
 class BaseViewVC: UIViewController {
        override func viewDidLoad() {
         super.viewDidLoad()

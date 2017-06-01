@@ -19,8 +19,6 @@ class SecurityVC: UIViewController {
     
     @IBOutlet var bgImageView: UIImageView!
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,8 +55,6 @@ class SecurityVC: UIViewController {
                 let vc = UIStoryboard.init(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "ChoseGroupVC") as! ChoseGroupVC
                 self.navigationController?.pushViewController(vc, animated: true)
                 
-                
-
             }else{
                 
                 SVProgressHUD.showInfo(withStatus: "注册失败")

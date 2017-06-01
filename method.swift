@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import SVProgressHUD
 import JCAlertView
+//import NIMSDK
+
 
 var ScreenWidth = UIScreen.main.bounds.size.width
 var ScreenHeight = UIScreen.main.bounds.size.height
@@ -18,6 +20,9 @@ let PHONENUM = "phone"
 let PASSWORD = "password"
 let COMPANYID = "companyId"
 let HRPOSITION = "HRPosition"
+//网易云Token
+let NETTOKEN = "netToken"
+
 
 //Userdefault(存)
 func SetUser(value:Any,key:String) -> Void {

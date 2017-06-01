@@ -9,6 +9,8 @@
 import UIKit
 import SwiftyJSON
 import SVProgressHUD
+import NIMSDK
+
 class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
     /*
@@ -172,6 +174,19 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         }
         return 0
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if self.dataType == .waittingHandle {
+            //待处理
+            print("待处理")
+        let vc = NTESVideoChatViewController(callee: "lq2388691")
+            
+        self.navigationController?.pushViewController(vc!, animated: true)
+    
+        }
+    }
+    
+    
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         if homeType == .HRHomePage {

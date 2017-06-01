@@ -12,7 +12,7 @@ import TagListView
 import SVProgressHUD
 import AKPickerView
 import SwiftyJSON
-class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate,AKPickerViewDelegate,AKPickerViewDataSource {
+class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate,AKPickerViewDelegate,AKPickerViewDataSource,NIMNetCallManagerDelegate {
 
     
     @IBOutlet var tableView: UITableView!
@@ -84,7 +84,17 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             NotificationCenter.default.addObserver(self, selector: #selector(addPositionNoti), name: NSNotification.Name(rawValue: "ADDPOSITION"), object: nil)
             
         }
+        
+        NIMAVChatSDK.shared().netCallManager.add(self)
        
+    }
+    func onReceive(_ callID: UInt64, from caller: String, type: NIMNetCallMediaType, message extendMessage: String?) {
+        print("收到呼叫")
+        let vc = NTESVideoChatViewController(caller: caller, callId: callID)
+
+        self.navigationController?.pushViewController(vc!, animated: true)
+        
+        
     }
     func addPositionNoti() -> Void {
         print("收到通知")

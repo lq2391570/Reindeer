@@ -9,7 +9,7 @@
 import UIKit
 import IQKeyboardManagerSwift
 import SVProgressHUD
-
+import NIMSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,6 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }else{
             print("启动百度地图成功")
         }
+        
+        //初始化网易云sdk
+        NIMSDK.shared().register(withAppID: "45c6af3c98409b18a84451215d0bdd6e", cerName: "ENTERPRISE")
+        
+        
         
         //IQKeyboardManager 开关
         IQKeyboardManager.sharedManager().enable = true
@@ -46,7 +51,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    
+//    func onReceive(_ callID: UInt64, from caller: String, type: NIMNetCallMediaType, message extendMessage: String?) {
+//        print("收到呼叫")
+//    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
