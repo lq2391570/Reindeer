@@ -34,6 +34,8 @@
 #import <CocoaLumberjack/CocoaLumberjack.h>
 
 #import "NTESGlobalMacro.h"
+
+
 #define NTES_USE_CLEAR_BAR - (BOOL)useClearBar{return YES;}
 
 #define NTES_FORBID_INTERACTIVE_POP - (BOOL)forbidInteractivePop{return YES;}

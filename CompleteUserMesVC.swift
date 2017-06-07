@@ -30,6 +30,8 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     //地区id
     var areaId:String = ""
+    //地区model
+    var areaModel:AreaBaseClass?
     
     //性别
     var sexStr:String!
@@ -49,7 +51,7 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
     }
     @IBAction func choseCityBtnClick(_ sender: UIButton) {
         
-        if let customView = LQPickView.newInstance() {
+        if let customView = LQAreaPickView.newInstance() {
            
             let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
             
@@ -60,10 +62,11 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
             }
             customView.sureBtnClickclosure = { (btn) in
                 
-                print("cityName = \(customView.cityNameStr) , cityId = \(customView.cityIDStr)")
-                self.cityTextField.text = "\(customView.provinceNameStr)\(customView.cityNameStr)"
+                print("cityName = \(customView.selevtCityModel?.name) , cityId = \(customView.selevtCityModel?.id)")
+                self.cityTextField.text = "\(customView.selectProvinModel?.name)\(customView.selevtCityModel?.name)"
                 customAlert?.dismiss(completion: nil)
-                self.areaId = customView.cityIDStr
+                self.areaModel = customView.selevtCityModel
+                
                 
             }
             customAlert?.show()
@@ -124,7 +127,7 @@ class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavi
             return
         }
         
-        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":areaId], actionHandler: {(jsonStr) in
+        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":self.areaModel?.id], actionHandler: {(jsonStr) in
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "完善信息成功")
                 //完善信息后必须填写求职意向，否则无法进入首页（什么鬼需求）

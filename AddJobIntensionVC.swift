@@ -36,6 +36,9 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var areaName = ""
     //地区id
     var areaId = ""
+    //地区model
+    var areaModel:AreaBaseClass?
+    
     //薪资范围数组
     var compensationArray:[PositionList] = []
     //薪资范围model
@@ -88,7 +91,7 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }else if industryList.count == 0 {
             SVProgressHUD.showInfo(withStatus: "请选择行业")
             return
-        }else if areaId == ""
+        }else if areaModel == nil
         {
             SVProgressHUD.showInfo(withStatus: "请选择地区")
             return
@@ -98,7 +101,7 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             return
         }
         
-       print("resumeId = \(self.resumeModel?.id),jobId = \(positionModel?.id) industryId =\(industryList[0].id),cityId = \(areaId),skills = \(skillsStr),salaryId = \(compensationModel?.id)")
+       print("resumeId = \(self.resumeModel?.id),jobId = \(positionModel?.id) industryId =\(industryList[0].id),cityId = \(areaModel?.id),skills = \(skillsStr),salaryId = \(compensationModel?.id)")
        //如果是添加则不传id,如果是更新则传id
         let noIdDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0 ] as NSDictionary
         let idDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0,"id":self.jobIntensionId] as NSDictionary
@@ -196,7 +199,7 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             }else if indexPath.row == 1 {
                 cell?.detailTextLabel?.text = "选择了\(industryList.count)个标签"
             }else if indexPath.row == 2 {
-                cell?.detailTextLabel?.text = areaName
+                cell?.detailTextLabel?.text = areaModel?.name
             }
             return cell!
         }else{
@@ -259,7 +262,7 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
             }else if indexPath.row == 2{
-                if let customView = LQPickView.newInstance() {
+                if let customView = LQAreaPickView.newInstance() {
                     
                     let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
                     
@@ -269,11 +272,14 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                         
                     }
                     customView.sureBtnClickclosure = { (btn) in
-                        
-                        print("cityName = \(customView.cityNameStr) , cityId = \(customView.cityIDStr)")
-                        self.areaName = customView.cityNameStr
-                        self.areaId = customView.cityIDStr
+                       
+                        print("www")
+//                        print("cityName = \(customView.cityNameStr) , cityId = \(customView.cityIDStr)")
+//                        self.areaName = customView.cityNameStr
+//                        self.areaId = customView.cityIDStr
                       //  self.cityTextField.text = "\(customView.provinceNameStr)\(customView.cityNameStr)"
+                        self.areaModel = customView.selevtCityModel
+                    
                         customAlert?.dismiss(completion: nil)
                         self.tableView.reloadData()
                     //    self.areaId = customView.cityIDStr

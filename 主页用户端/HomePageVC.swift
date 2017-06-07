@@ -12,7 +12,8 @@ import TagListView
 import SVProgressHUD
 import AKPickerView
 import SwiftyJSON
-class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate,AKPickerViewDelegate,AKPickerViewDataSource,NIMNetCallManagerDelegate {
+import JNDropDownMenu
+class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate,AKPickerViewDelegate,AKPickerViewDataSource,NIMNetCallManagerDelegate,JNDropDownMenuDelegate1, JNDropDownMenuDataSource1 {
 
     
     @IBOutlet var tableView: UITableView!
@@ -55,6 +56,24 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     //个人信息json
     var userMesJson:JSON?
     
+    //面试时间BassClass
+    var interViewTimeBassClass:PositionBaseClass?
+    //学历
+    var eduBassClass:PositionBaseClass?
+    //工作经验
+    var expBassClass:PositionBaseClass?
+    //薪资要求
+    var moneyBassClass:PositionBaseClass?
+    //地区
+    var areaBassClassArray:[AreaBaseClass] = []
+    //求职意向地区id
+    var jobSeekerAreaId:Int?
+    //求职意向地区Name
+    var jobSeekerAreaName:String?
+    //下拉菜单
+    var menu:JNMenu!
+    
+    
     //职位名称
     var jobName = ""
     
@@ -70,6 +89,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     override func viewDidLoad() {
         super.viewDidLoad()
 
+
         // Do any additional setup after loading the view.
         self.confineTableView()
         self.confineNavBar()
@@ -78,6 +98,16 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         if homeType == .userHomePage {
             //应聘者
              getJobIntension()
+            //获得面试时间
+            self.interViewTimeBassClass = getInterViewTypePath()
+            //获得学历
+            self.eduBassClass = getEduExpTypePath()
+            //获得工作经验
+            self.expBassClass = getWorkExpTypePath()
+            //获得薪资要求
+            self.moneyBassClass = getPayTypePath()
+            
+            
         }else if homeType == .HRHomePage {
             //HR
             getHRPostJobs()
@@ -101,6 +131,19 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         getHRPostJobs()
         
     }
+    //根据求职意向的地区id查找下属子地区（一层）
+    func getAreaWithPid(pid:Int) -> Void {
+        self.areaBassClassArray.removeAll()
+        for bassClass:AreaBaseClass in getAreaPath()! {
+            if bassClass.parentId == pid {
+                self.areaBassClassArray.append(bassClass)
+            }
+        }
+        
+    }
+    
+    
+    
     //获得简历列表（HR模式）
     func getResumeList() -> Void {
         HRResumeList(dic: ["token":GetUser(key: TOKEN),"jobId":jobStyleID], actionHander: { (bassClass) in
@@ -113,13 +156,14 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }
     }
     
-    
     //获得求职意向列表
     func getJobIntension() -> Void {
         searchUserResume(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
             self.resumeBassClass = bassClass
             
             self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![0].id)!).stringValue
+            
+            self.getAreaWithPid(pid: (self.resumeBassClass?.jobIntentList?[0].areaId)!)
             
             self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
             
@@ -333,13 +377,19 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         if homeType == .userHomePage {
             print("选中了\(String(describing: self.resumeBassClass?.jobIntentList![item].name))")
             self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![item].id)!).stringValue
-            
+            self.getAreaWithPid(pid: (self.resumeBassClass?.jobIntentList?[item].areaId)!)
             self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
+            if self.menu != nil {
+                  self.menu.dismiss()
+            }
+          
         }else if homeType == .HRHomePage {
             print("选中了\(String(describing: self.HRPostjobBassClass?.list?[item].name))")
             self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].id)!).stringValue
+            self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].jobId)!).stringValue
             
             self.getResumeList()
+            self.menu.dismiss()
         }
         
         
@@ -387,33 +437,129 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         guard section == 1 else {
             return nil
         }
-        if headView == nil {
-             headView = DropDownView()
-             headView!.supViewController = self
-
-        }
-        headView!.backgroundColor = UIColor.white
+//        if headView == nil {
+//             headView = DropDownView()
+//             headView!.supViewController = self
+//
+//        }
+//        headView!.backgroundColor = UIColor.white
+//        
+//        headView?.titleBtnClickClosure = { (sender,height) in
+//            print("height = \(height)")
+//            if self.headView?.isOpen == true {
+//                self.heightOfSeciton = height
+//                self.isOpen = true
+//                self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
+//                self.tableView.isScrollEnabled = false
+//                
+//            }else{
+//                self.heightOfSeciton = height
+//                self.isOpen = false
+//                self.tableView.isScrollEnabled = true
+//               
+//            }
+//           self.tableView.reloadData()
+//         //    print("headView.frame=\(self.headView!.frame)")
+//        }
+//      //  headView?.isUserInteractionEnabled = false
+//             return headView
         
-        headView?.titleBtnClickClosure = { (sender,height) in
-            print("height = \(height)")
-            if self.headView?.isOpen == true {
-                self.heightOfSeciton = height
-                self.isOpen = true
-                self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
-                self.tableView.isScrollEnabled = false
-                
-            }else{
-                self.heightOfSeciton = height
-                self.isOpen = false
-                self.tableView.isScrollEnabled = true
-               
-            }
-           self.tableView.reloadData()
-         //    print("headView.frame=\(self.headView!.frame)")
+        menu = JNMenu(origin: CGPoint(x: 0, y: 100), height: 40, width: self.view.frame.size.width)
+        menu.datasource = self
+        menu.delegate = self
+        menu.sureBtnClickClosure = { (eduModel,expModel,payModel) in
+            print("eduModel.name = \(eduModel?.name) expModel.name= \(expModel?.name) payModel.name = \(payModel?.name)")
+            
         }
-      //  headView?.isUserInteractionEnabled = false
-             return headView
+        
+        menu.menuOpenOrCloseClosure = { (isopen) in
+            if isopen == true {
+                
+                self.isOpen = true
+                if self.tableView.contentOffset.y < 140 {
+                     self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
+                }
+                if self.tableView.contentSize.height > ScreenHeight {
+                     self.menu.backGroundView.frame = CGRect(origin: CGPoint(x: 0, y :100),size: CGSize(width:self.view.frame.size.width, height: self.tableView.contentSize.height))
+                }else{
+                    self.menu.backGroundView.frame = CGRect(origin: CGPoint(x: 0, y :100),size: CGSize(width:self.view.frame.size.width, height: ScreenHeight))
+                }
+                 self.tableView.isScrollEnabled = false
+
+            }else{
+                
+                self.isOpen = false
+               
+                self.tableView.isScrollEnabled = true
+            }
+        }
+       
+        return menu
+        
     }
+    //JNDropDownMenuDataSource
+    func numberOfRows(in column: NSInteger, for menu: JNMenu) -> Int
+    {
+        if self.homeType == .userHomePage {
+            if column == 0 {
+                return 2
+            }else if column == 1 {
+                return self.areaBassClassArray.count
+            }else if column == 2 {
+                return (interViewTimeBassClass?.list?.count)!
+            }else if column == 3 {
+                return 4
+            }
+        }else{
+            return 1
+            
+        }
+        return 1
+    }
+    func titleForRow(at indexPath: JNIndexPath1, for menu: JNMenu) -> String
+    {
+        if self.homeType == .userHomePage {
+            if indexPath.column == 0 {
+                return ["最新","推荐"][indexPath.row]
+            }else if indexPath.column == 1 {
+                return self.areaBassClassArray[indexPath.row].name!
+                
+            }else if indexPath.column == 2 {
+                return (interViewTimeBassClass?.list![indexPath.row].name)!
+            }else if indexPath.column == 3 {
+                return "222"
+            }
+        }else{
+            return "111"
+        }
+        return "123"
+    }
+    func numberOfColumns(in menu: JNMenu) -> NSInteger
+    {
+        return 4
+    }
+    func titleFor(column: Int, menu: JNMenu) -> String
+    {
+        if self.homeType == .userHomePage {
+            if column == 0 {
+                return "推荐"
+            }else if column == 1 {
+                return "地区"
+            }else if column == 2 {
+                return "面试时间"
+            }else if column == 3 {
+                return "筛选"
+            }
+        }else{
+            return "222"
+        }
+        return "222"
+    }
+    func didSelectRow(at indexPath: JNIndexPath1, for menu: JNMenu)
+    {
+         self.tableView.isScrollEnabled = true
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
        // print("headView.frame=\(headView?.frame)")
     }
@@ -581,9 +727,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             if homeType == .userHomePage {
                 //应聘者
                 let cell:PositionCell = tableView.dequeueReusableCell(withIdentifier: "PositionCell") as! PositionCell
-                
-                
-                
+            
                 guard self.homePageJobBassClass != nil else {
                     return cell
                 }

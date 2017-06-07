@@ -56,6 +56,22 @@ func createAlert(title:String?,message:String?,viewControll:UIViewController,clo
     alert.addAction(ac2)
     viewControll.present(alert, animated: true, completion: nil)
 }
+//创建一个alertView(一个按钮)
+func createAlertOneBtn(title:String?,message:String?,btnStr:String?,viewControll:UIViewController,closure:(()->Void)?){
+    let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    let ac1 = UIAlertAction(title: btnStr, style: .default, handler:{ action in
+        if closure != nil {
+             closure!()
+        }
+       
+    })
+    alert.addAction(ac1)
+   
+    viewControll.present(alert, animated: true, completion: nil)
+}
+
+
+
 //创建一个带一个输入框的alertView
 func createAlertWithTextField(title:String?,message:String?,viewControll:UIViewController,closure:@escaping (_ text:String?)->Void){
     let alert=UIAlertController(title: title, message: message, preferredStyle: .alert)

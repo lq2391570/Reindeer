@@ -11,6 +11,7 @@ import SwiftyJSON
 import SVProgressHUD
 import NIMSDK
 
+
 class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
     /*
@@ -76,6 +77,9 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         tableView.register(UINib.init(nibName: "HRVideoWaitToManagerCell", bundle: nil), forCellReuseIdentifier: "HRVideoWaitToManagerCell")
         tableView.register(UINib.init(nibName: "HRVideoWaitUserManagerCell", bundle: nil), forCellReuseIdentifier: "HRVideoWaitUserManagerCell")
         tableView.register(UINib.init(nibName: "HRVideoAlreadyFinishCell", bundle: nil), forCellReuseIdentifier: "HRVideoAlreadyFinishCell")
+        tableView.register(UINib.init(nibName: "HRVideoWaitInterViewCell1", bundle: nil), forCellReuseIdentifier: "HRVideoWaitInterViewCell1")
+        tableView.register(UINib.init(nibName: "HRVideoWaitInterViewCell2", bundle: nil), forCellReuseIdentifier: "HRVideoWaitInterViewCell2")
+        
         if homeType == .HRHomePage {
             HRGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
         }
@@ -123,7 +127,20 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
+        if self.homeType == .HRHomePage {
+            if self.dataType == .waittingInterFace {
+                //待面试
+                if self.bassClass == nil {
+                    return 0
+                }
+                return (self.bassClass?.list![section].list?.count)! + 1 //+1是由于一直有第一行
+                
+            }
+        }
+        
         return 1
+        
+        
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
@@ -156,6 +173,58 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     
                 })
                 return cell
+            }else if self.dataType == .waittingInterFace{
+                //待面试
+                if indexPath.row == 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoWaitInterViewCell1") as! HRVideoWaitInterViewCell1
+                    cell.installCell(jobName: model.jobName, time: model.time, timeLong: model.duration, numOfPeople: "\(model.num!)/\(model.nums!)",stateNum:model.state!, startBtnClosure: { (btn) in
+                        print("开始面试BtnClick")
+                            //开始面试按钮点击
+                            let dic:NSDictionary = [
+                                "token":GetUser(key: TOKEN),
+                                "id":model.id!
+                            ]
+                            let jsonStr = JSON(dic)
+                            let newDic:NSDictionary = jsonStr.dictionaryValue as NSDictionary
+                            
+                            HRStartInterView(dic: newDic, actionHander: { (jsonStr) in
+                                if jsonStr["code"] == 0 {
+                                    SVProgressHUD.showSuccess(withStatus: "开始面试成功")
+                                      self.HRGetVideoInterViewList(num: 1, type: 2)
+                                }else{
+                                    SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                                }
+                                
+                            }, fail: {
+                                SVProgressHUD.showInfo(withStatus: "请求失败")
+                            })
+                
+                    })
+                    
+                    return cell
+                }else{
+                    
+                    let listModel:HRVideoInterState2List = (model.list?[indexPath.row - 1])!
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoWaitInterViewCell2") as! HRVideoWaitInterViewCell2
+                    cell.installCell(headImageUrl: listModel.avatar, name: listModel.name, money: listModel.salary, stateNum: listModel.ready!, videoBtnClosure: { (btn) in
+                        print("开始视频")
+                        if listModel.ready == 1 {
+                            //未就绪(测试视频直接进入视频)
+//                            createAlertOneBtn(title: "提示", message: "此应聘者暂未就绪", btnStr: "知道了", viewControll: self, closure: nil)
+                            let vc = NTESVideoChatViewController(callee: "lq2388691")
+                         //   print("listModel.avatar = \(listModel.avatar)")
+                          vc?.headUrl = listModel.avatar
+                            vc?.nameStr = listModel.name
+                        self.navigationController?.pushViewController(vc!, animated: true)
+                            
+                        }
+                        
+                    })
+                    
+                    return cell
+                }
+                
+                
             }
             
         }
@@ -178,10 +247,11 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         if self.dataType == .waittingHandle {
             //待处理
             print("待处理")
-        let vc = NTESVideoChatViewController(callee: "lq2388691")
+
+    let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "EvaluateVC") as! EvaluateVC
             
-        self.navigationController?.pushViewController(vc!, animated: true)
-    
+            self.navigationController?.pushViewController(vc, animated: true)
+            
         }
     }
     
@@ -198,8 +268,17 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     return 210
                 }
             }else if self.dataType == .alreadyFinish {
+                //已面试
                 return 120
+            }else if self.dataType == .waittingInterFace{
+                //待面试
+                if indexPath.row == 0 {
+                    return 65
+                }else{
+                    return 80
+                }
             }
+            
            
         }else{
              return 150

@@ -21,13 +21,20 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     var transparentView:UIView?
     //全局btn（布局用）
     var overAllBtn:UIButton?
-    //页面类型(枚举)
+    //页面类型(枚举)应聘者
     enum viewType {
         case recommend //推荐
         case area      //地区
         case InterviewTime  //面试时间
         case filter     //筛选
     }
+    enum viewTypeHR {
+        case HRRecommend //推荐
+        case HRPay       //薪资
+        case HRExp       //经验
+        case HREdu       //学历
+    }
+    
     // 全局类型
     var viewTypeNum:viewType?
     //底部view
@@ -101,6 +108,7 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             titleLabel.font = UIFont.systemFont(ofSize: 14)
             titleLabel.text = nameArray [index-1]
             titleLabel.textAlignment = .center
+            titleLabel.tag = index + 100
             btn.addSubview(titleLabel)
             overAllBtn = btn
             let arrowView = ArrowsView(frame: CGRect.init(x: btn.frame.midX-btn.frame.minX-30+40, y: btn.frame.midY-10, width: 20, height: 20))
@@ -116,9 +124,22 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
     }
     func btnClick(btn:UIButton) -> Void {
         print("点击了第\(btn.tag)个按钮")
-        print("heightOfsupViewController?.view=\(supViewController?.view.frame.size.height)")
+    print("heightOfsupViewController?.view=\(supViewController?.view.frame.size.height)")
         print("overAllBtn.frame=\(overAllBtn?.frame)")
         print("selfOfHeight=\(self.frame)")
+        
+        if btn.isSelected == true {
+            let label:UILabel = btn.viewWithTag(btn.tag + 100) as! UILabel
+            print("label.text = \(label.text)")
+            label.textColor = UIColor.init(red: 206/255.0, green: 88/255.0, blue: 61/255.0, alpha: 1)
+            btn.isSelected = false
+        }else{
+            let label:UILabel = btn.viewWithTag(btn.tag + 100) as! UILabel
+            print("label.text = \(label.text)")
+            label.textColor = UIColor.black
+            btn.isSelected = true
+        }
+        
         
         if isOpen == false{
             switch btn.tag {
@@ -128,13 +149,7 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
                 viewTypeNum = .area
             case 3:
                 viewTypeNum = .InterviewTime
-                
-                
-                
                 self.tableView.reloadData()
-                
-                
-                
             case 4:
                 viewTypeNum = .filter
                 self.tableView.reloadData()
@@ -158,6 +173,7 @@ class DropDownView: UIView,UITableViewDelegate,UITableViewDataSource{
             isOpen = false
             //闭包传值
             titleBtnClickClosure?(btn,0)
+            
         }
         
     }
