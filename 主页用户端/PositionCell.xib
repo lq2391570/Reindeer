@@ -160,7 +160,7 @@
                         </constraints>
                     </imageView>
                 </subviews>
-                <color key="backgroundColor" red="0.94509803921568625" green="0.92941176470588238" blue="0.92549019607843142" alpha="1" colorSpace="calibratedRGB"/>
+                <color key="backgroundColor" red="0.97244364023208618" green="0.97260981798171997" blue="0.97243314981460571" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 <constraints>
                     <constraint firstAttribute="trailingMargin" secondItem="FBJ-lq-API" secondAttribute="trailing" constant="14" id="5dC-hD-QLp"/>
                     <constraint firstItem="AC9-3d-gjg" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="Dqc-9e-Fbz"/>
