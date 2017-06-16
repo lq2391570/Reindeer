@@ -23,7 +23,7 @@ class CompanyDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     //职位列表
     var positionList:NSMutableArray = []
     //公司详情model
-    var companyDetailModel:CompanyDetailBaseClass?
+    var companyDetailModel:CompanyDetail2BaseClass?
     //公司id
     var companyId = ""
     

@@ -65,6 +65,11 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //招聘人数
     var recruitingNum = 1
     
+    struct JobAddressStruct {
+        var addressName:String?
+        var addressPt:CLLocationCoordinate2D?
+    }
+    var jobAddressModel:JobAddressStruct?
     
     
     
@@ -126,7 +131,7 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }else if eduExpModel == nil {
             SVProgressHUD.showInfo(withStatus: "请选择学历范围")
             return
-        }else if areaId == "" {
+        }else if self.jobAddressModel == nil {
             SVProgressHUD.showInfo(withStatus: "请选择工作地区")
             return
         }else if descOfJobStr == "" {
@@ -154,9 +159,9 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             "qualification":eduExpModel?.id as Any ,   //学历范围id
             "area":areaId,                     //工作地区id
             "district":areaName,               //地区名称
-            "lat":lat,                         //经度
-            "lng":lng,                         //纬度
-            "address":address,                 //地址名称
+            "lat":self.jobAddressModel?.addressPt?.latitude as Any,                         //经度
+            "lng":self.jobAddressModel?.addressPt?.longitude as Any,                         //纬度
+            "address":self.jobAddressModel?.addressName as Any,                 //地址名称
             "note":descOfJobStr,               //职位描述
             "nums":recruitingNum,               //招聘人数
             "token":GetUser(key: TOKEN)
@@ -270,6 +275,8 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             cell?.textLabel?.text = titleArray3[indexPath.row]
             if indexPath.row == 0 {
                 cell?.detailTextLabel?.text = self.areaName
+            }else if indexPath.row == 1 {
+                cell?.detailTextLabel?.text = self.jobAddressModel?.addressName
             }
             
             
@@ -395,11 +402,25 @@ class HRAddJobVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     
                 }
 
-                
-                
-                
             }else if indexPath.row == 1 {
                 //工作地点
+                
+                let vc = MapVC()
+                vc.title = "选择工作地点"
+                vc.cityName = self.areaName
+                vc.completeClickClosure = { (poiInfo,selectAddress,selectPt) in
+                    print("地区名称 = \(poiInfo?.name) ,选择的地区名称 = \(selectAddress) 坐标 = \(selectPt)")
+                    if poiInfo == nil {
+                        self.jobAddressModel = JobAddressStruct.init(addressName: selectAddress, addressPt: selectPt)
+                    }else{
+                        self.jobAddressModel = JobAddressStruct.init(addressName: poiInfo?.name, addressPt: poiInfo?.pt)
+                    }
+                    self.tableView.reloadData()
+                    
+                }
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+                
             }
         }else if indexPath.section == 3 {
             //职位描述

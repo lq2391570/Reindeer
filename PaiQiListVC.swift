@@ -62,7 +62,7 @@ class PaiQiListVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     {
         let model:HRPaiQiListList = (self.bassClass?.list![indexPath.section])!
         let cell = tableView.dequeueReusableCell(withIdentifier: "PaiQiListCell") as! PaiQiListCell
-       cell.installCell(name: model.job, stateNum: model.state, time: model.datetime, timeLong: model.duration, peopleNum: model.nums)
+        cell.installCell(name: model.job, stateNum: model.state, time: model.datetime, timeLong: model.duration, peopleNum: model.nums)
         
         return cell
     }
@@ -74,8 +74,11 @@ class PaiQiListVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         return (self.bassClass?.list?.count)!
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PaiQiDetailVC") as! PaiQiDetailVC
         
+         let model:HRPaiQiListList = (self.bassClass?.list![indexPath.section])!
+        let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PaiQiDetailVC") as! PaiQiDetailVC
+        vc.title = model.job
+        vc.paiqiListBassClass = model
         self.navigationController?.pushViewController(vc, animated: true)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

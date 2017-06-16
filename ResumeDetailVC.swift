@@ -36,7 +36,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //个人信息json
     var userMesJson:JSON?
     //公司详情model
-    var companyDetailModel:CompanyDetailBaseClass?
+    var companyDetailModel:CompanyDetail2BaseClass?
     
     
     var resumeDetailBassClass:ResumeHRBaseClass?
@@ -51,10 +51,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var phoneNumStr = ""
     //职位详情model
     var jobDetailBassClass:JobDetailBaseClass?
-    
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()

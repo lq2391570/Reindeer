@@ -30,6 +30,8 @@ class IndustryAndLogoCell: UITableViewCell {
         logoBtn.layer.masksToBounds = true
         logoBtn.addTarget(self, action: #selector(logoBtnClick(sender:)), for: .touchUpInside)
         self.selectionStyle = .none
+        self.backgroundColor = UIColor.init(red: 246/255.0, green: 246/255.0, blue: 246/255.0, alpha: 1)
+        
     }
     //logo点击
     func logoBtnClick(sender:UIButton) -> Void {

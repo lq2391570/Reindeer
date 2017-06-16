@@ -23,9 +23,12 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     //图片地址Array
     var imageFileArray:NSMutableArray = []
     //公司产品Array
-    var productArray:[CompanyDetailProductList] = []
+    var productArray:[CompanyDetail2ProductList] = []
+    //公司图片Array
+    var companyImageModelArray:[CompanyDetail2ImageList] = []
+    
     //公司详情model
-    var companyDetailModel:CompanyDetailBaseClass?
+    var companyDetailModel:CompanyDetail2BaseClass?
     //公司id
     var companyId:String! = "1"
     //公司行业modelArray
@@ -52,8 +55,21 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     //公司图片Array
     var companyImageArray:[String] = [""]
     
+    //公司简称
+    var companySimpleName = ""
+    //公司全称
+    var companyCompleteName = ""
     
     
+    
+    //是完善公司信息还是个人中心进入的公司信息
+    enum EnterTypeNum {
+        case registerEnter   //注册进入
+        case userCenterEnter //个人中心进入
+    }
+    var enterType:EnterTypeNum = .registerEnter
+    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -62,6 +78,11 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         //消除毛玻璃效果
         self.navigationController?.navigationBar.isTranslucent = false;
         self.title = "完善公司信息"
+        
+        if self.enterType == .userCenterEnter {
+            self.title = "公司信息"
+        }
+        
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.mainColor]
         
@@ -73,6 +94,8 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         tableView.register(UINib.init(nibName: "IndustryAndLogoCell", bundle: nil), forCellReuseIdentifier: "IndustryAndLogoCell")
         tableView.register(UINib.init(nibName: "ImageSelectCell", bundle: nil), forCellReuseIdentifier: "ImageSelectCell")
         tableView.register(UINib.init(nibName: "CompanyProductCell", bundle: nil), forCellReuseIdentifier: "CompanyProductCell")
+        tableView.register(UINib.init(nibName: "TagAndNameCell", bundle: nil), forCellReuseIdentifier: "TagAndNameCell")
+        tableView.backgroundColor = UIColor.init(red: 246/255.0, green: 246/255.0, blue: 246/255.0, alpha: 1)
         
         tableView.tableFooterView = createFootView()
         tableView.estimatedRowHeight = 100
@@ -95,6 +118,15 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         getCompanyDetail(dic: ["companyId":self.companyId], actionHandler: { (bassClass) in
             self.companyDetailModel = bassClass
             self.productArray = bassClass.productList!
+            self.companyImageModelArray = bassClass.imageList!
+            if self.companyImageModelArray.count > 0 {
+                self.isHaveImage = true
+            }
+            self.companyImageArray.removeAll()
+            for model in self.companyImageModelArray {
+                self.companyImageArray.append(model.path!)
+            }
+            
             self.tableView.reloadData()
         }, fail: {
             
@@ -138,8 +170,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         print("companyId = \(companyId),logo = \(logoImageStr),industryId = \(industryId) scaleId = \(scaleListModel?.id!) tel = \(phoneNumStr), address = 暂无  desc = \(descStr),images = \(self.companyImageArray)")
         //(地址暂时为空)
         
+        
         let dicStr:NSDictionary = ["companyId":companyId,"logo":logoImageStr,"industryId":industryId!,"scaleId":(scaleListModel?.id)!,"tel":phoneNumStr,"address":"","desc":descStr,"images":companyImageArray]
         let jsonStr = JSON(dicStr)
+        
         
         print("jsonStr.dictionaryValue = \(jsonStr.dictionaryValue)")
         
@@ -166,21 +200,25 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         })
         
         
-        
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0 {
             return 2
         }else if section == 1{
-            return 3
+            return 2
         }else if section == 2{
+            
+            return 3
+        }else if section == 3{
+            return 1
+        }else if section == 4{
             if isHaveImage == false {
                 return 1
             }else{
                 return 2
             }
-        }else if section == 3{
+        }else if section == 5{
             return productArray.count + 1
         }else{
             return 0
@@ -194,8 +232,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "IndustryAndLogoCell") as! IndustryAndLogoCell
-                cell.nameLabel.text = "公司行业"
-                cell.rightLabel.text = self.industryString
+                cell.nameLabel.text = "公司简称"
+               // cell.rightLabel.text = self.industryString
+               // cell.rightLabel.text = self.companySimpleName
+                cell.rightLabel.text = self.companyDetailModel?.shortName
                 cell.logoBtn.sd_setBackgroundImage(with: NSURL.init(string: self.logoImageStr) as URL!, for: .normal)
                 if self.logoImageStr != "" {
                     cell.logoBtn.setTitle("", for: .normal)
@@ -208,38 +248,63 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultSelectCell") as! DefaultSelectCell
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
-                cell.nameLabel.text = "公司规模"
-                cell.rightLabel.text = self.scaleListModel?.name
+                cell.nameLabel.text = "公司全称"
+               // cell.rightLabel.text = self.scaleListModel?.name
+                cell.rightLabel.text = self.companyDetailModel?.name
                 return cell
             }
-        }else if indexPath.section == 1{
+        }else if indexPath.section == 1 {
+            if indexPath.row == 0{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultSelectCell") as! DefaultSelectCell
+                cell.topLineLabel.isHidden = true
+                cell.bottomLineLabel.isHidden = true
+                cell.nameLabel.text = "公司行业"
+                cell.rightLabel.text = self.companyDetailModel?.companyIndustry?.name
+                return cell
+            }else{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultSelectCell") as! DefaultSelectCell
+                cell.topLineLabel.isHidden = true
+                cell.bottomLineLabel.isHidden = true
+                cell.nameLabel.text = "公司规模"
+                cell.rightLabel.text = self.companyDetailModel?.companyScale?.name
+                return cell
+            }
+        }else if indexPath.section == 2{
             let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultSelectCell") as! DefaultSelectCell
             if indexPath.row == 0 {
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司电话"
-                cell.rightLabel.text = phoneNumStr
+                cell.rightLabel.text = self.companyDetailModel?.tel
             }else if indexPath.row == 2{
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司简介"
+                cell.rightLabel.text = self.companyDetailModel?.desc
             }else{
                 cell.nameLabel.text = "公司地址"
+                cell.rightLabel.text = self.companyDetailModel?.address
             }
             return cell
-        }else if indexPath.section == 2 {
+        }else if indexPath.section == 3 {
+            //团队亮点
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TagAndNameCell") as! TagAndNameCell
+            
+            return cell
+        }else if indexPath.section == 4 {
             //判断是否添加了图片
             if isHaveImage == false {
                 //没有添加公司图片
                 let cell = tableView.dequeueReusableCell(withIdentifier: "AddImageCell") as! AddImageCell
                 cell.nameLabel.text = "添加公司图片"
                 return cell
-            }else{
+                 }else{
                 //添加了公司图片
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ImageSelectCell") as! ImageSelectCell
-                    cell.imagePathArray = self.imageFileArray
-                    print("cell.imagePathArray.count = \(cell.imagePathArray.count)")
+                    
+                    cell.imagePathArray = NSMutableArray.init(array: self.companyImageArray)
+                    print("cell.imagePathArray = \(cell.imagePathArray)")
                     if isReflashCollection == false {
                         isReflashCollection = true
                         cell.collectionView.reloadData()
@@ -265,7 +330,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                     return cell
                 }
             }
-        }else if indexPath.section == 3 {
+        }else if indexPath.section == 5 {
             if productArray.count == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "AddImageCell") as! AddImageCell
                 cell.nameLabel.text = "添加公司产品"
@@ -277,7 +342,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                     return cell
                 }else{
                     let cell = tableView.dequeueReusableCell(withIdentifier: "CompanyProductCell") as! CompanyProductCell
-                    let productModel:CompanyDetailProductList = productArray[indexPath.row]
+                    let productModel:CompanyDetail2ProductList = productArray[indexPath.row]
                     
                     cell.headImage.sd_setBackgroundImage(with: NSURL.init(string: productModel.logo ?? "") as URL!, for: UIControlState.normal)
                     
@@ -295,7 +360,33 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
+        
+        
+        if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                //公司简称
+                let vc = TextViewVC()
+                vc.placeholdText = "请输入公司简称"
+                vc.navTitle = "公司简称"
+                vc.textViewTypeEnum = .typeWorkContent
+                vc.saveBtnClickClosure = { (deacStr) in
+                    self.companySimpleName = deacStr
+                    tableView.reloadData()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else if indexPath.row == 1 {
+                //公司全称
+                let vc = TextViewVC()
+                vc.placeholdText = "请输入公司全称"
+                vc.navTitle = "公司全称"
+                vc.textViewTypeEnum = .typeWorkContent
+                vc.saveBtnClickClosure = { (deacStr) in
+                    self.companyCompleteName = deacStr
+                    tableView.reloadData()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }else if indexPath.section == 2 {
             if indexPath.row == 0 {
                 //设置公司电话号码
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PhoneNumVC") as! PhoneNumVC
@@ -318,7 +409,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 self.navigationController?.pushViewController(vc, animated: true)
                 
             }
-        }else if indexPath.section == 2 {
+        }else if indexPath.section == 4 {
             //判断是否有图片
             if isHaveImage == true {
                 //有图片则需判断点击了哪一个row（图片展示的或添加图片的）
@@ -334,7 +425,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 
             }
             
-        }else if indexPath.section == 3{
+        }else if indexPath.section == 5{
             if productArray.count == 0{
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyProductVC") as! CompanyProductVC
                 vc.companyId = companyId
@@ -354,7 +445,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 }
             }
             
-        }else if indexPath.section == 0 {
+        }else if indexPath.section == 1 {
             if indexPath.row == 0 {
                 //选择公司行业
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "IndustryChoseVC") as! IndustryChoseVC
@@ -445,7 +536,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         print("asstes.count=\(assets.count)")
         //因为assets有缓存，所以每次调用需清空数组
         self.imageFileArray = []
-        self.companyImageArray = []
+       // self.companyImageArray = []
         for asset in assets {
             print("asset=\(asset)")
             index = index + 1
@@ -491,10 +582,13 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         
         for imageUrl in self.imageFileArray {
             uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
+                
                 print("jsonstr = \(jsonStr)")
                 if jsonStr["code"] == 0 {
                     let imageUrlStr = jsonStr["url"].stringValue
                     self.companyImageArray.append(imageUrlStr)
+                    self.isReflashCollection = false
+                    self.tableView.reloadData()
                 }
             }, fail: {
                 
@@ -517,6 +611,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         }else if indexPath.section == 1 {
             return 70
         }else if indexPath.section == 2 {
+            return 70
+        }else if indexPath.section == 3 {
+            return 70
+        }else if indexPath.section == 4 {
             if isHaveImage == true {
                 //需判断是哪个cell
                 if indexPath.row == 0 {
@@ -527,7 +625,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             }
             return 50
             
-        }else if indexPath.section == 3{
+        }else if indexPath.section == 5{
             //是否有产品
             if productArray.count > 0{
                 if indexPath.row == productArray.count {
@@ -558,7 +656,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     }
     func numberOfSections(in tableView: UITableView) -> Int
     {
-      return 4
+      return 6
     }
     //图片选择代理
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {

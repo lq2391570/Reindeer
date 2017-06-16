@@ -55,7 +55,8 @@ class ImageSelectCell: UITableViewCell,UICollectionViewDelegate,UICollectionView
         if indexPath.row != imagePathArray.count {
 //        cell.imageBtn.setBackgroundImage(UIImage.init(data: imagePathArray.object(at: indexPath.row) as! Data), for: .normal)
      //   cell.imageBtn.setBackgroundImage(UIImage.init(contentsOfFile: imagePathArray.object(at: indexPath.row) as! String), for: .normal)
-         cell.imageBtn.sd_setBackgroundImage(with: imagePathArray.object(at: indexPath.row) as! URL, for: .normal)
+       //  cell.imageBtn.sd_setBackgroundImage(with: imagePathArray.object(at: indexPath.row) as! URL, for: .normal)
+            cell.imageBtn.sd_setBackgroundImage(with: URL.init(string: imagePathArray.object(at: indexPath.row) as! String), for: .normal)
             
         cell.imageBtn.addTarget(self, action: #selector(imageBtnClick(btn:)), for: .touchUpInside)
         }else{
