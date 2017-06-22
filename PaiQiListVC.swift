@@ -75,7 +75,7 @@ class PaiQiListVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-         let model:HRPaiQiListList = (self.bassClass?.list![indexPath.section])!
+        let model:HRPaiQiListList = (self.bassClass?.list![indexPath.section])!
         let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PaiQiDetailVC") as! PaiQiDetailVC
         vc.title = model.job
         vc.paiqiListBassClass = model
@@ -90,6 +90,46 @@ class PaiQiListVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 10
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return .delete
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let index = IndexSet.init(integer: indexPath.section)
+            deletePaiqi(model: (self.bassClass?.list?[indexPath.section])!, succeedClosure: { 
+                self.bassClass?.list?.remove(at: indexPath.section)
+                tableView.deleteSections(index, with: UITableViewRowAnimation.fade)
+            })
+        }
+        
+    }
+    
+    func deletePaiqi(model:HRPaiQiListList,succeedClosure:(() ->())?) -> Void {
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "id":model.id as Any,
+            "remark":""
+        ]
+        let jsonStr = JSON(dic)
+        let newDic:NSDictionary = jsonStr.dictionaryValue as NSDictionary
+         print("newDic = \(newDic)")
+        HRdeletePaiQi(dic: newDic, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("删除成功")
+                succeedClosure!()
+            }
+        }) { 
+            
+        }
+        
+        
+    }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

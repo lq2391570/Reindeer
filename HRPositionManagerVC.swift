@@ -87,6 +87,45 @@ class HRPositionManagerVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return .delete
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+        
+            let index = IndexSet.init(integer: indexPath.section)
+            
+           deleteJob(model: (self.positionManagerBassClass?.list?[indexPath.section])!, succeedClosure: { 
+            self.positionManagerBassClass?.list?.remove(at: indexPath.section)
+            tableView.deleteSections(index, with: UITableViewRowAnimation.fade)
+           })
+        
+        }
+    }
+    func deleteJob(model:HRPositionManagerList,succeedClosure:(() -> ())?) -> Void {
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "id":model.id as Any,
+            "reason":""
+        ]
+        let jsonStr = JSON(dic)
+        let newDic:NSDictionary = jsonStr.dictionaryValue as NSDictionary
+        print("newDic = \(newDic)")
+        HRDeleteJobInterface(dic: newDic, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("删除成功")
+                succeedClosure!()
+            }
+        }) {
+            
+        }
+    }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

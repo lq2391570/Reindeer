@@ -12,7 +12,7 @@ class ImageSelectCell: UITableViewCell,UICollectionViewDelegate,UICollectionView
 
     @IBOutlet var collectionView: UICollectionView!
     
-    var imagePathArray:NSMutableArray! = []
+    var imagePathArray:[String] = []
     //点击添加按钮闭包
     var addBtnClickClosure:((_ btn:UIButton) -> ())?
     //点击图片按钮闭包
@@ -56,7 +56,15 @@ class ImageSelectCell: UITableViewCell,UICollectionViewDelegate,UICollectionView
 //        cell.imageBtn.setBackgroundImage(UIImage.init(data: imagePathArray.object(at: indexPath.row) as! Data), for: .normal)
      //   cell.imageBtn.setBackgroundImage(UIImage.init(contentsOfFile: imagePathArray.object(at: indexPath.row) as! String), for: .normal)
        //  cell.imageBtn.sd_setBackgroundImage(with: imagePathArray.object(at: indexPath.row) as! URL, for: .normal)
-            cell.imageBtn.sd_setBackgroundImage(with: URL.init(string: imagePathArray.object(at: indexPath.row) as! String), for: .normal)
+            
+            
+       // cell.imageBtn.sd_setBackgroundImage(with: URL.init(string: imagePathArray.object(at: indexPath.row) as! String), for: .normal)
+            
+           // cell.imageBtn.sd_setBackgroundImage(with: URL.init(string: imagePathArray[indexPath.row]), for: .normal)
+            
+            cell.imageBtn.sd_setBackgroundImage(with: URL.init(string: imagePathArray[indexPath.row]), for: .normal)
+            
+            print("imagePath = \(imagePathArray[indexPath.row])")
             
         cell.imageBtn.addTarget(self, action: #selector(imageBtnClick(btn:)), for: .touchUpInside)
         }else{

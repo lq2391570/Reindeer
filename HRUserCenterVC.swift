@@ -10,6 +10,8 @@ import UIKit
 
 class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
+    //HR个人信息model
+    var hrMesBassClass:HRUserMesBaseClass?
     
     @IBOutlet var tableView: UITableView!
     
@@ -23,8 +25,18 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.isScrollEnabled = false
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = UIColor.init(red: 245/255.0, green: 245/255.0, blue: 245/255.0, alpha: 1)
+        HRGetUserMes()
     }
-
+//获取HR个人信息
+    func HRGetUserMes() -> Void {
+        HRUserMesInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
+            self.hrMesBassClass = bassClass
+            self.tableView.reloadData()
+        }) { 
+            print("请求失败")
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0 {
@@ -45,6 +57,10 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "HRUserCenterFirstCell") as! HRUserCenterFirstCell
                 cell.selectionStyle = .none
+                if self.hrMesBassClass != nil {
+                    cell.installCell(renzhengState: self.hrMesBassClass?.authentic, headImageStr: self.hrMesBassClass?.avatar, callRate: self.hrMesBassClass?.callRate, name: self.hrMesBassClass?.name, sex: self.hrMesBassClass?.sex, company: self.hrMesBassClass?.company)
+                }
+                
                 return cell
             }else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "UserCenterCell") as! UserCenterCell
@@ -128,6 +144,17 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 vc.enterType = .userCenterEnter
                 vc.companyId = GetUser(key: COMPANYID) as! String
                 
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+            }else if indexPath.row == 0 {
+                print("点击完善个人信息")
+                let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
+            
+                vc.enterTypeEnum = .userCenterEnter
+                vc.hrMesBassClass = self.hrMesBassClass
+                vc.saveSucceedClosure = {
+                    self.HRGetUserMes()
+                }
                 self.navigationController?.pushViewController(vc, animated: true)
                 
             }

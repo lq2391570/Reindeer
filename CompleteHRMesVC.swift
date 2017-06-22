@@ -8,6 +8,7 @@
 
 import UIKit
 import SVProgressHUD
+import SwiftyJSON
 class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
 
     @IBOutlet var tableView: UITableView!
@@ -35,7 +36,18 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     
     //公司名称TextField
     var mytextField:UITextField!
+    //注册进入或个人中心进入
+    enum enterType {
+        case registerEnter
+        case userCenterEnter
+    }
+    var enterTypeEnum:enterType = .registerEnter
     
+    //个人中心进入时将个人信息带过来
+    //HR个人信息model
+    var hrMesBassClass:HRUserMesBaseClass?
+    //保存成功回调
+    var saveSucceedClosure:(() ->())?
     
     
     override func viewDidLoad() {
@@ -55,18 +67,66 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         tableView.register(UINib.init(nibName: "OpenChoseCell", bundle: nil), forCellReuseIdentifier: "OpenChoseCell")
         tableView.tableFooterView = createFootView()
         
+        if self.enterTypeEnum == .userCenterEnter {
+            self.headImageStr = (self.hrMesBassClass?.avatar)!
+            self.sexStr = (self.hrMesBassClass?.sex)!
+            self.trueNameStr = self.hrMesBassClass?.name
+            self.dutyNameStr = self.hrMesBassClass?.job
+            self.emailStr = self.hrMesBassClass?.mail
+            
+        }
+        
+        
     }
     func createFootView() -> UIView {
         let footView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width , height: 60))
-        let btn = UIButton(frame: CGRect.init(x: 20, y: 10, width: tableView.frame.size.width - 40, height: 40))
+        let btn = UIButton(frame: CGRect.init(x: 20, y: 10, width: ScreenWidth - 40, height: 40))
         btn.backgroundColor = UIColor.black
-        btn.setTitle("下一步", for: .normal)
+      
         btn.setTitleColor(UIColor.mainColor, for: .normal)
         btn.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        btn.addTarget(self, action: #selector(nextBtnClick), for: .touchUpInside)
+      
+        if self.enterTypeEnum == .userCenterEnter {
+             btn.setTitle("保存", for: .normal)
+            btn.addTarget(self, action: #selector(saveBtnClick), for: .touchUpInside)
+        }else{
+            btn.setTitle("下一步", for: .normal)
+            btn.addTarget(self, action: #selector(nextBtnClick), for: .touchUpInside)
+        }
+        
         footView.addSubview(btn)
         return footView
     }
+    func saveBtnClick() -> Void {
+        
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "avatar":self.headImageStr,
+            "name":self.trueNameStr as Any,
+            "sex":self.sexStr,
+            "job":self.dutyNameStr as Any,
+            "mail":self.emailStr as Any
+        ]
+        let jsonStr = JSON(dic)
+        let newDic = jsonStr.dictionaryValue as NSDictionary
+        
+        HREditInfo(dic: newDic, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                SVProgressHUD.showSuccess(withStatus: "修改成功")
+                if self.saveSucceedClosure != nil {
+                    self.saveSucceedClosure!()
+                }
+                _ = self.navigationController?.popViewController(animated: true)
+            }else{
+                SVProgressHUD.showInfo(withStatus: "修改失败")
+            }
+        }) { 
+            
+        }
+        
+    }
+    
+    
     func nextBtnClick() -> Void {
        
         self.view.endEditing(true)
@@ -156,6 +216,9 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         case 0:
             return 1
         case 1:
+            if self.enterTypeEnum == .userCenterEnter {
+                return 3
+            }
             return 2
         case 2:
             return 2
@@ -174,6 +237,30 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "CompleteHRMesHeadCell") as! CompleteHRMesHeadCell
             cell.superVC = self
+            if self.enterTypeEnum == .userCenterEnter {
+                cell.headImageBtn.sd_setBackgroundImage(with: URL.init(string: self.headImageStr), for: .normal, placeholderImage: UIImage.init(named: "默认头像_男.png"))
+                if self.sexStr == "男" {
+                    cell.manBtn.isSelected = true
+                   cell.manBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
+                   cell.womanBtn.backgroundColor = UIColor.clear
+                    cell.womanBtn.isSelected = false
+                }else{
+                    cell.manBtn.isSelected = false
+                   cell.womanBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
+                   cell.manBtn.backgroundColor = UIColor.clear
+                    cell.womanBtn.isSelected = true
+                }
+            }
+            
+            
+            cell.sexBtnClickClosure = { btn in
+                if btn.tag == 1 {
+                    self.sexStr = "男"
+                }else{
+                    self.sexStr = "女"
+                }
+            }
+            
             cell.choseImageColsure = { (choseImageStr) in
                 self.headImageStr = choseImageStr
             }
@@ -186,6 +273,10 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 cell.jvTextField.delegate = cell
                 cell.jvTextField.placeholder = "真实姓名"
                 cell.jvTextField.setPlaceholder("真实姓名", floatingTitle: "姓名")
+                if self.enterTypeEnum == .userCenterEnter {
+                    cell.jvTextField.text = self.trueNameStr
+                }
+                
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("namejvTextField = \(jvTextField.text)")
                     self.trueNameStr = jvTextField.text
@@ -194,9 +285,25 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 cell.jvTextField.delegate = cell
                 cell.jvTextField.placeholder = "您的职务"
                 cell.jvTextField.setPlaceholder("您的职务", floatingTitle: "职务")
+                if self.enterTypeEnum == .userCenterEnter {
+                    cell.jvTextField.text = self.dutyNameStr
+                }
+                
                 cell.textFieldDelegateColsure = { (jvTextField) in
                     print("dutyjvTextField = \(jvTextField.text)")
                     self.dutyNameStr = jvTextField.text
+                }
+            }else if indexPath.row == 2 {
+                cell.jvTextField.tag = 300
+                cell.jvTextField.placeholder = "接收简历的邮箱"
+                cell.jvTextField.setPlaceholder("接收简历的邮箱", floatingTitle: "邮箱")
+                if self.enterTypeEnum == .userCenterEnter {
+                    cell.jvTextField.text = self.emailStr
+                }
+                
+                cell.textFieldDelegateColsure = { (jvTextField) in
+                    print("emailTextField = \(jvTextField.text)")
+                    self.emailStr = jvTextField.text
                 }
             }
             return cell
@@ -296,6 +403,10 @@ class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     }
     func numberOfSections(in tableView: UITableView) -> Int
     {
+        if self.enterTypeEnum == .userCenterEnter {
+            return 2
+        }
+        
         return 5
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

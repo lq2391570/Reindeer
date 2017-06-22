@@ -24,6 +24,9 @@ class CompleteHRMesHeadCell: UITableViewCell,UIImagePickerControllerDelegate,UIN
     var headImageStr = ""
     
     var superVC:UIViewController!
+    //性别按钮点击回调
+    var sexBtnClickClosure:((_ btn:UIButton) ->())?
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -102,7 +105,6 @@ class CompleteHRMesHeadCell: UITableViewCell,UIImagePickerControllerDelegate,UIN
                 //上传成功获得url
                 print("imageUrl = \(jsonStr["url"])")
                 self.headImageStr = jsonStr["url"].string!
-                
                 self.headImageBtn.sd_setBackgroundImage(with: NSURL.init(string: self.headImageStr) as URL!, for: UIControlState.normal)
                 if self.choseImageColsure != nil {
                     self.choseImageColsure!(self.headImageStr)
@@ -123,6 +125,7 @@ class CompleteHRMesHeadCell: UITableViewCell,UIImagePickerControllerDelegate,UIN
             manBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
             womanBtn.backgroundColor = UIColor.clear
             womanBtn.isSelected = false
+            self.sexBtnClickClosure!(manBtn)
         }
 
     }
@@ -134,6 +137,7 @@ class CompleteHRMesHeadCell: UITableViewCell,UIImagePickerControllerDelegate,UIN
             womanBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
             manBtn.backgroundColor = UIColor.clear
             manBtn.isSelected = false
+            self.sexBtnClickClosure!(womanBtn)
         }
 
     }

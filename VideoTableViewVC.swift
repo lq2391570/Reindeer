@@ -248,9 +248,16 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
             //待处理
             print("待处理")
 
-    let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "EvaluateVC") as! EvaluateVC
-            
-            self.navigationController?.pushViewController(vc, animated: true)
+//    let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "EvaluateVC") as! EvaluateVC
+//            
+//        self.navigationController?.pushViewController(vc, animated: true)
+//            let vc = NTESVideoChatViewController(callee: "lq2388691")
+//            //   print("listModel.avatar = \(listModel.avatar)")
+//            vc?.headUrl = listModel.avatar
+//            vc?.nameStr = listModel.name
+//            
+//            self.navigationController?.pushViewController(vc!, animated: true)
+
             
         }
     }

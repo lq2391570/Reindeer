@@ -56,7 +56,7 @@
                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="发送成功.png" translatesAutoresizingMaskIntoConstraints="NO" id="9FY-v8-9M4">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="认证.png" translatesAutoresizingMaskIntoConstraints="NO" id="9FY-v8-9M4">
                         <rect key="frame" x="67" y="34" width="20" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="Rbh-t1-Rn8"/>
@@ -102,11 +102,19 @@
                     <constraint firstAttribute="trailingMargin" secondItem="97d-IF-gJW" secondAttribute="trailing" constant="47" id="wWy-eo-iVo"/>
                 </constraints>
             </tableViewCellContentView>
+            <connections>
+                <outlet property="companyNameLabel" destination="Cue-o8-QYr" id="fJX-2Y-ynH"/>
+                <outlet property="headImageBtn" destination="nnV-zT-LCp" id="lBi-c7-4Ju"/>
+                <outlet property="nameAndSexLabel" destination="tF6-RP-med" id="vcM-VB-jQz"/>
+                <outlet property="renzhengImage" destination="9FY-v8-9M4" id="htZ-Q6-nhX"/>
+                <outlet property="renzhengLabel" destination="RfR-fr-fmZ" id="nVz-Fa-yEc"/>
+                <outlet property="zhunDianLvLabel" destination="97d-IF-gJW" id="lG9-64-NpJ"/>
+            </connections>
             <point key="canvasLocation" x="19" y="41"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="发送成功.png" width="130" height="130"/>
+        <image name="认证.png" width="36" height="36"/>
         <image name="默认头像_女.png" width="200" height="200"/>
     </resources>
 </document>

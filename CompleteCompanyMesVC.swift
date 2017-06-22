@@ -60,7 +60,12 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     //公司全称
     var companyCompleteName = ""
     
-    
+    //公司地址
+    struct JobAddressStruct {
+        var addressName:String?
+        var addressPt:CLLocationCoordinate2D?
+    }
+    var jobAddressModel:JobAddressStruct?
     
     //是完善公司信息还是个人中心进入的公司信息
     enum EnterTypeNum {
@@ -100,8 +105,11 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         tableView.tableFooterView = createFootView()
         tableView.estimatedRowHeight = 100
         
-        let rightBarItem = UIBarButtonItem.init(title: "跳过", style: .plain, target: self, action: #selector(rightBarItemClick))
-        self.navigationItem.rightBarButtonItem = rightBarItem
+        if self.enterType == .registerEnter {
+            let rightBarItem = UIBarButtonItem.init(title: "跳过", style: .plain, target: self, action: #selector(rightBarItemClick))
+            self.navigationItem.rightBarButtonItem = rightBarItem
+        }
+        
         
         companyDetail()
         companyScale()
@@ -123,7 +131,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 self.isHaveImage = true
             }
             self.companyImageArray.removeAll()
-            for model in self.companyImageModelArray {
+            for model in bassClass.imageList! {
+                print("model.path = \(model.path!)")
+              //  let pathStr = model.path?.replacingOccurrences(of: "\\", with: "")
+                
                 self.companyImageArray.append(model.path!)
             }
             
@@ -165,20 +176,15 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     }
     func nextBtnClick() -> Void {
         print("保存")
-        
-        
+        if self.enterType == .registerEnter {
+            //注册时完善公司信息
         print("companyId = \(companyId),logo = \(logoImageStr),industryId = \(industryId) scaleId = \(scaleListModel?.id!) tel = \(phoneNumStr), address = 暂无  desc = \(descStr),images = \(self.companyImageArray)")
         //(地址暂时为空)
-        
-        
         let dicStr:NSDictionary = ["companyId":companyId,"logo":logoImageStr,"industryId":industryId!,"scaleId":(scaleListModel?.id)!,"tel":phoneNumStr,"address":"","desc":descStr,"images":companyImageArray]
         let jsonStr = JSON(dicStr)
-        
-        
         print("jsonStr.dictionaryValue = \(jsonStr.dictionaryValue)")
         
         completeCompanyMes(dic: jsonStr.dictionaryValue as NSDictionary, actionHandler: { (jsonStr) in
-            
             
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
@@ -188,8 +194,6 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 
             self.navigationController?.pushViewController(vc, animated: true)
                 
-                
-                
             }else{
                 SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
                 
@@ -198,7 +202,45 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         }, fail: {
             
         })
-        
+        }else{
+            //个人中心完善公司信息
+            let imageArray:NSArray = companyImageArray as NSArray
+            let subImageStr = imageArray.componentsJoined(by: ",")
+            print("subImageStr = \(subImageStr)")
+            let dic:NSDictionary = [
+                "companyId":GetUser(key: COMPANYID),
+                "logo":self.logoImageStr,
+                "shortName":self.companyDetailModel?.shortName as Any,
+                "fullName":self.companyDetailModel?.name as Any,
+                "industryId":self.companyDetailModel?.companyIndustry?.id as Any,
+                "scaleId":self.companyDetailModel?.companyScale?.id as Any,
+                "tel":self.companyDetailModel?.tel as Any,
+                "address":self.companyDetailModel?.address as Any,
+                "lat":String.init(format: "%.4f", (self.companyDetailModel?.lat)!),
+                "lng":String.init(format: "%.4f", (self.companyDetailModel?.lng)!),
+                "desc":self.companyDetailModel?.desc as Any,
+                "teamHighs":"",
+               // "images":companyImageArray
+                "subImages":subImageStr
+            ]
+         //   print("newDic = \(newDic)")
+            print("companyImageArray = \(companyImageArray)")
+            let jsonStr = JSON(dic)
+            let newDic = jsonStr.dictionaryValue
+            print("dic = \(dic)")
+            print("newDic = \(newDic)")
+            HRChangeCompanyMes(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+                if jsonStr["code"] == 0 {
+                    SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
+                    
+                }else{
+                     SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                }
+            }, fail: { 
+                SVProgressHUD.showInfo(withStatus: "请求失败")
+            })
+            
+        }
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -236,8 +278,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                // cell.rightLabel.text = self.industryString
                // cell.rightLabel.text = self.companySimpleName
                 cell.rightLabel.text = self.companyDetailModel?.shortName
-                cell.logoBtn.sd_setBackgroundImage(with: NSURL.init(string: self.logoImageStr) as URL!, for: .normal)
-                if self.logoImageStr != "" {
+                if self.companyDetailModel?.logo != nil {
+                    cell.logoBtn.sd_setBackgroundImage(with: NSURL.init(string: (self.companyDetailModel?.logo)!) as URL!, for: .normal)
+                }
+                if self.companyDetailModel?.logo != "" {
                     cell.logoBtn.setTitle("", for: .normal)
                 }
                 cell.logoBtnClickclosure = { (sender) in
@@ -251,6 +295,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 cell.nameLabel.text = "公司全称"
                // cell.rightLabel.text = self.scaleListModel?.name
                 cell.rightLabel.text = self.companyDetailModel?.name
+               
                 return cell
             }
         }else if indexPath.section == 1 {
@@ -260,6 +305,8 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司行业"
                 cell.rightLabel.text = self.companyDetailModel?.companyIndustry?.name
+                
+                
                 return cell
             }else{
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultSelectCell") as! DefaultSelectCell
@@ -267,6 +314,8 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司规模"
                 cell.rightLabel.text = self.companyDetailModel?.companyScale?.name
+                
+                
                 return cell
             }
         }else if indexPath.section == 2{
@@ -284,6 +333,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             }else{
                 cell.nameLabel.text = "公司地址"
                 cell.rightLabel.text = self.companyDetailModel?.address
+                
             }
             return cell
         }else if indexPath.section == 3 {
@@ -303,18 +353,24 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ImageSelectCell") as! ImageSelectCell
                     
-                    cell.imagePathArray = NSMutableArray.init(array: self.companyImageArray)
+                  //  cell.imagePathArray = NSMutableArray.init(array: self.companyImageArray)
+                    if self.companyImageArray.count > 0 {
+                         cell.imagePathArray = self.companyImageArray
+                    }
+                    
+                    
                     print("cell.imagePathArray = \(cell.imagePathArray)")
+                    
+                    
                     if isReflashCollection == false {
                         isReflashCollection = true
                         cell.collectionView.reloadData()
                     }
-                    
                     //判断item是否大于1
                     if cell.collectionView.numberOfItems(inSection: 0) > 1 {
                          itemCount = cell.collectionView.numberOfItems(inSection: 0)
                     }
-                  //图片点击
+                    //图片点击
                     cell.imageBtnClickClosure = { (btn) in
                           print("tupian")
                     }
@@ -370,6 +426,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 vc.navTitle = "公司简称"
                 vc.textViewTypeEnum = .typeWorkContent
                 vc.saveBtnClickClosure = { (deacStr) in
+                    self.companyDetailModel?.shortName = deacStr
                     self.companySimpleName = deacStr
                     tableView.reloadData()
                 }
@@ -381,6 +438,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 vc.navTitle = "公司全称"
                 vc.textViewTypeEnum = .typeWorkContent
                 vc.saveBtnClickClosure = { (deacStr) in
+                    self.companyDetailModel?.name = deacStr
                     self.companyCompleteName = deacStr
                     tableView.reloadData()
                 }
@@ -392,6 +450,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "PhoneNumVC") as! PhoneNumVC
                 vc.placeholderStr = "请输入公司电话"
                 vc.doneClosure = { (str) in
+                    self.companyDetailModel?.tel = str
                     self.phoneNumStr = str
                     self.tableView.reloadData()
                 }
@@ -403,10 +462,38 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 vc.navTitle = "公司简介"
                 vc.textViewTypeEnum = .typeWorkContent
                 vc.saveBtnClickClosure = { (deacStr) in
+                    self.companyDetailModel?.desc = deacStr
                     self.descStr = deacStr
                     tableView.reloadData()
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
+                
+            }else if indexPath.row == 1 {
+                //公司地址
+                let vc = MapVC()
+                vc.title = "公司地址"
+               // vc.cityName = self.areaName
+                vc.completeClickClosure = { (poiInfo,selectAddress,selectPt) in
+                    print("地区名称 = \(poiInfo?.name) ,选择的地区名称 = \(selectAddress) 坐标 = \(selectPt)")
+                    if poiInfo == nil {
+                        self.jobAddressModel = JobAddressStruct.init(addressName: selectAddress, addressPt: selectPt)
+                        self.companyDetailModel?.address = selectAddress
+                        self.companyDetailModel?.lat = selectPt?.latitude
+                        self.companyDetailModel?.lng = selectPt?.longitude
+                        
+                    }else{
+                        self.jobAddressModel = JobAddressStruct.init(addressName: poiInfo?.name, addressPt: poiInfo?.pt)
+                        self.companyDetailModel?.address = poiInfo?.name
+                        self.companyDetailModel?.lat = poiInfo?.pt.latitude
+                        self.companyDetailModel?.lng = poiInfo?.pt.longitude
+                        
+                    }
+                    self.tableView.reloadData()
+                    
+                }
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+
                 
             }
         }else if indexPath.section == 4 {
@@ -430,6 +517,7 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyProductVC") as! CompanyProductVC
                 vc.companyId = companyId
                 vc.succeedReturnClosure = { (jsonStr) in
+                    
                     self.companyDetail()
                    
                 }
@@ -456,6 +544,8 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                         let model:CompanyIndustryListList! = listModel
                         self.industryString.append(model.name!)
                         self.industryId = "\(listModel.id!)"
+                        self.companyDetailModel?.companyIndustry?.id = listModel.id
+                        self.companyDetailModel?.companyIndustry?.name = listModel.name
                     }
                     print("self.industryString = \(self.industryString)")
                     print("self.industryId = \(self.industryId)")
@@ -468,10 +558,14 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 for scaleList in (self.scaleBassClass?.companyScale)! {
                     let model:CompanyScaleCompanyScale = scaleList 
                     stringArray.append(model.name!)
+                    
+                    
                 }
                 createActionSheet(title: "公司规模", message: "请选择公司规模", stringArray: stringArray, viewController: self, closure: { (index) in
                     print("选择了第\(index)个")
                     self.scaleListModel = self.scaleBassClass?.companyScale?[index]
+                    self.companyDetailModel?.companyScale?.id = self.scaleListModel?.id
+                    self.companyDetailModel?.companyScale?.name = self.scaleListModel?.name
                     self.tableView.reloadData()
                 })
             
@@ -536,7 +630,8 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
         print("asstes.count=\(assets.count)")
         //因为assets有缓存，所以每次调用需清空数组
         self.imageFileArray = []
-       // self.companyImageArray = []
+        self.companyImageArray = []
+        
         for asset in assets {
             print("asset=\(asset)")
             index = index + 1
@@ -579,6 +674,10 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
             })
         }
         print("self.imageFileArray.count=\(self.imageFileArray.count)")
+                   self.companyImageArray.removeAll()
+                    for model in self.companyImageModelArray {
+                        self.companyImageArray.append(model.path!)
+                    }
         
         for imageUrl in self.imageFileArray {
             uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
@@ -594,7 +693,6 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
                 
             })
         }
-
         
         self.dismiss(animated: true, completion: nil)
         
