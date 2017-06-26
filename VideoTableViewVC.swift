@@ -209,15 +209,16 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     cell.installCell(headImageUrl: listModel.avatar, name: listModel.name, money: listModel.salary, stateNum: listModel.ready!, videoBtnClosure: { (btn) in
                         print("开始视频")
                         if listModel.ready == 1 {
-                            //未就绪(测试视频直接进入视频)
-//                            createAlertOneBtn(title: "提示", message: "此应聘者暂未就绪", btnStr: "知道了", viewControll: self, closure: nil)
-                            let vc = NTESVideoChatViewController(callee: "lq2388691")
+                    //未就绪(测试视频直接进入视频)
+//               createAlertOneBtn(title: "提示", message: "此应聘者暂未就绪", btnStr: "知道了",   viewControll: self, closure: nil)
+                       let vc = NTESVideoChatViewController(callee: "lq2391570")
                          //   print("listModel.avatar = \(listModel.avatar)")
                           vc?.headUrl = listModel.avatar
-                            vc?.nameStr = listModel.name
+                          vc?.nameStr = listModel.name
+                          vc?.ypUserId = listModel.id!
+                        //  vc?.stateLabel.text = listModel.
                         self.navigationController?.pushViewController(vc!, animated: true)
-                            
-                        }
+                      }
                         
                     })
                     
@@ -233,6 +234,24 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         return cell
         
     }
+    //由于视频文件中不能调用HttpEngin，先把视频中的请求写在这里
+    //1获取jobeeker的个人信息
+    func getJobSeekerMes(mianshiId:Int,succeedClosure:((_ jobSeekerBassClass:JobSeekerMesInVideoBaseClass) -> ())?) -> Void {
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "id":mianshiId
+        ]
+        let jsonStr = JSON(dic)
+        let newDic = jsonStr.dictionaryValue as NSDictionary
+        
+        JobSeekerMesInVideo(dic: newDic, actionHander: { (jobSeekerBassClass) in
+            succeedClosure!(jobSeekerBassClass)
+        }) { 
+            
+        }
+    }
+    
+    
     func numberOfSections(in tableView: UITableView) -> Int
     {
         if homeType == .HRHomePage {
@@ -251,17 +270,23 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
 //    let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "EvaluateVC") as! EvaluateVC
 //            
 //        self.navigationController?.pushViewController(vc, animated: true)
-//            let vc = NTESVideoChatViewController(callee: "lq2388691")
-//            //   print("listModel.avatar = \(listModel.avatar)")
+         //   let model:HRVideoInterViewStateList = (self.bassClass?.list![indexPath.section])!
+          //  let listModel:HRVideoInterState2List = (model.list?[indexPath.row])!
+            
+          //  print("listModel.mianshiId = \(listModel.id)")
+            
+            let vc = NTESVideoChatViewController(callee: "lq2391570")
+            //   print("listModel.avatar = \(listModel.avatar)")
 //            vc?.headUrl = listModel.avatar
 //            vc?.nameStr = listModel.name
-//            
-//            self.navigationController?.pushViewController(vc!, animated: true)
-
+            vc?.mianshiId = 74
+            vc?.token = GetUser(key: TOKEN) as! String
+            vc?.isHRVideo = true
+            self.navigationController?.pushViewController(vc!, animated: true)
             
         }
+        
     }
-    
     
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

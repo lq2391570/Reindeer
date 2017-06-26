@@ -163,6 +163,10 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 print("点击了视频管理")
             }else if indexPath.row == 1 {
                 print("点击账户管理")
+                let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AccountVC") as! AccountVC
+                vc.title = "账户管理"
+                self.navigationController?.pushViewController(vc, animated: true)
+                
             }
         }else if indexPath.section == 2 {
             if indexPath.row == 0 {

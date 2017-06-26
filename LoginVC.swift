@@ -43,7 +43,7 @@ class LoginVC: UIViewController {
                 SetUser(value: jsonStr["netToken"].stringValue, key: NETTOKEN)
                 //登陆成功后登陆网易云
                 
-                NIMSDK.shared().loginManager.login("lq2391570", token: "e10adc3949ba59abbe56e057f20f883e", completion: { (error) in
+                NIMSDK.shared().loginManager.login("lq2388691", token: "e10adc3949ba59abbe56e057f20f883e", completion: { (error) in
                      print("error = \(error)")
                     if error == nil{
                         print("登陆成功")
