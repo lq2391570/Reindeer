@@ -171,8 +171,17 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }else if indexPath.section == 2 {
             if indexPath.row == 0 {
                 print("邀请同事")
+                let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "InviteColleagueVC") as! InviteColleagueVC
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+                
+                
             }else if indexPath.row == 1 {
                 print("认证状态")
+                let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AttestationVC") as! AttestationVC
+                
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             
         }else if indexPath.section == 3 {

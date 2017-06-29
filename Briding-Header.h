@@ -24,17 +24,24 @@
 #import "NTESVideoChatViewController.h"
 #import "NTESNetChatViewController.h"
 #import "NTESAudioChatViewController.h"
-
+#import <AlipaySDK/AlipaySDK.h>
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 //#import <CocoaLumberjack/CocoaLumberjack.h>
+
+#import "WXApi.h"
+#import "WXApiObject.h"
+
+
 #ifdef __OBJC__
-//#import <UIKit/UIKit.h>
-//#import <Foundation/Foundation.h>
+#import <AlipaySDK/AlipaySDK.h>
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #import <NIMSDK/NIMSDK.h>
 #import <NIMAVChat/NIMAVChat.h>
 #import <CocoaLumberjack/CocoaLumberjack.h>
 
 #import "NTESGlobalMacro.h"
-
 
 
 

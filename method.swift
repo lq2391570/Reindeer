@@ -258,7 +258,7 @@ func cancel(_ task: Task?) {
     task?(true)
 }
 
-//时间转化为时间戳
+//时间转化为时间戳(13位)
 func dateTransformUnixStr(date:Date) ->String
 {
     let timeInterval:TimeInterval = date.timeIntervalSince1970*1000
@@ -266,6 +266,14 @@ func dateTransformUnixStr(date:Date) ->String
     print("timeString = \(timeString)")
     return timeString
 }
+////时间转化为时间戳(10位)
+//func dateTransformUnixStr(date:Date) ->String
+//{
+//    let timeInterval:TimeInterval = date.timeIntervalSince1970*1000
+//    let timeString:String = String(format: "%0.f",timeInterval)
+//    print("timeString = \(timeString)")
+//    return timeString
+//}
 //时间戳转化为时间(格式自定义)
 func unixTransformtimeStr(unixStr:NSNumber,dateStyle:String) ->String
 {

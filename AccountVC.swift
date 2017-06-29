@@ -39,10 +39,19 @@ class AccountVC: BaseViewVC {
     
     @IBAction func rechargeClick(_ sender: UIButton) {
         
+        let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "RechargeVC") as! RechargeVC
+        vc.succeedReturnClosure = {
+           self.getAccountBalance()
+        }
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+        
         
     }
-    
     @IBAction func applyInvoiceClick(_ sender: UIButton) {
+        
+        
         
     }
     
