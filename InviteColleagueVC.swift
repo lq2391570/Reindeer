@@ -91,7 +91,7 @@ class InviteColleagueVC: BaseViewVC {
         
     }
     func getVerCode() -> Void {
-        getVerificationCodeLogin(dic: ["phone":phoneNumTextField.text!], actionHandler: { (jsonStr) in
+        getVerificationCode(dic: ["phone":phoneNumTextField.text!], actionHandler: { (jsonStr) in
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "获取成功")
                 

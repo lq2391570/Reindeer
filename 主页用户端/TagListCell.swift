@@ -16,7 +16,7 @@ class TagListCell: UITableViewCell {
         // Initialization code
         recommendView.borderColor = UIColor.init(red: 233/255.0, green: 228/255.0, blue: 222/255.0, alpha: 1)
         recommendView.tagBackgroundColor = UIColor.white
-        recommendView.textFont = UIFont.systemFont(ofSize: 16)
+        recommendView.textFont = UIFont.systemFont(ofSize: 14)
         recommendView.borderWidth = 1
         
     }

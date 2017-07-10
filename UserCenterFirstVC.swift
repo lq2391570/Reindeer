@@ -9,10 +9,6 @@
 import UIKit
 
 class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
-
-   
-    
-    
     
     @IBOutlet var headImageView: UIImageView!
     
@@ -28,12 +24,9 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     
     var resumeBassClass:ResumeBaseClass?
     
-     var titleArray = ["简历管理","上传简历附件","积分任务","成就","设置"]
+    var titleArray = ["简历管理","上传简历附件","积分任务","成就","设置"]
     
-    var imageNameArray = ["1简历管理","2上传简历附件","3积分任务","4成就","5设置","6求职意向","7我的优势","8社交主页"]
-    
-    
-    
+    var imageNameArray = ["1简历管理user","2上传简历附件user","3积分任务user","4成就user","5设置user","6求职意向","7我的优势","8社交主页"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,25 +37,26 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.dataSource = self
         tableView.register(UINib.init(nibName: "UserCenterCell", bundle: nil), forCellReuseIdentifier: "UserCenterCell")
         tableView.tableFooterView = UIView()
-      //  tableView.separatorStyle = .none
+      // tableView.separatorStyle = .none
         
-        headImageView.layer.cornerRadius = 40
+        headImageView.layer.cornerRadius = 35
         headImageView.layer.masksToBounds = true
       //  headImageView.sizeToFit()
         let addtap = UITapGestureRecognizer(target: self, action: #selector(headImageClick))
         headImageView.addGestureRecognizer(addtap)
-        overturnReturnImage()
+      //  overturnReturnImage()
         getUserMesAndImage()
         getJobIntension()
     }
     //获取个人资料
     func getUserMesAndImage() -> Void {
-        getUserMes(dic: ["token":GetUser(key: TOKEN)], actionHandler: { (jsonStr) in
+        userMesInfoInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (jsonStr) in
             if jsonStr["code"] == 0 {
                 print("jsonStr = \(jsonStr)")
                 self.nameLabel.text = jsonStr["name"].stringValue
                 self.sexLabel.text = jsonStr["sex"].stringValue
-                
+                self.headImageView.sd_setImage(with: URL.init(string: jsonStr["avatar"].stringValue), placeholderImage: UIImage.init(named: "默认头像_男.png"))
+                self.successProLabel.text = "接通率：\(jsonStr["callRate"].stringValue)"
             }
             
         }) {
@@ -79,9 +73,6 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             //  SVProgressHUD.showInfo(withStatus: "请求失败")
         }
     }
-
-    
-    
     //翻转returnImage
     func overturnReturnImage() -> Void {
         returnImage.layer.transform = CATransform3DMakeRotation(self.radians(degress: 180), 0, 0, 1);
@@ -124,6 +115,7 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             self.navigationController?.pushViewController(vc, animated: true)
         }else if indexPath.section == 2 {
             let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "SettingVC") as! SettingVC
+            vc.title = "设置"
             self.navigationController?.pushViewController(vc, animated: true)
             
         }

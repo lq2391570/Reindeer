@@ -10,6 +10,7 @@ import UIKit
 
 class CompanyIntroduceCell: UITableViewCell {
 
+    @IBOutlet var contentLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

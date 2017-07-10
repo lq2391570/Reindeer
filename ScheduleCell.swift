@@ -16,6 +16,7 @@ class ScheduleCell: UITableViewCell,UITableViewDelegate,UITableViewDataSource {
     
     @IBOutlet var interViewListTableView: UITableView!
     
+    @IBOutlet var jiantouImage: UIImageView!
     
     
     override func awakeFromNib() {
@@ -26,7 +27,12 @@ class ScheduleCell: UITableViewCell,UITableViewDelegate,UITableViewDataSource {
         interViewListTableView.dataSource = self
         interViewListTableView.register(UINib.init(nibName: "ScheduleListCell", bundle: nil), forCellReuseIdentifier: "ScheduleListCell")
         interViewListTableView.rowHeight = 25
+        interViewListTableView.tableFooterView = UIView()
+        overturnReturnImage(view: jiantouImage, degress: 270)
     }
+    
+   
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return (listArray.count)

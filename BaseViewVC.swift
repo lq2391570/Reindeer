@@ -21,8 +21,23 @@ class BaseViewVC: UIViewController {
       //  self.title = "完善公司信息"
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.mainColor]
+        
+        if self.navigationController != nil{
+            //自定义左键，并重写返回方法
+            let leftBtn = UIButton(type: .custom)
+            leftBtn.frame = CGRect.init(x: 0, y: 0, width: 20, height: 20)
+            leftBtn.setImage(UIImage.init(named: "返回new"), for: .normal)
+            leftBtn.addTarget(self, action: #selector(leftReturnBtnClick), for: .touchUpInside)
+            let leftBarButtonItem = UIBarButtonItem(customView: leftBtn)
+            self.navigationItem.leftBarButtonItem = leftBarButtonItem
+            
+        }
+        
     }
-
+    func leftReturnBtnClick() -> Void {
+       _ = self.navigationController?.popViewController(animated: true)
+        
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

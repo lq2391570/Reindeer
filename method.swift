@@ -22,6 +22,34 @@ let COMPANYID = "companyId"
 let HRPOSITION = "HRPosition"
 //网易云Token
 let NETTOKEN = "netToken"
+//user信息
+let USERMES = "USERMES"
+
+
+//let ViewBorderRadius
+
+//设置圆角
+func ViewBorderRadius(view:UIView,radius:CGFloat,width:CGFloat?,color:UIColor?)
+{
+    view.layer.cornerRadius = radius
+    view.layer.masksToBounds = true
+    if width != nil {
+        view.layer.borderWidth = width!
+    }
+    if color != nil {
+        view.layer.borderColor = color!.cgColor
+    }
+    
+}
+
+//旋转
+
+func overturnReturnImage(view:UIView,degress:CGFloat) -> Void {
+    view.layer.transform = CATransform3DMakeRotation(radians(degress: degress), 0, 0, 1);
+}
+func radians(degress:CGFloat) -> CGFloat {
+    return (degress * 3.14159265) / 180.0;
+}
 
 
 //Userdefault(存)
@@ -287,14 +315,14 @@ func unixTransformtimeStr(unixStr:NSNumber,dateStyle:String) ->String
     return dateStr
     
 }
-
-
 //创建底部Btn(保存按钮)
 func createBottomBtn(supView:UIView,title:String,actionHander:(_ sender:UIButton) -> Void) -> UIView {
-    let view = UIView(frame: CGRect.init(x: 0, y: 0, width: supView.frame.size.width, height: 60))
-    view.backgroundColor = UIColor.clear
+    let view = UIView(frame: CGRect.init(x: 0, y: 0, width: ScreenWidth, height: 60))
+    view.backgroundColor = UIColor.init(red: 246/255.0, green: 246/255.0, blue: 246/255.0, alpha: 1)
+    
     let btn = UIButton(type: .custom)
-    btn.frame = CGRect.init(x: 20, y: 10, width: supView.frame.size.width - 40, height: 40)
+  //  btn.frame = CGRect.init(x: 20, y: 10, width: view.frame.size.width - 40 , height: 40)
+  //  btn.center = CGPoint.init(x: view.center.x, y: v)
     btn.backgroundColor = UIColor.black
     btn.setTitle(title, for: .normal)
   
@@ -302,6 +330,14 @@ func createBottomBtn(supView:UIView,title:String,actionHander:(_ sender:UIButton
     
     view.addSubview(btn)
     actionHander(btn)
+    print("view.frame.size.width=\(view.frame.size.width)")
+    print("ScreenWidth = \(ScreenWidth)")
+    btn.snp.makeConstraints { (make) in
+        make.left.equalTo(view.snp.left).offset(20)
+        make.right.equalTo(view.snp.right).offset(-20)
+       make.height.equalTo(40)
+    }
+    
     
     return view
 }

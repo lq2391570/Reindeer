@@ -26,6 +26,12 @@ class CompanyProductCell: UITableViewCell {
         
         
     }
+    func installCell(logoStr:String?,name:String?,desc:String?) -> Void {
+        headImage.sd_setBackgroundImage(with: URL.init(string: logoStr ?? ""), for: UIControlState.normal, placeholderImage: UIImage.init(named: "hua"))
+        titleLabel.text = name
+        introLabel.text = desc
+    }
+    
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

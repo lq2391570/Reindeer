@@ -14,13 +14,13 @@ class SettingVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     @IBOutlet var tableView: UITableView!
     
     var section1NameArray = ["设置提醒","修改手机号","修改密码"]
+    var section1ImageNameArray = ["remind_setting_icon.png","modification_phone_icon.png","modification_password_icon.png"]
+    
     var section2NameArray = ["帮助与反馈","关于我们"]
-    
-    
+    var section2ImageNameArray = ["help_back_icon.png","about_icon.png"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
         tableView.delegate = self
         tableView.dataSource = self
@@ -28,10 +28,14 @@ class SettingVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.rowHeight = 70
         tableView.tableFooterView = createBottomBtn(supView: tableView, title: "退出登录", actionHander: { (btn) in
             btn.addTarget(self, action: #selector(exitBtnClick), for: .touchUpInside)
+            
         })
+        
     }
     func exitBtnClick() -> Void {
         print("退出登录")
+        
+        
     }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 10
@@ -54,15 +58,46 @@ class SettingVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCell") as! SettingCell
         if indexPath.section == 0 {
             cell.nameLabel.text = section1NameArray[indexPath.row]
+            cell.leftImageView.image = UIImage.init(named: section1ImageNameArray[indexPath.row])
         }else if indexPath.section == 1 {
             cell.nameLabel.text = section2NameArray[indexPath.row]
+            cell.leftImageView.image = UIImage.init(named: section2ImageNameArray[indexPath.row])
         }else{
             cell.nameLabel.text = "切换身份"
+            cell.leftImageView.image = UIImage.init(named: "switch_roles_icon.png")
         }
         return cell
         
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                //设置提醒
+                let vc = RemindSwitchVC()
+                vc.title = "设置提醒"
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else if indexPath.row == 1 {
+                //修改手机号
+                let vc = ChangePhoneNumVC()
+                vc.title = "修改手机号"
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else if indexPath.row == 2 {
+                //修改密码
+                let vc = ChangeMiMaVC()
+                vc.title = "修改密码"
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }else if indexPath.section == 1 {
+            if indexPath.row == 0 {
+                //帮助与反馈
+                
+            }else if indexPath.row == 1 {
+                //关于我们
+    
+            }
+            
+        }
+        
         if indexPath.section == 2 {
             createActionSheet(title: "提示", message: "切换身份", stringArray: ["应聘者","HR"], viewController: self, closure: { (index) in
                 print("点击了第\(index)个")

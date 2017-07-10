@@ -24,8 +24,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         case HRHomePage   //HR
     }
     
-    
-    
     var homeType:HomepageType = .userHomePage
     var headView:DropDownView?
     var arrowView:ArrowsView!
@@ -90,6 +88,9 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     //选择薪资要求model
     var paySelectModel:PositionList?
    
+    //头像ImageView
+    var headImageView:UIImageView?
+    
     //职位名称
     var jobName = ""
     
@@ -101,6 +102,10 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         var expId = ""
         var salaryId = ""
         var jobStyleID = "" // 职位类型id
+    
+    var numOfNoReadVideo = "0"
+    var numOfNoReadCommon = "0"
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -118,14 +123,20 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         self.moneyBassClass = getPayTypePath()
         if homeType == .userHomePage {
             //应聘者
-             getJobIntension()
+             getJobIntension(succeedClosure: { 
+                self.getHomePageZhiWeiList()
+             })
             //获得面试时间
             self.interViewTimeBassClass = getInterViewTypePath()
+            userGetNoReadNum()
+            
         }else if homeType == .HRHomePage {
             //HR
-            getHRPostJobs()
+            getHRPostJobs(succeedClosure: { 
+                 self.getHomePageJIanLiList()
+            })
             NotificationCenter.default.addObserver(self, selector: #selector(addPositionNoti), name: NSNotification.Name(rawValue: "ADDPOSITION"), object: nil)
-            
+           
         }
         
             NIMAVChatSDK.shared().netCallManager.add(self)
@@ -137,11 +148,10 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
 
         self.navigationController?.pushViewController(vc!, animated: true)
         
-        
     }
     func addPositionNoti() -> Void {
         print("收到通知")
-        getHRPostJobs()
+        getHRPostJobs(succeedClosure: nil)
         
     }
     //根据求职意向的地区id查找下属子地区（一层）
@@ -167,7 +177,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     }
     
     //获得求职意向列表
-    func getJobIntension() -> Void {
+    func getJobIntension(succeedClosure:(()->())?) -> Void {
         searchUserResume(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
             self.resumeBassClass = bassClass
             
@@ -183,13 +193,18 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 self.akPickView?.reloadData()
             }
             self.tableView.reloadData()
+            if succeedClosure != nil {
+                succeedClosure!()
+            }
+            
+            
         }) {
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
     }
     
     //获得HR发布的职位列表（HR端）
-    func getHRPostJobs() -> Void {
+    func getHRPostJobs(succeedClosure:(() -> ())?) -> Void {
         HRPostJobsInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
             
             self.HRPostjobBassClass = bassClass
@@ -197,8 +212,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             //得到职位列表后存起来，排期选择职位时使用
             let data:Data = NSKeyedArchiver.archivedData(withRootObject: self.HRPostjobBassClass!)
             SetUser(value: data, key: HRPOSITION)
-            
-            
             self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[0].id)!).stringValue
             self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list![0].jobId)!).stringValue
             print("self.jobId =\(self.jobId)")
@@ -208,6 +221,9 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 self.akPickView?.reloadData()
             }
             self.tableView.reloadData()
+            if succeedClosure != nil {
+                succeedClosure!()
+            }
         }) {
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
@@ -221,7 +237,15 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         if (bassClass.list?.count)! > 0 {
             self.jobName = (bassClass.list?[0].jobName!)!
         }
-              self.tableView.reloadData()
+//        var IndexPathArray:[IndexPath] = []
+//        for index:Int in 0..<(bassClass.list?.count)!{
+//            let indexPath = NSIndexPath(row: index, section: 1)
+//            IndexPathArray.append(indexPath as IndexPath)
+//        }
+        let index = IndexSet(integer: 1)
+        
+        self.tableView.reloadSections(index, with: .automatic)
+         //     self.tableView.reloadData()
         
         }) { 
         SVProgressHUD.showInfo(withStatus: "请求失败")
@@ -247,17 +271,19 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         //消除毛玻璃效果
         self.navigationController?.navigationBar.isTranslucent = false;
         
-        let headImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 36, height: 36))
-        headImageView.layer.cornerRadius = 18
-        headImageView.layer.masksToBounds = true
+        headImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 36, height: 36))
+        headImageView?.layer.cornerRadius = 18
+        headImageView?.layer.masksToBounds = true
      //   headImageView.backgroundColor = UIColor.green
-        headImageView.sd_setImage(with: NSURL.init(string: headImageUrlStr) as URL!, placeholderImage: UIImage.init(named: "默认头像_男.png"))
-        headImageView.isUserInteractionEnabled = true
-        let leftBarBtnItem = UIBarButtonItem(customView: headImageView)
+        headImageView?.sd_setImage(with: NSURL.init(string: headImageUrlStr) as URL!, placeholderImage: UIImage.init(named: "默认头像_男.png"))
+        
+        
+        headImageView?.isUserInteractionEnabled = true
+        let leftBarBtnItem = UIBarButtonItem(customView: headImageView!)
         self.navigationItem.leftBarButtonItem = leftBarBtnItem
         let tapReginzer = UITapGestureRecognizer.init(target: self, action: #selector(headImageViewTap))
         
-        headImageView.addGestureRecognizer(tapReginzer)
+        headImageView?.addGestureRecognizer(tapReginzer)
         
         if homeType == .userHomePage {
             let installBtn = UIButton(type: .custom)
@@ -313,6 +339,16 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             if jsonStr["code"] == 0 {
                 print("jsonStr = \(jsonStr)")
                 self.userMesJson = jsonStr
+              //  let userDic = jsonStr.dictionaryValue
+
+                
+//                let userData = NSKeyedArchiver.archivedData(withRootObject: jsonStr)
+//                let dataArray = NSArray()
+//                dataArray.adding(userData)
+//                SetUser(value: dataArray, key: USERMES)
+                
+                self.headImageUrlStr = (self.userMesJson?["avatar"].stringValue)!
+                self.headImageView?.sd_setImage(with: URL.init(string: self.headImageUrlStr), placeholderImage: UIImage.init(named: "默认头像_男.png"))
             }
         }) { 
         print("请求失败")
@@ -321,14 +357,29 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     
     //设置按钮点击
     func installBtnClick() -> Void {
-        print("设置")
+        print("扫码登录")
         
-        //暂时放完善信息
-        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
-        
+        //扫码登陆
+        let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "QRCodeVC")
+        vc.title = "扫码登录"
         self.navigationController?.pushViewController(vc, animated: true)
         
     }
+    //获取面试未读数量
+    func userGetNoReadNum() -> Void {
+        userNoManagerNumInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                self.numOfNoReadVideo = jsonStr["video"].stringValue
+                self.numOfNoReadCommon = jsonStr["common"].stringValue
+                self.tableView.reloadData()
+            }
+        }) { 
+            
+        }
+        
+    }
+    
+    
     
     //titleView
     func createTitleView() -> UIView {
@@ -373,9 +424,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }else{
             return 0
         }
-       
     }
-    
     func pickerView(_ pickerView: AKPickerView!, titleForItem item: Int) -> String!
     {
         if homeType == .userHomePage {
@@ -385,7 +434,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }else{
             return ""
         }
-        
     }
     func pickerView(_ pickerView: AKPickerView!, didSelectItem item: Int)
     {
@@ -452,70 +500,62 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         guard section == 1 else {
             return nil
         }
-//        if headView == nil {
-//             headView = DropDownView()
-//             headView!.supViewController = self
-//
-//        }
-//        headView!.backgroundColor = UIColor.white
-//        
-//        headView?.titleBtnClickClosure = { (sender,height) in
-//            print("height = \(height)")
-//            if self.headView?.isOpen == true {
-//                self.heightOfSeciton = height
-//                self.isOpen = true
-//                self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
-//                self.tableView.isScrollEnabled = false
-//                
-//            }else{
-//                self.heightOfSeciton = height
-//                self.isOpen = false
-//                self.tableView.isScrollEnabled = true
-//               
-//            }
-//           self.tableView.reloadData()
-//         //    print("headView.frame=\(self.headView!.frame)")
-//        }
-//      //  headView?.isUserInteractionEnabled = false
-//             return headView
-        
-        menu = JNMenu(origin: CGPoint(x: 0, y: 100), height: 40, width: self.view.frame.size.width)
+        if menu == nil {
+            menu = JNMenu(origin: CGPoint(x: 0, y:100), height: 40, width: self.view.frame.size.width)
+        }
         menu.datasource = self
         menu.delegate = self
         if self.homeType == .HRHomePage {
             menu.isHRDropType = true
         }
-        
         menu.sureBtnClickClosure = { (eduModel,expModel,payModel) in
             print("eduModel.name = \(eduModel?.name) expModel.name= \(expModel?.name) payModel.name = \(payModel?.name)")
             self.eduSelectModel = eduModel
             self.expSelectModel = expModel
             self.paySelectModel = payModel
             self.getHomePageZhiWeiList()
+        }
+        menu.cancelBtnClickClosure = {
+            self.expSelectModel = nil
+            self.eduSelectModel = nil
+            self.paySelectModel = nil
+        
+            self.getHomePageZhiWeiList()
             
         }
+        //赋予选择条件的初始值，记录选择的条件
+        if self.eduSelectModel != nil {
+            menu.eduSelectModel = self.eduSelectModel
+        }
+        if self.expSelectModel != nil {
+            menu.expSelectModel = self.expSelectModel
+        }
+        if self.paySelectModel != nil {
+            menu.paySelectModel = self.paySelectModel
+        }
+        
+        
         menu.menuOpenOrCloseClosure = { (isopen) in
             if isopen == true {
-                
                 self.isOpen = true
                 if self.tableView.contentOffset.y < 140 {
-                     self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
+                    self.tableView.setContentOffset(CGPoint.init(x: 0, y: 140), animated: true)
                 }
                 if self.tableView.contentSize.height > ScreenHeight {
-                     self.menu.backGroundView.frame = CGRect(origin: CGPoint(x: 0, y :100),size: CGSize(width:self.view.frame.size.width, height: self.tableView.contentSize.height))
+                    self.menu.backGroundView.frame = CGRect(origin: CGPoint(x: 0, y :100),size: CGSize(width:self.view.frame.size.width, height: self.tableView.contentSize.height))
                 }else{
                     self.menu.backGroundView.frame = CGRect(origin: CGPoint(x: 0, y :100),size: CGSize(width:self.view.frame.size.width, height: ScreenHeight))
                 }
-                 self.tableView.isScrollEnabled = false
-
+                self.tableView.isScrollEnabled = false
+                
             }else{
                 
                 self.isOpen = false
-               
+                
                 self.tableView.isScrollEnabled = true
             }
         }
-       
+    
         return menu
         
     }
@@ -579,22 +619,47 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     {
         if self.homeType == .userHomePage {
             if column == 0 {
-                return "推荐"
+                if self.selectRecommonOrNew == 1 {
+                    return "推荐"
+                }else{
+                    return "最新"
+                }
+                
             }else if column == 1 {
+                if self.selectAreaModel != nil {
+                    return (self.selectAreaModel?.name)!
+                }
                 return "地区"
             }else if column == 2 {
+                if self.selectTimeModel != nil {
+                    return (self.selectTimeModel?.name)!
+                }
                 return "面试时间"
             }else if column == 3 {
                 return "筛选"
             }
         }else{
             if column == 0 {
-                return "推荐"
+                if self.selectRecommonOrNew == 1 {
+                    return "推荐"
+                }else{
+                    return "最新"
+                }
+                
             }else if column == 1 {
+                if self.paySelectModel != nil {
+                    return (self.paySelectModel?.name)!
+                }
                 return "薪资"
             }else if column == 2 {
+                if self.expSelectModel != nil {
+                    return (self.expSelectModel?.name)!
+                }
                 return "经验"
             }else if column == 3 {
+                if self.eduSelectModel != nil {
+                    return (self.eduSelectModel?.name)!
+                }
                 return "学历"
             }
         }
@@ -607,17 +672,13 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             if indexPath.column == 0 {
                 self.selectRecommonOrNew = indexPath.row
                 getHomePageZhiWeiList()
-                
             }else if indexPath.column == 1 {
                 self.selectAreaModel = self.areaBassClassArray[indexPath.row]
                 getHomePageZhiWeiList()
-                
             }else if indexPath.column == 2 {
                 self.selectTimeModel = interViewTimeBassClass?.list?[indexPath.row]
                 getHomePageZhiWeiList()
-                
             }
-
         }else{
             if indexPath.column == 0 {
                 self.selectRecommonOrNew = indexPath.row
@@ -761,7 +822,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             default:
                 return 0
             }
-
         }else if homeType == .HRHomePage {
             switch indexPath.section {
             case 0:
@@ -821,49 +881,47 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if indexPath.section == 0 {
-            if ScreenWidth == 320{
-                let cell:Position3Cell = tableView.dequeueReusableCell(withIdentifier: "Position3Cell") as! Position3Cell
-                cell.commonInterFaceListClosure = { (btn) in
-                    //普通面试列表
-                    print("普通面试列表")
-                    let vc = InterFaceNotiVC()
-                    vc.title = "普通面试"
-                    vc.userMesJson = self.userMesJson
-                    vc.jobId = self.jobId
-                    vc.intentId = self.jobId
-                    vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-                cell.videoInterFaceListClosure = { (btn) in
-                    //视频面试列表
-                    let vc = VideoInterViewListVC()
-                    vc.userMesJson = self.userMesJson
-                    vc.jobId = self.jobId
-                    vc.intentId = self.jobId
-                    vc.homeType = VideoInterViewListVC.HomepageType(rawValue: self.homeType.rawValue)!
-                    vc.title = "视频面试"
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-                cell.notiListClosure = { (btn) in
-                    //通知列表
-                    let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "NotiAllVC") as! NotiAllVC
-                    
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-                
-                cell.searchBar.delegate = self
-                return cell
-            }else {
+//            if ScreenWidth == 320{
+//                let cell:Position3Cell = tableView.dequeueReusableCell(withIdentifier: "Position3Cell") as! Position3Cell
+//                cell.commonInterFaceListClosure = { (btn) in
+//                    //普通面试列表
+//                    print("普通面试列表")
+//                    let vc = InterFaceNotiVC()
+//                    vc.title = "普通面试"
+//                    vc.userMesJson = self.userMesJson
+//                    vc.jobId = self.jobId
+//                    vc.intentId = self.jobId
+//                    vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//                cell.videoInterFaceListClosure = { (btn) in
+//                    //视频面试列表
+//                    let vc = VideoInterViewListVC()
+//                    vc.userMesJson = self.userMesJson
+//                    vc.jobId = self.jobId
+//                    vc.intentId = self.jobId
+//                    vc.homeType = VideoInterViewListVC.HomepageType(rawValue: self.homeType.rawValue)!
+//                    vc.title = "视频面试"
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//                cell.notiListClosure = { (btn) in
+//                    //通知列表
+//                    let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "NotiAllVC") as! NotiAllVC
+//                    
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//                
+//                cell.searchBar.delegate = self
+//                return cell
+//            }else {
                 let cell:PositionLongCell = tableView.dequeueReusableCell(withIdentifier: "PositionLongCell") as! PositionLongCell
                 cell.searchBar.delegate = self
-                
+            
+            cell.numOfVideoInterView.text = self.numOfNoReadVideo
+            cell.numOfCommonInterView.text = self.numOfNoReadCommon
+            
                 cell.searchBtnClickClosure = { (sender) in
                     print("点击搜索\(sender)")
-                    
-//                    let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "SearchVC") as! SearchVC
-//                    let nav = UINavigationController.init(rootViewController: vc)
-//                    self.present(nav, animated: false, completion: nil)
-                    
                     let hotSeaches = ["百度","阿里巴巴","腾讯","中软国际","美团","京东","同纳信息","软通动力"]
                     let searchViewController = PYSearchViewController(hotSearches: hotSeaches, searchBarPlaceholder: "请输入关键字", didSearch: { (searchViewController, searchBar, searchText) in
                         print("searchViewController = \(searchViewController),searchBar = \(searchBar),searchText= \(searchText)")
@@ -912,7 +970,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 }
 
                 return cell
-            }
+      //      }
         }else
         {
             

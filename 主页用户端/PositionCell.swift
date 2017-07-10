@@ -35,6 +35,11 @@ class PositionCell: UITableViewCell {
         self.areaLabel.text = area ?? ""
         self.yearRangeLabel.text = yearRange ?? ""
         self.eduLabel.text = edu ?? ""
+        self.areaLabel.adjustsFontSizeToFitWidth = true
+        self.yearRangeLabel.adjustsFontSizeToFitWidth = true
+        self.eduLabel.adjustsFontSizeToFitWidth = true
+        self.jobNameLabel.adjustsFontSizeToFitWidth = true
+        self.companyNameLabel.adjustsFontSizeToFitWidth = true
     }
     
 

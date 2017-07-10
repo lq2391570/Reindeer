@@ -15,17 +15,17 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="169"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="169"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="168.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="面试时间" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qW0-eL-L2n">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&gt;面试时间" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qW0-eL-L2n">
                         <rect key="frame" x="15" y="8" width="107" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="107" id="R1K-FM-vgL"/>
                             <constraint firstAttribute="height" constant="21" id="ylP-F2-hif"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                        <nil key="textColor"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.95681279897689819" green="0.80190509557723999" blue="0.63274669647216797" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0E8-NE-haY">
@@ -53,12 +53,18 @@
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="8Q6-UU-qP5"/>
                         </constraints>
-                        <state key="normal" title="Button"/>
                     </button>
                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gXB-er-AqC">
                         <rect key="frame" x="8" y="37" width="304" height="98"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </tableView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="返回new" translatesAutoresizingMaskIntoConstraints="NO" id="9H8-Kb-Oo6">
+                        <rect key="frame" x="153" y="146" width="14" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="6Em-rs-Vfq"/>
+                            <constraint firstAttribute="width" constant="14" id="JVN-8N-1Vv"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="qW0-eL-L2n" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="7" id="Hga-gN-XF8"/>
@@ -66,7 +72,9 @@
                     <constraint firstItem="CnH-cL-ijS" firstAttribute="leading" secondItem="0E8-NE-haY" secondAttribute="leading" id="OB9-Hn-qmP"/>
                     <constraint firstItem="CnH-cL-ijS" firstAttribute="top" secondItem="gXB-er-AqC" secondAttribute="bottom" id="OIo-d0-fsJ"/>
                     <constraint firstItem="CnH-cL-ijS" firstAttribute="trailing" secondItem="0E8-NE-haY" secondAttribute="trailing" id="OpK-Tn-qBT"/>
+                    <constraint firstItem="9H8-Kb-Oo6" firstAttribute="centerX" secondItem="gOz-3L-GDs" secondAttribute="centerX" id="T16-Dg-lXZ"/>
                     <constraint firstItem="gXB-er-AqC" firstAttribute="top" secondItem="0E8-NE-haY" secondAttribute="bottom" id="UH6-rE-wej"/>
+                    <constraint firstItem="9H8-Kb-Oo6" firstAttribute="centerY" secondItem="gOz-3L-GDs" secondAttribute="centerY" id="XRI-EY-s4b"/>
                     <constraint firstAttribute="topMargin" secondItem="qW0-eL-L2n" secondAttribute="top" id="bOD-EL-IBQ"/>
                     <constraint firstItem="gOz-3L-GDs" firstAttribute="top" secondItem="CnH-cL-ijS" secondAttribute="bottom" constant="2" id="cNW-vP-9Dt"/>
                     <constraint firstItem="CnH-cL-ijS" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="jkJ-CO-aZc"/>
@@ -80,8 +88,12 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="interViewListTableView" destination="gXB-er-AqC" id="PeL-Me-CeJ"/>
+                <outlet property="jiantouImage" destination="9H8-Kb-Oo6" id="qjR-nM-rGf"/>
             </connections>
             <point key="canvasLocation" x="56" y="131.5"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="返回new" width="30" height="30"/>
+    </resources>
 </document>

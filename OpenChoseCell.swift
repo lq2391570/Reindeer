@@ -27,7 +27,10 @@ class OpenChoseCell: UITableViewCell {
         // Initialization code
         
         self.selectionStyle = .none
-        switchBtn.isSelected = true
+     //   switchBtn.isSelected = true
+        
+               
+        
     }
 
     @IBAction func switchBtnClick(_ sender: UIButton) {
@@ -47,7 +50,11 @@ class OpenChoseCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        if switchBtn.isSelected == true {
+            switchImage.image = UIImage(named: "开")
+        }else{
+            switchImage.image = UIImage(named: "关")
+        }
         // Configure the view for the selected state
     }
     

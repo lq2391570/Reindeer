@@ -186,6 +186,9 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             
         }else if indexPath.section == 3 {
             print("设置")
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "SettingVC") as! SettingVC
+            vc.title = "设置"
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     override func didReceiveMemoryWarning() {

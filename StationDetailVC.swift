@@ -10,7 +10,7 @@ import UIKit
 import JCAlertView
 import SVProgressHUD
 import SwiftyJSON
-class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
+class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tableView: UITableView!
     
@@ -57,6 +57,7 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
         tableView.register(UINib.init(nibName: "StationDescripeCell", bundle: nil), forCellReuseIdentifier: "StationDescripeCell")
         tableView.register(UINib.init(nibName: "PublisherCell", bundle: nil), forCellReuseIdentifier: "PublisherCell")
         tableView.register(UINib.init(nibName: "CompanyCell", bundle: nil), forCellReuseIdentifier: "CompanyCell")
+        tableView.register(UINib.init(nibName: "StationFirstCellNew", bundle: nil), forCellReuseIdentifier: "StationFirstCellNew")
         tableView.estimatedRowHeight = 80
         if self.stationEnterType == .stationListType {
             tableView.tableFooterView = bottomBtnForInterView()
@@ -170,6 +171,11 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             customView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 280)
             let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: true)
             customAlert?.show()
+//            let userJsonDataArray:NSArray = GetUser(key: USERMES) as! NSArray
+//         //   let userJson = NSKeyedUnarchiver.unarchiveObject(with: userJsonData as! Data) as! NSDictionary
+//            let userJson:JSON = NSKeyedUnarchiver.unarchiveObject(with: userJsonDataArray.object(at: 0) as! Data) as! JSON
+//            self.userMesJson = userJson
+        
             customView.name = (self.userMesJson?["name"].stringValue)!
             customView.sex = (self.userMesJson?["sex"].stringValue)!
             customView.eduExp = (self.userMesJson?["edu"].stringValue)!
@@ -288,7 +294,7 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return 69
+            return 300
         }else if indexPath.section == 1 {
             return 169
         }else if indexPath.section == 2{
@@ -313,15 +319,19 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         
+        
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "StationFirstCell") as! StationFirstCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StationFirstCellNew") as! StationFirstCellNew
             cell.selectionStyle = .none
             guard self.jobDetailBassClass != nil else {
                 return cell
             }
-            cell.installCell(jobName: (self.jobDetailBassClass?.jobName)!, companyName: (self.jobDetailBassClass?.companyName)!, payRange: (self.jobDetailBassClass?.salary)!, area: (self.jobDetailBassClass?.area)!, yearRange: (self.jobDetailBassClass?.exp)!, edu: (self.jobDetailBassClass?.qualification)!)
-            
-            return cell
+            cell.installCell(jobName: self.jobDetailBassClass?.jobName, companyName: self.jobDetailBassClass?.companyName, money: self.jobDetailBassClass?.salary, area: self.jobDetailBassClass?.area, year: self.jobDetailBassClass?.exp, edu: self.jobDetailBassClass?.qualification, headImageName: self.jobDetailBassClass?.hrAvatar, HRName: self.jobDetailBassClass?.hrName,HRJobName:self.jobDetailBassClass?.hrJob, starNum: (self.jobDetailBassClass?.hrScore)!)
+            cell.tagListView.removeAllTags()
+            for tagStr in (self.jobDetailBassClass?.tags)! {
+                cell.tagListView.addTag(tagStr)
+            }
+                return cell
         }else if indexPath.section == 1{
             let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleCell") as! ScheduleCell
             cell.selectionStyle = .none
@@ -338,6 +348,11 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             }
             cell.selectionStyle = .none
             cell.contentLabel.text = self.jobDetailBassClass?.desc
+            cell.jiantouClickclosure = { btn in
+                let index = IndexSet(integer: 2)
+                self.tableView.reloadSections(index, with: .automatic)
+            }
+            
             return cell
         }else if indexPath.section == 3{
             let cell = tableView.dequeueReusableCell(withIdentifier: "PublisherCell") as! PublisherCell
@@ -356,7 +371,9 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
             guard self.jobDetailBassClass != nil else {
                 return cell
             }
-            cell.companyImageView.sd_setImage(with: NSURL.init(string: (self.jobDetailBassClass?.companyLogo)!)! as URL, placeholderImage: nil)
+            if self.jobDetailBassClass?.companyLogo != nil {
+                 cell.companyImageView.sd_setImage(with: NSURL.init(string: (self.jobDetailBassClass?.companyLogo)!)! as URL, placeholderImage: nil)
+            }
             cell.installCell(publishJobNum: NSNumber.init(value: (self.jobDetailBassClass?.jobsCount)!).stringValue, companyName: (self.jobDetailBassClass?.companyName)!, companyMes: "\(self.jobDetailBassClass?.companyIndustry ?? "") | \(self.jobDetailBassClass?.companyScale ?? "")", companyArea: (self.jobDetailBassClass?.address)!)
             
             return cell
@@ -369,7 +386,9 @@ class StationDetailVC: UIViewController,UITableViewDelegate,UITableViewDataSourc
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 4 {
             let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyDetailVC") as! CompanyDetailVC
-        
+            vc.userMesJson = self.userMesJson
+            vc.intentId = self.intentId
+            vc.intentName = self.intentName
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

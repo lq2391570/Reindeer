@@ -10,7 +10,7 @@ import UIKit
 import YYText
 import IQKeyboardManagerSwift
 import SVProgressHUD
-class TextViewVC: UIViewController,YYTextViewDelegate {
+class TextViewVC: BaseViewVC,YYTextViewDelegate {
 
     //textView类型
     enum textViewType {
@@ -40,8 +40,24 @@ class TextViewVC: UIViewController,YYTextViewDelegate {
     
     @IBOutlet var bottomline: UILabel!
     
-    
-    
+    override func viewWillAppear(_ animated: Bool) {
+        IQKeyboardManager.sharedManager().enable = false
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        IQKeyboardManager.sharedManager().enable = true
+    }
+    func textViewDidBeginEditing(_ textView: YYTextView)
+    {
+        let done = UIBarButtonItem.init(barButtonSystemItem: .done, target: self, action: #selector(leaveEditMode))
+        self.navigationItem.rightBarButtonItem = done
+    }
+    func textViewDidEndEditing(_ textView: YYTextView)
+    {
+        self.navigationItem.rightBarButtonItem = nil
+    }
+    func leaveEditMode() -> Void {
+        self.textView.resignFirstResponder()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -61,6 +77,11 @@ class TextViewVC: UIViewController,YYTextViewDelegate {
         
         
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.textView.resignFirstResponder()
+    }
+    
     func textView(_ textView: YYTextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool
     {
         print("text.lengh = \(range.location)")

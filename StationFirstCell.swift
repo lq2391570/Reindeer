@@ -22,6 +22,9 @@ class StationFirstCell: UITableViewCell {
     
     @IBOutlet var eduLabel: UILabel!
     
+    @IBOutlet var lineLabel: UILabel!
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

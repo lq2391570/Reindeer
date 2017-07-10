@@ -19,6 +19,15 @@ class PositionLongCell: UITableViewCell {
     var commonInterFaceListClosure:((_ sender:UIButton) -> ())?
     var notiListClosure:((_ sender:UIButton) -> ())?
     
+
+    @IBOutlet var redNotiImageView: UIImageView!
+    
+    @IBOutlet var numOfVideoInterView: UILabel!
+    
+    @IBOutlet var numOfCommonInterView: UILabel!
+    
+    
+    
   //   var viewHeight:((CGFloat) -> ())?
     @IBOutlet var searchView: UIView!
     override func awakeFromNib() {
@@ -27,10 +36,13 @@ class PositionLongCell: UITableViewCell {
        // searchBar.barTintColor = UIColor.white
         
         self.selectionStyle = .none
-            
-        
         
         print("searcharray\(searchBar.subviews.first?.subviews.last?.subviews)")
+        
+        self.redNotiImageView.backgroundColor = UIColor.red
+        
+        self.redNotiImageView.layer.cornerRadius = 4
+        self.redNotiImageView.layer.masksToBounds = true
         
         if searchBar.subviews.first?.subviews.last?.isKind(of: UITextField.self) == true {
             let searchTextField:UITextField = searchBar.subviews.first?.subviews.last as! UITextField

@@ -8,7 +8,7 @@
 
 import UIKit
 import SVProgressHUD
-class ResumeManagerVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
+class ResumeManagerVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     
     @IBOutlet var tableView: UITableView!

@@ -14,6 +14,9 @@ class LQFlexibleBar: BLKFlexibleHeightBar {
      Only override draw() if you perform custom drawing.
      An empty implementation adversely affects performance during animation.
        */
+    
+    
+    
     override func draw(_ rect: CGRect) {
        //  self.configureBar()
     }
@@ -36,10 +39,8 @@ class LQFlexibleBar: BLKFlexibleHeightBar {
         self.backgroundColor = UIColor.black
         self.minimumBarHeight = 65.0
         self.maximumBarHeight = 200.0
-        
-        
         let bigImageView = UIImageView()
-        bigImageView.image = UIImage.init(named: "hua.png")
+        bigImageView.image = UIImage.init(named: "user_home_bj.png")
         bigImageView.backgroundColor = UIColor.green
         let initialBigImageView = BLKFlexibleHeightBarSubviewLayoutAttributes()
         initialBigImageView.size = bigImageView.sizeThatFits(CGSize.zero)
@@ -58,9 +59,13 @@ class LQFlexibleBar: BLKFlexibleHeightBar {
         let finalBigImageView = BLKFlexibleHeightBarSubviewLayoutAttributes(existing: midwayBigImageView)
         finalBigImageView?.alpha = 1
         finalBigImageView?.center = CGPoint.init(x: self.frame.size.width * 0.5, y: self.minimumBarHeight-25.0)
-        
         bigImageView.add(finalBigImageView, forProgress: 1)
         self.addSubview(bigImageView)
+    }
+    //圆形头像
+    func headImageView() -> Void {
+        
+        
         
     }
     
@@ -68,7 +73,9 @@ class LQFlexibleBar: BLKFlexibleHeightBar {
     
     
     
-}
     
+}
+
+
 
 

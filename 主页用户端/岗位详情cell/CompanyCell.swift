@@ -20,9 +20,11 @@ class CompanyCell: UITableViewCell {
     
     @IBOutlet var companyAreaLabel: UILabel!
     
+    @IBOutlet var jiantouImageView: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        overturnReturnImage(view: jiantouImageView, degress: 180)
     }
     func installCell(publishJobNum:String,companyName:String,companyMes:String,companyArea:String) -> Void {
         self.publishJobNumLabel.text = "共发布了\(publishJobNum)个职位"

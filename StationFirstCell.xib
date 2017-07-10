@@ -80,7 +80,7 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="产品经理" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="di8-JM-bYr">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="产品经理" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="di8-JM-bYr">
                         <rect key="frame" x="12" y="9" width="68" height="25"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="25" id="WPU-td-vYL"/>
@@ -139,6 +139,7 @@
                 <outlet property="companyNameLabel" destination="Pgg-ok-Am2" id="xDc-4d-HCw"/>
                 <outlet property="eduLabel" destination="imE-yW-4NT" id="b2s-4O-bzL"/>
                 <outlet property="jobNameLabel" destination="di8-JM-bYr" id="Ypw-bI-lKk"/>
+                <outlet property="lineLabel" destination="8oW-B7-fmM" id="aow-Wt-2s7"/>
                 <outlet property="payRangeLabel" destination="i6A-gB-rRR" id="80V-cT-70D"/>
                 <outlet property="yearRangeLabel" destination="rJc-lb-xdQ" id="OWY-fa-kEb"/>
             </connections>

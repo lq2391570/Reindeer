@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1421" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -46,7 +46,6 @@
                     <rect key="frame" x="16" y="20" width="343" height="248"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="248" id="7T0-1a-Ly3"/>
-                        <constraint firstAttribute="width" constant="343" id="Yp9-Q3-eFh"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="fontSize_">
@@ -90,7 +89,6 @@
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="VL2-Jx-Ioo"/>
-                        <constraint firstAttribute="width" constant="343" id="yVM-Ud-G6F"/>
                     </constraints>
                     <state key="normal" title="保存">
                         <color key="titleColor" red="0.94117647059999998" green="0.76470588240000004" blue="0.57254901960000004" alpha="1" colorSpace="calibratedRGB"/>
@@ -100,18 +98,20 @@
             <color key="backgroundColor" red="0.97647058823529409" green="0.95686274509803926" blue="0.94901960784313721" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
                 <constraint firstItem="b7g-Zy-THC" firstAttribute="top" secondItem="aj2-wu-6IM" secondAttribute="bottom" constant="8" id="0OY-HF-afa"/>
+                <constraint firstItem="IZe-TF-vLP" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="1ME-nI-JIY"/>
                 <constraint firstItem="IZe-TF-vLP" firstAttribute="top" secondItem="J5V-T0-Mud" secondAttribute="bottom" constant="76" id="3ly-Hz-z9d"/>
                 <constraint firstItem="Dqd-wv-jIz" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="-1" id="4oZ-Xs-din"/>
                 <constraint firstAttribute="bottom" secondItem="b7g-Zy-THC" secondAttribute="bottom" constant="12" id="7iN-sR-C5O"/>
                 <constraint firstItem="Dqd-wv-jIz" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="8tV-Oj-7oS"/>
                 <constraint firstItem="J5V-T0-Mud" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="CXA-tj-Db3"/>
+                <constraint firstItem="IZe-TF-vLP" firstAttribute="top" secondItem="Dqd-wv-jIz" secondAttribute="bottom" constant="28" id="FNs-DT-QBE"/>
                 <constraint firstAttribute="trailing" secondItem="Dqd-wv-jIz" secondAttribute="trailing" constant="-1" id="Fze-5b-v4W"/>
                 <constraint firstItem="b7g-Zy-THC" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="N9A-Iw-16f"/>
                 <constraint firstAttribute="trailing" secondItem="J5V-T0-Mud" secondAttribute="trailing" constant="16" id="cGO-ES-tb8"/>
                 <constraint firstItem="J5V-T0-Mud" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="eDv-Ij-JoK"/>
                 <constraint firstItem="IZe-TF-vLP" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="fGl-Bu-bjT"/>
                 <constraint firstItem="aj2-wu-6IM" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="hOV-wb-RPM"/>
-                <constraint firstAttribute="bottom" secondItem="Dqd-wv-jIz" secondAttribute="bottom" constant="351" id="qQE-27-0PB"/>
+                <constraint firstAttribute="trailing" secondItem="IZe-TF-vLP" secondAttribute="trailing" constant="16" id="nIF-fk-pYT"/>
             </constraints>
             <point key="canvasLocation" x="33.5" y="85.5"/>
         </view>

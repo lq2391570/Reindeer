@@ -9,7 +9,8 @@
 import UIKit
 import AVFoundation
 import AudioToolbox
-class QRCodeVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
+import SVProgressHUD
+class QRCodeVC: BaseViewVC,AVCaptureMetadataOutputObjectsDelegate {
 
     var session:AVCaptureSession!
   
@@ -22,16 +23,17 @@ class QRCodeVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     //声音
     var player : AVAudioPlayer?
 
-    
     //透明背景
     @IBOutlet var bigbackgroundView: QRClearView!
     //qrView
     @IBOutlet var QRView: UIView!
     
-
+//扫出的串码
+    var scanCode = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.title = "二维码扫描"
     // Do any additional setup after loading the view.
        
       
@@ -68,7 +70,6 @@ class QRCodeVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
         
         }
     }
-    
     
     //开始扫描
     func startQR(smlFrame:CGRect)  {
@@ -143,15 +144,40 @@ class QRCodeVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
         print("QR Code -- \(zhQRCode)")
          session.stopRunning()
         //判断扫出来的是什么
-        if zhQRCode?.contains("http") == true {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WebVC") as! WebVC
-            vc.webStr = zhQRCode!
+        if zhQRCode?.contains("xunlu") == true {
+            let index = zhQRCode?.index((zhQRCode?.startIndex)!, offsetBy: 6)
+            
+            let qrCode = zhQRCode?.substring(from:index!)
+            scanCode = zhQRCode!
+            print("qrCode = \(qrCode)")
+            
+            scanLoginFirst(succeedClosure: { 
+                let vc = QRCodeSecondVC()
+                //   vc.webStr = zhQRCode!
+                vc.scanCode = self.scanCode
+                vc.cancelBtnClickClosure = {
+                    _ = self.navigationController?.popViewController(animated: true)
+                }
             self.present(vc, animated: true, completion: nil)
+            })
+            
+         
         }
         
-        
-       
     }
+    //扫码登录第一步
+    func scanLoginFirst(succeedClosure:(() ->())?) -> Void {
+        scanCodeFirst(dic: ["token":GetUser(key: TOKEN),"code":scanCode], actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                succeedClosure!()
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+        }) {
+            
+        }
+    }
+
     //播放滴滴声
     func playDiDiMusic(){
        let mainBundle = Bundle.main.path(forResource: "st_noticeMusic", ofType: "wav")

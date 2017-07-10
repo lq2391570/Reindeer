@@ -11,7 +11,7 @@ import SDWebImage
 import SVProgressHUD
 import JVFloatLabeledTextField
 import JCAlertView
-class CompleteUserMesVC: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     
     @IBOutlet var headImageBtn: UIButton!

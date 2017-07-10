@@ -140,11 +140,26 @@
                     <view key="view" contentMode="scaleToFill" id="Qh3-iW-2QD">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="18c-Se-rH2">
+                                <rect key="frame" x="0.0" y="-33" width="375" height="700"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="18c-Se-rH2" firstAttribute="top" secondItem="Qh3-iW-2QD" secondAttribute="top" constant="-33" id="R6x-1o-AmR"/>
+                            <constraint firstItem="18c-Se-rH2" firstAttribute="leading" secondItem="Qh3-iW-2QD" secondAttribute="leading" id="hRA-yR-W4g"/>
+                            <constraint firstItem="RUO-P2-hZH" firstAttribute="top" secondItem="18c-Se-rH2" secondAttribute="bottom" id="ppB-CB-2gz"/>
+                            <constraint firstAttribute="trailing" secondItem="18c-Se-rH2" secondAttribute="trailing" id="yOV-vZ-bzd"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="01f-Fo-yqQ"/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="myTableView" destination="18c-Se-rH2" id="tji-Mc-D6T"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CzE-gx-EFQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
