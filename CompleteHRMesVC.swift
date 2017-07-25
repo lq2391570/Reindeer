@@ -9,7 +9,7 @@
 import UIKit
 import SVProgressHUD
 import SwiftyJSON
-class CompleteHRMesVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
+class CompleteHRMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
 
     @IBOutlet var tableView: UITableView!
     

@@ -11,7 +11,7 @@
 import UIKit
 import JVFloatLabeledTextField
 import SVProgressHUD
-class PhoneNumVC: UIViewController {
+class PhoneNumVC: BaseViewVC {
 
     
     @IBOutlet var phoneTextField: JVFloatLabeledTextField!

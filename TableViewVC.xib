@@ -20,7 +20,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="cX7-qH-wKz">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="617"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                 </tableView>
             </subviews>
@@ -28,7 +28,7 @@
             <constraints>
                 <constraint firstItem="cX7-qH-wKz" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="PEg-DB-jQ3"/>
                 <constraint firstItem="cX7-qH-wKz" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Ru9-zd-Xpb"/>
-                <constraint firstAttribute="bottom" secondItem="cX7-qH-wKz" secondAttribute="bottom" id="tIo-V1-2SX"/>
+                <constraint firstAttribute="bottom" secondItem="cX7-qH-wKz" secondAttribute="bottom" constant="50" id="tIo-V1-2SX"/>
                 <constraint firstAttribute="trailing" secondItem="cX7-qH-wKz" secondAttribute="trailing" id="yoC-ZJ-0XG"/>
             </constraints>
             <point key="canvasLocation" x="32.5" y="81.5"/>

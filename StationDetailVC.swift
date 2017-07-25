@@ -20,6 +20,9 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         case userCommonInterViewListType //普通面试列表进入(待处理状态)
         case userCommonInterViewListApplyType  //普通面试列表进入（申请状态）
         case userCommonInterViewListWaitType  //普通面试等待中 （等待普通面试状态）
+        case userVideoInterViewListWaitHandle //user视频面试待处理
+        
+        
     }
     var stationEnterType:StationEnterTypeNum = .stationListType
     
@@ -32,13 +35,30 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var userMesJson:JSON?
     var intentName = ""
     var intentId = ""
+    //面试id
+    var interfaceId = 0
+    
+    var returnClosure:(() -> ())?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "职位详情"
         // Do any additional setup after loading the view.
         installTableView()
         getJobDetail()
+        
+//        //长按复制
+//        let gestureRecognizer = UILongPressGestureRecognizer.init(target: self, action: #selector(pasteBoard(_:)))
+//        
+//        self.view.addGestureRecognizer(gestureRecognizer)
+
     }
+//    func pasteBoard(_ longPress:UILongPressGestureRecognizer) -> Void {
+//        if longPress.state == UIGestureRecognizerState.began {
+//            let pasteboard = UIPasteboard.general
+//            pasteboard.string = "需要复制的文本"
+//        }
+//    }
     //根据职位id获取职位详情
     
     func getJobDetail() -> Void {
@@ -68,9 +88,9 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }else if self.stationEnterType == .userCommonInterViewListWaitType
         {
             tableView.tableFooterView = bottomViewForApply(typeNum: 2)
+        }else if self.stationEnterType == .userVideoInterViewListWaitHandle {
+            tableView.tableFooterView = bottomBtnForAgreeAndRefuse()
         }
-        
-        
     }
     
     //底部按钮（普通面试，视频面试）
@@ -113,14 +133,14 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         //创建底部按钮（普通面试和视频面试）
         let leftBtn = UIButton(type: .custom)
         leftBtn.backgroundColor = UIColor.init(red: 223/255.0, green: 212/255.0, blue: 203/255.0, alpha: 1)
-        leftBtn.addTarget(self, action: #selector(agreeBtnClick), for: .touchUpInside)
+        leftBtn.addTarget(self, action: #selector(refuseBtnClick), for: .touchUpInside)
         leftBtn.setTitle("拒绝", for: .normal)
         leftBtn.setTitleColor(UIColor.black, for: .normal)
         leftBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         view.addSubview(leftBtn)
         let rightBtn = UIButton(type: .custom)
         rightBtn.backgroundColor = UIColor.black
-        rightBtn.addTarget(self, action: #selector(refuseBtnClick), for: .touchUpInside)
+        rightBtn.addTarget(self, action: #selector(agreeBtnClick), for: .touchUpInside)
         rightBtn.setTitle("同意", for: .normal)
         rightBtn.setTitleColor(UIColor.mainColor, for: .normal)
         rightBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
@@ -128,7 +148,7 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         leftBtn.snp.makeConstraints { (make) in
             make.left.equalTo(view.snp.left).offset(0)
             make.top.equalTo(view.snp.top).offset(0)
-            make.width.equalTo(view.frame.width/2)
+            make.width.equalTo(rightBtn.snp.width)
             make.bottom.equalTo(view.snp.bottom).offset(0)
         }
         rightBtn.snp.makeConstraints { (make) in
@@ -144,7 +164,7 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         let view = UIView()
         view.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 50)
         view.backgroundColor = UIColor.black
-        let label = UILabel(frame: CGRect.init(x: tableView.frame.size.width/2 - 100, y: 10, width: 200, height: 30))
+        let label = UILabel(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0))
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = UIColor.lightGray
         if typeNum == 1 {
@@ -155,14 +175,52 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         
         label.textAlignment = .center
         view.addSubview(label)
+        
+        label.snp.makeConstraints { (make) in
+            make.left.equalTo(view.snp.left).offset(50)
+            make.right.equalTo(view.snp.right).offset(-50)
+            make.top.equalTo(view.snp.top).offset(10)
+            make.bottom.equalTo(view.snp.bottom).offset(-10)
+        }
+        
         return view
     }
     
     func agreeBtnClick() -> Void {
-        print("同意")
+         print("同意")
+        userVideoApprovalAgreeOrRefuse(dic: ["token":GetUser(key: TOKEN),"id":self.interfaceId,"type":"0"], actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("成功")
+                SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].stringValue)
+                if self.returnClosure != nil {
+                    self.returnClosure!()
+                }
+                _ = self.navigationController?.popViewController(animated: true)
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+        }) { 
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
     }
     func refuseBtnClick() -> Void {
-        print("拒绝")
+         print("拒绝")
+        userVideoApprovalAgreeOrRefuse(dic: ["token":GetUser(key: TOKEN),"id":self.interfaceId,"type":"1"], actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("成功")
+                SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].stringValue)
+                if self.returnClosure != nil {
+                    self.returnClosure!()
+                }
+                
+                _ = self.navigationController?.popViewController(animated: true)
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+        }) {
+            SVProgressHUD.showInfo(withStatus: "请求失败")
+        }
+
     }
 
     //普通面试
@@ -328,9 +386,18 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             }
             cell.installCell(jobName: self.jobDetailBassClass?.jobName, companyName: self.jobDetailBassClass?.companyName, money: self.jobDetailBassClass?.salary, area: self.jobDetailBassClass?.area, year: self.jobDetailBassClass?.exp, edu: self.jobDetailBassClass?.qualification, headImageName: self.jobDetailBassClass?.hrAvatar, HRName: self.jobDetailBassClass?.hrName,HRJobName:self.jobDetailBassClass?.hrJob, starNum: (self.jobDetailBassClass?.hrScore)!)
             cell.tagListView.removeAllTags()
-            for tagStr in (self.jobDetailBassClass?.tags)! {
-                cell.tagListView.addTag(tagStr)
+            if self.jobDetailBassClass?.tags != nil {
+                for tagStr in (self.jobDetailBassClass?.tags)! {
+                    cell.tagListView.addTag(tagStr)
+                }
             }
+           
+            //长按复制
+//            let gestureRecognizer = UILongPressGestureRecognizer.init(target: self, action: #selector(pasteBoard(_:)))
+//            
+//            cell.jobNameLabel.addGestureRecognizer(gestureRecognizer)
+            
+            
                 return cell
         }else if indexPath.section == 1{
             let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleCell") as! ScheduleCell
@@ -386,10 +453,15 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 4 {
             let vc = UIStoryboard.init(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyDetailVC") as! CompanyDetailVC
-            vc.userMesJson = self.userMesJson
-            vc.intentId = self.intentId
-            vc.intentName = self.intentName
+            
+            vc.inittCompanyMesWithId(intentId1: self.intentId, intentName1: self.intentName, userMesJson1: self.userMesJson!)
+            //翻牌子动画
+//            UIView.beginAnimations("View Flip", context: nil)
+//            UIView.setAnimationDuration(0.8)
+//            UIView.setAnimationCurve(.easeInOut)
+//            UIView.setAnimationTransition(.flipFromRight, for: (self.navigationController?.view)!, cache: false)
             self.navigationController?.pushViewController(vc, animated: true)
+         //   UIView.commitAnimations()
         }
     }
     override func didReceiveMemoryWarning() {

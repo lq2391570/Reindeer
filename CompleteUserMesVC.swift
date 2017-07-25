@@ -63,7 +63,7 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
             customView.sureBtnClickclosure = { (btn) in
                 
                 print("cityName = \(customView.selevtCityModel?.name) , cityId = \(customView.selevtCityModel?.id)")
-                self.cityTextField.text = "\(customView.selectProvinModel?.name)\(customView.selevtCityModel?.name)"
+                self.cityTextField.text = "\(customView.selectProvinModel?.name! ?? "")\(customView.selevtCityModel?.name! ?? "")"
                 customAlert?.dismiss(completion: nil)
                 self.areaModel = customView.selevtCityModel
                 
@@ -127,7 +127,7 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
             return
         }
         
-        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":self.areaModel?.id], actionHandler: {(jsonStr) in
+        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":self.areaModel?.id as Any], actionHandler: {(jsonStr) in
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "完善信息成功")
                 //完善信息后必须填写求职意向，否则无法进入首页（什么鬼需求）

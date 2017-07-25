@@ -13,6 +13,8 @@ import SVProgressHUD
 import AKPickerView
 import SwiftyJSON
 import JNDropDownMenu
+import MJRefresh
+
 class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,PYSearchViewControllerDelegate,AKPickerViewDelegate,AKPickerViewDataSource,NIMNetCallManagerDelegate,JNDropDownMenuDelegate1, JNDropDownMenuDataSource1,PYSearchViewControllerDataSource {
 
     
@@ -106,7 +108,12 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     var numOfNoReadVideo = "0"
     var numOfNoReadCommon = "0"
     
-    
+    //顶部刷新
+    var header = MJRefreshGifHeader()
+    //底部刷新
+    let footer = MJRefreshAutoFooter()
+    //gif图片数组
+    var gifImageArray:[UIImage] = []
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -129,19 +136,61 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             //获得面试时间
             self.interViewTimeBassClass = getInterViewTypePath()
             userGetNoReadNum()
+            //下拉刷新
+            
+            self.tableView.mj_header = setUpMJHeader(refreshingClosure: { 
+                self.getHomePageZhiWeiList()
+            })
+            //上拉更多
+            self.tableView.mj_footer = setUpMJFooter(refreshingClosure: { 
+                self.tableView.mj_footer.endRefreshingWithNoMoreData()
+            })
+            
+            
             
         }else if homeType == .HRHomePage {
             //HR
             getHRPostJobs(succeedClosure: { 
                  self.getHomePageJIanLiList()
             })
+            self.tableView.mj_header = setUpMJHeader(refreshingClosure: { 
+                self.getHomePageJIanLiList()
+            })
+            //上拉更多
+            self.tableView.mj_footer = setUpMJFooter(refreshingClosure: {
+                self.tableView.mj_footer.endRefreshingWithNoMoreData()
+            })
+            
+            
             NotificationCenter.default.addObserver(self, selector: #selector(addPositionNoti), name: NSNotification.Name(rawValue: "ADDPOSITION"), object: nil)
-           
+            NotificationCenter.default.addObserver(self, selector: #selector(addJobIntensionNoti), name: NSNotification.Name(rawValue: "ADDJobIntensionNoti"), object: nil)
+            
         }
-        
             NIMAVChatSDK.shared().netCallManager.add(self)
        
     }
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(addPositionNoti), name: NSNotification.Name(rawValue: "ADDPOSITION"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(addJobIntensionNoti), name: NSNotification.Name(rawValue: "ADDJobIntensionNoti"), object: nil)
+    }
+    
+    //添加求职意向noti
+    func addJobIntensionNoti() -> Void {
+        
+        getJobIntension(succeedClosure: nil)
+    }
+    
+    
+    //将图片放入数组
+    func CreateImageArray() -> Void {
+        for index in 0...29 {
+            let str = "roll\(index).png"
+            print("str = \(str)")
+            gifImageArray.append(UIImage.init(named: str)!)
+        }
+        
+    }
+    
     func onReceive(_ callID: UInt64, from caller: String, type: NIMNetCallMediaType, message extendMessage: String?) {
         print("收到呼叫")
         let vc = NTESVideoChatViewController(caller: caller, callId: callID)
@@ -207,11 +256,25 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     func getHRPostJobs(succeedClosure:(() -> ())?) -> Void {
         HRPostJobsInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
             
+            
+            
             self.HRPostjobBassClass = bassClass
+            
+            guard self.HRPostjobBassClass?.list?.count != 0 else {
+                
+                createAlert(title: "提示", message: "还没发布职位，先去发布一个职位吧", viewControll: self, closure: { 
+                    let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRAddJobVC") as! HRAddJobVC
+                    vc.companyId = GetUser(key: COMPANYID) as! String
+                    self.navigationController?.pushViewController(vc, animated: true)
+                })
+                
+                return
+            }
             
             //得到职位列表后存起来，排期选择职位时使用
             let data:Data = NSKeyedArchiver.archivedData(withRootObject: self.HRPostjobBassClass!)
             SetUser(value: data, key: HRPOSITION)
+            
             self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[0].id)!).stringValue
             self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list![0].jobId)!).stringValue
             print("self.jobId =\(self.jobId)")
@@ -243,7 +306,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
 //            IndexPathArray.append(indexPath as IndexPath)
 //        }
         let index = IndexSet(integer: 1)
-        
+        self.tableView.mj_header.endRefreshing()
         self.tableView.reloadSections(index, with: .automatic)
          //     self.tableView.reloadData()
         
@@ -257,13 +320,11 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             
             self.HRresumeHomePageBaseClass = bassClass
             self.tableView.reloadData()
-            
+            self.tableView.mj_header.endRefreshing()
         }) {
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
     }
-    
-    
     
     //设置navBar
     func confineNavBar() -> Void {
@@ -378,7 +439,6 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }
         
     }
-    
     
     
     //titleView
@@ -519,9 +579,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             self.expSelectModel = nil
             self.eduSelectModel = nil
             self.paySelectModel = nil
-        
             self.getHomePageZhiWeiList()
-            
         }
         //赋予选择条件的初始值，记录选择的条件
         if self.eduSelectModel != nil {

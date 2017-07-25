@@ -28,6 +28,8 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 //#import <CocoaLumberjack/CocoaLumberjack.h>
+#import <MJRefresh/MJRefresh.h>
+
 
 #import "WXApi.h"
 #import "WXApiObject.h"

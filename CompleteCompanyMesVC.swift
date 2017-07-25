@@ -10,7 +10,7 @@ import UIKit
 import QBImagePickerController
 import SVProgressHUD
 import SwiftyJSON
-class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewDataSource,QBImagePickerControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,QBImagePickerControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     @IBOutlet var tableView: UITableView!
     
@@ -117,6 +117,8 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     func rightBarItemClick() -> Void {
         print("跳过")
         
+        
+        
     }
     
        //获得公司详情
@@ -165,13 +167,21 @@ class CompleteCompanyMesVC: UIViewController,UITableViewDelegate,UITableViewData
     
     func createFootView() -> UIView {
         let footView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width , height: 60))
-        let btn = UIButton(frame: CGRect.init(x: 20, y: 10, width: tableView.frame.size.width - 40, height: 40))
+        let btn = UIButton(type: .custom)
         btn.backgroundColor = UIColor.black
         btn.setTitle("保存", for: .normal)
         btn.setTitleColor(UIColor.mainColor, for: .normal)
         btn.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         btn.addTarget(self, action: #selector(nextBtnClick), for: .touchUpInside)
         footView.addSubview(btn)
+        
+        btn.snp.makeConstraints { (make) in
+            make.left.equalTo(footView.snp.left).offset(20)
+            make.top.equalTo(footView.snp.top).offset(10)
+            make.bottom.equalTo(footView.snp.bottom).offset(10)
+            make.right.equalTo(footView.snp.right).offset(20)
+            
+        }
         return footView
     }
     func nextBtnClick() -> Void {

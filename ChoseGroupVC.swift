@@ -8,7 +8,7 @@
 
 import UIKit
 import SVProgressHUD
-class ChoseGroupVC: UIViewController {
+class ChoseGroupVC: BaseViewVC {
 
     @IBOutlet var bgImageView: UIImageView!
     

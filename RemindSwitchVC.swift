@@ -39,7 +39,7 @@ class RemindSwitchVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     cell.nameLabel.text = "消息通知"
         cell.switchBtnClickColsure = { btn in
             if btn.isSelected == false {
-                createAlert(title: "提示", message: "关掉消息通知会收不到推送", viewControll: self, closure: {
+//                createAlert(title: "提示", message: "关掉消息通知会收不到推送", viewControll: self, closure: {
                     pushSwitchInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (jsonStr) in
                         if jsonStr["code"] == 0 {
                             SVProgressHUD.showSuccess(withStatus: "操作成功")
@@ -52,7 +52,7 @@ class RemindSwitchVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                         SVProgressHUD.showInfo(withStatus: "请求失败")
                     }
 
-                })
+            //    })
             }else{
                 pushSwitchInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (jsonStr) in
                     if jsonStr["code"] == 0 {

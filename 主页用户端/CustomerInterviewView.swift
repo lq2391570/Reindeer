@@ -160,14 +160,17 @@ class CustomerInterviewView: UIView,UITableViewDelegate,UITableViewDataSource,UI
                 cell.leftLabel.text = leftNameArray[indexPath.row]
                 cell.rightLabel.text = rightNameArray[indexPath.row]
                 return cell
-                
             }
-
         }
-        
-        
-        
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 1 {
+            print("地区定位")
+            
+        }
+    }
+    
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
     {
         print("textField.text = \(textField.text)")

@@ -10,7 +10,7 @@ import UIKit
 import JVFloatLabeledTextField
 import SVProgressHUD
 
-class CompanyNameVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
+class CompanyNameVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
 
     @IBOutlet var textFieldBgView: UIView!
     

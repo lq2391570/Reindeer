@@ -20,6 +20,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+//        if (UIApplicationOpenSettingsURLString != "") {
+//            let url = NSURL.init(string: UIApplicationOpenSettingsURLString)
+//            if #available(iOS 10.0, *) {
+//                UIApplication.shared.open(url! as URL, options: [:], completionHandler: nil)
+//            } else {
+//                // Fallback on earlier versions
+//            }
+//            
+//            //    NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+//            //    [[UIApplication sharedApplication] openURL:url];
+//        }
+
+        
+        
         //注册微信
         WXApi.registerApp("wxc02c094325351685")
         
@@ -34,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
         }
         
         //初始化网易云sdk
-        NIMSDK.shared().register(withAppID: "45c6af3c98409b18a84451215d0bdd6e", cerName: "ENTERPRISE")
+        NIMSDK.shared().register(withAppID: "5525f5715f8118ba266d4faadfa627d2", cerName: "ENTERPRISE")
     
         //IQKeyboardManager 开关
         IQKeyboardManager.sharedManager().enable = true

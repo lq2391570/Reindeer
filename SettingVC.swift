@@ -56,6 +56,7 @@ class SettingVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCell") as! SettingCell
+        cell.selectionStyle = .none
         if indexPath.section == 0 {
             cell.nameLabel.text = section1NameArray[indexPath.row]
             cell.leftImageView.image = UIImage.init(named: section1ImageNameArray[indexPath.row])
@@ -106,6 +107,11 @@ class SettingVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     switchIdentity(jobFanderOrHR: 1, actionHander: { (jsonStr) in
                         if jsonStr["code"] == 0 {
                             SVProgressHUD.showSuccess(withStatus: "切换成功")
+                            let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
+                            vc.homeType = .userHomePage
+                            let nav = UINavigationController.init(rootViewController: vc)
+                            self.view.window?.rootViewController = nav
+                            
                         }else{
                             SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
                         }
@@ -117,6 +123,11 @@ class SettingVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     switchIdentity(jobFanderOrHR: 2, actionHander: { (jsonStr) in
                         if jsonStr["code"] == 0 {
                             SVProgressHUD.showSuccess(withStatus: "切换成功")
+                            let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "HomePageVC") as! HomePageVC
+                            vc.homeType = .HRHomePage
+                            let nav = UINavigationController.init(rootViewController: vc)
+                            
+                            self.view.window?.rootViewController = nav
                         }else{
                             SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
                         }

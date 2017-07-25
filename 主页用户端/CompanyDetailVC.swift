@@ -40,13 +40,39 @@ class CompanyDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //公司id
     var companyId = ""
     
+//    init(intentId1:String,intentName1:String,userMesJson1:JSON) {
+//       self.intentId = intentId1
+//        self.intentName = intentName1
+//        self.userMesJson = userMesJson1
+//    //    super.init(nibName: "UserFirstStoryboard.storyboard", bundle: Bundle.init(identifier: "CompanyDetailVC"))
+//        let bundlePath = UIStoryboard.init(name: <#T##String#>, bundle: <#T##Bundle?#>)
+//        super.init(nibName: "CompanyDetailVC", bundle: Bundle.init(path: bundlePath!))
+//    }
+//    
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//        
+//        
+//    }
+    func inittCompanyMesWithId(intentId1:String,intentName1:String,userMesJson1:JSON) -> Void {
+               self.intentId = intentId1
+                self.intentName = intentName1
+                self.userMesJson = userMesJson1
+    }
+    
+    func awakeFromNib(intentId1:String,intentName1:String,userMesJson1:JSON) {
+        super.awakeFromNib()
+    }
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = true
     }
-    override func viewDidDisappear(_ animated: Bool) {
-        self.navigationController?.isNavigationBarHidden = false
+    override func viewWillDisappear(_ animated: Bool) {
+         self.navigationController?.isNavigationBarHidden = false
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.

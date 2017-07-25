@@ -50,6 +50,12 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //传递的dic
     var saveOrUpdateDic:NSDictionary!
     
+    //若为更新进来的则传入model
+    var jobIntensionModel:JobIntentSearchBaseClass?
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -62,19 +68,63 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.tableFooterView = createBottomBtn()
         getCompensation()
         getUserResume()
+        if self.enterState == .updateEnterState {
+            updateGetjobIntententModel()
+            
+        }
+        
         
     }
+    //更新时获得求职意向的model
+    func updateGetjobIntententModel() -> Void {
+        searchJobIntentInterface(dic: ["jobIntentId":jobIntensionId], actionHander: { (bassClass) in
+            
+            self.jobIntensionModel = bassClass
+            self.positionModel = PositionList(object: [])
+            self.positionModel?.id = bassClass.jobId
+            self.positionModel?.name = bassClass.name
+            
+            self.areaModel = AreaBaseClass(object: [])
+            self.areaModel?.name = bassClass.area
+            self.areaModel?.id = bassClass.cityId
+            self.skillsStr = ""
+            
+            let industryModel = CompanyIndustryListList(object: [])
+            industryModel.id = bassClass.industryId
+            industryModel.name = bassClass.industry
+           self.industryList.append(industryModel)
+            
+            
+            self.compensationModel = PositionList(object: [])
+            self.compensationModel?.id = bassClass.salaryId
+            self.compensationModel?.name = bassClass.salary
+            
+           // self.jobIntensionId = bassClass.jobId
+            self.tableView.reloadData()
+            
+        }) { 
+            
+        }
+        
+    }
+    
     //创建底部Btn(保存按钮)
     func createBottomBtn() -> UIView {
         let view = UIView(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 60))
         view.backgroundColor = UIColor.clear
         let btn = UIButton(type: .custom)
-        btn.frame = CGRect.init(x: 20, y: 10, width: tableView.frame.size.width - 40, height: 40)
+        btn.frame = CGRect.init(x: 0, y: 0, width: tableView.frame.size.width - 40, height: 40)
         btn.backgroundColor = UIColor.black
         btn.setTitle("保存", for: .normal)
         btn.addTarget(self, action: #selector(saveBtnClick), for: .touchUpInside)
         btn.setTitleColor(UIColor.mainColor, for: .normal)
         view.addSubview(btn)
+        btn.snp.makeConstraints { (make) in
+            make.left.equalTo(view.snp.left).offset(20)
+            make.right.equalTo(view.snp.right).offset(-20)
+            make.top.equalTo(view.snp.top).offset(10)
+        }
+        
         return view
     }
     func saveBtnClick() -> Void {
@@ -103,19 +153,23 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         
        print("resumeId = \(self.resumeModel?.id),jobId = \(positionModel?.id) industryId =\(industryList[0].id),cityId = \(areaModel?.id),skills = \(skillsStr),salaryId = \(compensationModel?.id)")
        //如果是添加则不传id,如果是更新则传id
-        let noIdDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0 ] as NSDictionary
-        let idDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaId,"skills":"","salaryId":compensationModel?.id ?? 0,"id":self.jobIntensionId] as NSDictionary
+        let noIdDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaModel?.id as Any,"skills":"","salaryId":compensationModel?.id ?? 0 ] as NSDictionary
+        let idDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaModel?.id as Any,"skills":"","salaryId":compensationModel?.id ?? 0,"id":self.jobIntensionId] as NSDictionary
         if self.enterState == .resumeEnterState || self.enterState == .loginEnterState  {
             saveOrUpdateDic = noIdDic
         }else if self.enterState == .updateEnterState
         {
             saveOrUpdateDic = idDic
         }
-        
+        print("saveOrUpdateDic = \(saveOrUpdateDic)")
         
         saveOrUpdateJobIntent(dic: saveOrUpdateDic, actionHander: { (jsonStr) in
             if jsonStr["code"] == 0{
               print("保存成功")
+                //保存成功后发送通知首页横向滑动列表
+                let noti = NSNotification.Name(rawValue: "ADDJobIntensionNoti")
+                NotificationCenter.default.post(name: noti, object: nil)
+                
                 //判断添加是从哪里进入的添加求职意向（enterState）,若是简历中则传一个闭包
                 if self.enterState == .resumeEnterState
                 {

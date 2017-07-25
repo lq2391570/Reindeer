@@ -11,6 +11,7 @@ import UIKit
 import SVProgressHUD
 import JCAlertView
 //import NIMSDK
+import MJRefresh
 
 
 var ScreenWidth = UIScreen.main.bounds.size.width
@@ -369,12 +370,32 @@ func createLQPickView(dataArray1:[String],dataArray2:[String]?,numOfComponents:I
 //        customView.sureBtnClickclosure = { (btn,selectNum1,selectNum2) in
 //            customAlert?.dismiss(completion: nil)
 //        }
-        
         customAlert?.show()
-       
-    
     return customAlert!
     
+}
+//下拉刷新及上拉更多
+func setUpMJHeader(refreshingClosure:(() ->())?) -> MJRefreshGifHeader {
+    let header = MJRefreshGifHeader { 
+         refreshingClosure!()
+    }
+    header?.lastUpdatedTimeLabel.isHidden = true
+    header?.stateLabel.isHidden = true
+    var gifImageArray:[UIImage] = []
+    for index in 0...29 {
+        let str = "roll\(index).png"
+        print("str = \(str)")
+        gifImageArray.append(UIImage.init(named: str)!)
+    }
+    header?.setImages(gifImageArray, duration: 0.5, for: .refreshing)
+    return header!
+}
+func setUpMJFooter(refreshingClosure:(() ->())?) -> MJRefreshAutoNormalFooter {
+    let footer = MJRefreshAutoNormalFooter { 
+        refreshingClosure!()
+    }
+    
+    return footer!
 }
 
 

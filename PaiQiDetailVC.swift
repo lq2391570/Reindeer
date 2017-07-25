@@ -35,6 +35,8 @@ class PaiQiDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         if let view = PaiQiDetailHeadView.newInstance() {
             
             view.timeLabel.text = paiqiDetailBassClass?.date
+            
+            print("paiqiDetailBassClass?.date = \(paiqiDetailBassClass?.date)")
             view.timeLongLabel.text = paiqiDetailBassClass?.duration
             view.numOfPeopleLabel.text = paiqiDetailBassClass?.nums
             return view
@@ -48,7 +50,7 @@ class PaiQiDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             "token":GetUser(key: TOKEN),
             "id":paiqiListBassClass?.id as Any,
            // "itemId":paiqiListBassClass?.itemId as Any
-            "itemId":269
+            "itemId":paiqiListBassClass?.itemId as Any
         ]
         let jsonStr = JSON(dic)
         let newDic = jsonStr.dictionaryValue as NSDictionary
@@ -73,6 +75,8 @@ class PaiQiDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         let model:PaiQiDetailList = (self.paiqiDetailBassClass?.list![indexPath.section])!
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "HRHomePageCell") as! HRHomePageCell
+        cell.smlBGView.isHidden = true
+        cell.contentView.backgroundColor = UIColor.white
         cell.installHRHomePageCell(headImageStr: model.avatar, nameAndJob: "\(model.name!)|\(model.job!)", area: model.area, year: model.exp, edu: model.edu, recentjob: model.recentJob, recentCompany: model.recentCompany)
         return cell
     }

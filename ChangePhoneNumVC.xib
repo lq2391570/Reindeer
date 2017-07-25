@@ -32,7 +32,7 @@
                                 <constraint firstAttribute="width" constant="194" id="dbc-nq-Igh"/>
                             </constraints>
                             <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                         </textField>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="THT-zL-S7j">
@@ -52,6 +52,7 @@
                                 <constraint firstAttribute="width" constant="145" id="820-Qs-QY2"/>
                                 <constraint firstAttribute="height" constant="87" id="RKP-m4-QVG"/>
                             </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <state key="normal" title="获取验证码">
                                 <color key="titleColor" red="0.79221397640000002" green="0.62504237890000003" blue="0.47207564120000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
@@ -66,7 +67,7 @@
                                 <constraint firstAttribute="height" constant="40" id="ua3-0I-Hxa"/>
                             </constraints>
                             <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
                         </textField>
                     </subviews>
@@ -95,14 +96,14 @@
                                 <constraint firstAttribute="width" constant="194" id="hzV-eA-agE"/>
                             </constraints>
                             <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                         </textField>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="mDj-9X-gks" firstAttribute="leading" secondItem="80R-vA-Hsh" secondAttribute="leading" constant="16" id="16p-Lp-r78"/>
-                        <constraint firstAttribute="height" constant="80" id="LMu-dr-aDZ"/>
+                        <constraint firstAttribute="height" constant="80" id="TyP-zZ-kfN"/>
                         <constraint firstItem="mDj-9X-gks" firstAttribute="centerY" secondItem="80R-vA-Hsh" secondAttribute="centerY" id="fHC-gA-Bnl"/>
                     </constraints>
                 </view>

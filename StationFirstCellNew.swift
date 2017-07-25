@@ -46,11 +46,12 @@ class StationFirstCellNew: UITableViewCell {
         // Initialization code
         tagListView.alignment = .center
         ViewBorderRadius(view: self.headImageView, radius: 20, width: nil, color: nil)
-       
+       self.jobNameLabel.adjustsFontSizeToFitWidth = true
+       // self.companyNameLabel.adjustsFontSizeToFitWidth = true
     }
     func installCell(jobName:String?,companyName:String?,money:String?,area:String?,year:String?,edu:String?,headImageName:String?,HRName:String?,HRJobName:String?,starNum:Int) -> Void {
-        self.jobNameLabel.text = jobName
-        self.companyNameLabel.text = companyName
+        self.jobNameLabel.text = "\(jobName ?? "")|\(companyName ?? "")"
+      //  self.companyNameLabel.text = companyName
         self.moneyLabel.text = money
         self.areaLabel.text = area
         self.yearLabel.text = year

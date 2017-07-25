@@ -22,7 +22,7 @@ class HRUserCenterVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.dataSource = self
         tableView.register(UINib.init(nibName: "HRUserCenterFirstCell", bundle: nil), forCellReuseIdentifier: "HRUserCenterFirstCell")
         tableView.register(UINib.init(nibName: "UserCenterCell", bundle: nil), forCellReuseIdentifier: "UserCenterCell")
-        tableView.isScrollEnabled = false
+      //  tableView.isScrollEnabled = false
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = UIColor.init(red: 245/255.0, green: 245/255.0, blue: 245/255.0, alpha: 1)
         HRGetUserMes()

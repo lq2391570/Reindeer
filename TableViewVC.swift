@@ -57,9 +57,6 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
     var dataType:TableViewDataType = .waittingHandle
     
-    
-    
-    
   //  var roleType:HROrUserTypeEnum = .HRType
     
     //个人信息json
@@ -75,18 +72,13 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         tableView.register(UINib.init(nibName: "UserManagerInterViewCell", bundle: nil), forCellReuseIdentifier: "UserManagerInterViewCell")
         tableView.register(UINib.init(nibName: "UserApplyToInterViewCommonCell", bundle: nil), forCellReuseIdentifier: "UserApplyToInterViewCommonCell")
         tableView.register(UINib.init(nibName: "UserCommonWaitInterViewCell", bundle: nil), forCellReuseIdentifier: "UserCommonWaitInterViewCell")
-        
-        
         // Do any additional setup after loading the view.
         if self.homeType == .HRHomePage {
              getInterViewtype1(num: 1, type:self.dataType.rawValue)
         }else{
             UserGetInterViewtype1(num: 1, type: self.dataType.rawValue)
         }
-       
-
     }
-    
     
     //待处理列表(HR)
     func getInterViewtype1(num:Int,type:Int) -> Void {
@@ -124,7 +116,7 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         if self.dataType == .waittingHandle {
             //待处理
             pageNum = pageNum1
-        }else if self.dataType == .waittingInterFace{
+        }else if self.dataType == .waittingInterFace {
             //待面试
             pageNum = pageNum2
         }else if self.dataType == .alreadyFinish{
@@ -173,13 +165,10 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
             }
             
-            
-            
             if model.state == 1 {
                 //邀约中
                 let cell = tableView.dequeueReusableCell(withIdentifier: "CommonInterViewCell1") as! CommonInterViewCell1
                 cell.selectionStyle = .none
-
                 cell.installCell(jobName: model.jobName, state: "等待求职者处理", headImageStr: model.avatar, name: model.name, money: model.salary, area: model.area, year: model.exp, edu: model.edu, interViewTime: model.time, interViewArea: model.address, isHiddenBtn: true, phoneClickClosure: nil)
                 return cell
                 
@@ -212,14 +201,10 @@ class TableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
                 return cell
             }
             
-            
-            
-            
             if model.state == 1 {
                 //等待HR处理
                 let cell = tableView.dequeueReusableCell(withIdentifier: "UserApplyToInterViewCommonCell") as! UserApplyToInterViewCommonCell
-                
-                cell.installCell(jobName: "\(model.name!)|\(model.company!)", stateName: "等待HR处理", headImageStr: model.avatar, name: "\(model.hrName!)|\(model.job!)")
+                cell.installCell(jobName: "\(model.name ?? "")|\(model.company ?? "")", stateName: "等待HR处理", headImageStr: model.avatar, name: "\(model.hrName ?? "")|\(model.job ?? "")")
                 
                 return cell
             }else if model.state == 8 {

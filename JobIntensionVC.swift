@@ -8,6 +8,7 @@
 
 import UIKit
 import SVProgressHUD
+import SwiftyJSON
 class JobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     
@@ -32,6 +33,10 @@ class JobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         self.navigationItem.rightBarButtonItem = addBtn
         // Do any additional setup after loading the view.
         getJobIntension()
+        
+       
+        
+        
     }
     //获得求职意向列表
     func getJobIntension() -> Void {
@@ -123,6 +128,8 @@ class JobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 self.getJobIntension()
             }
             vc.jobIntensionId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList?[indexPath.row].id)!).stringValue
+          
+            
             self.navigationController?.pushViewController(vc, animated: true)
             
             
@@ -155,7 +162,50 @@ class JobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     {
         return 2
     }
-
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return .delete
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if indexPath.section == 1 {
+                
+                delegateJobIntent(model: (self.resumeBassClass?.jobIntentList?[indexPath.row])!, succeedClosure: {
+                    print("indexPath.row = \(indexPath.row)")
+                    self.resumeBassClass?.jobIntentList?.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                    //保存成功后发送通知首页横向滑动列表
+                    let noti = NSNotification.Name(rawValue: "ADDJobIntensionNoti")
+                    NotificationCenter.default.post(name: noti, object: nil)
+                    
+                })
+            }
+        }
+    }
+    //删除求职意向
+    func delegateJobIntent(model:ResumeJobIntentList,succeedClosure:(() -> ())?) -> Void {
+        let dic:NSDictionary = [
+            "resumeId":self.resumeBassClass?.id as Any,
+            "jobIntentId":model.id as Any,
+        ]
+        let jsonStr = JSON(dic)
+        let newDic = jsonStr.dictionaryValue
+        deleteJobIntentInterface(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("删除成功")
+                succeedClosure!()
+            }
+        }) { 
+            
+        }
+        
+        
+    }
+    
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

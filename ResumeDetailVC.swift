@@ -138,6 +138,8 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         
         getCompanyDetail(dic: ["companyId":companyId as Any], actionHandler: { (bassClass) in
             self.companyDetailModel = bassClass
+            
+            print("self.companyDetailModel.adress = \(self.companyDetailModel?.address)")
         }) { 
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
@@ -339,10 +341,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             
         }
 
-        
-        
-        
-        
     }
     
     
@@ -373,7 +371,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 customAlert?.dismiss(completion: {
                     //出现成功或失败（根据业务逻辑）
                     
-                    
                     self.commonInvite(succeed: { 
                         let succeedView = Bundle.main.loadNibNamed("SucceedView", owner: self, options: nil)?.last as! SucceedView
                         succeedView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 320)
@@ -389,7 +386,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     }, fail: { (failResonStr) in
                         SVProgressHUD.showInfo(withStatus: failResonStr)
                     })
-                    
                     
                 })
             }
@@ -432,6 +428,38 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     
                     return
                 }
+                let dic:NSDictionary = [
+                    "token":GetUser(key: TOKEN),
+                    "jobId":self.jobId as Any,
+                    "resumeId":self.resumeId as Any,
+                    "intentId":self.intentId as Any,
+                    "scheduleId":self.jobDetailBassClass?.interviewTimes![numOfSelectRow].id as Any
+                ]
+                let jsonStr = JSON(dic)
+                let newDic:NSDictionary = jsonStr.dictionaryValue as NSDictionary
+                print("newDic = \(newDic)")
+                videoInviteInterface(dic: newDic, actionHander: { (jsonStr) in
+                    if jsonStr["code"] == 0 {
+                        print("成功")
+                        let succeedView = Bundle.main.loadNibNamed("SucceedView", owner: self, options: nil)?.last as! SucceedView
+                        succeedView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 320)
+                        succeedView.mesLabel.text = "邀约成功，请耐心等待回应"
+                        let succeedAlert = JCAlertView.init(customView: succeedView, dismissWhenTouchedBackground: true)
+                        succeedAlert?.show()
+                        succeedView.cancelBtnClickClsure = { (sender) in
+                            print("取消")
+                            succeedAlert?.dismiss(completion: nil)
+                            interFaceAlert?.dismiss(completion: nil)
+                            SVProgressHUD.dismiss()
+                        }
+                        
+                    }else{
+                        SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                    }
+                }, fail: { 
+                    
+                })
+                
             }
         }
     

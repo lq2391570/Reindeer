@@ -35,8 +35,13 @@ class VideoInterViewListVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource
         super.viewDidLoad()
         self.addChildViewController(createMagicController())
         self.view.addSubview((magController?.view)!)
+        if self.homeType == .userHomePage {
+            titleArray = ["待处理","待面试","已结束"]
+        }
         self.magController?.magicView.reloadData()
         // Do any additional setup after loading the view.
+       
+        
     }
     //获得视频面试列表
     

@@ -11,7 +11,7 @@
 import UIKit
 import SVProgressHUD
 import SwiftyJSON
-class CompanyProductVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+class CompanyProductVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     @IBOutlet var tableView: UITableView!
     

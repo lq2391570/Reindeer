@@ -43,7 +43,7 @@ class LoginVC: UIViewController {
                 SetUser(value: jsonStr["netToken"].stringValue, key: NETTOKEN)
                 //登陆成功后登陆网易云
                 
-                NIMSDK.shared().loginManager.login("lq2388691", token: "e10adc3949ba59abbe56e057f20f883e", completion: { (error) in
+                NIMSDK.shared().loginManager.login(self.phoneNumTextField.text!, token: jsonStr["netToken"].stringValue, completion: { (error) in
                      print("error = \(error)")
                     if error == nil{
                         print("登陆成功")
@@ -89,8 +89,8 @@ class LoginVC: UIViewController {
                     if jsonStr["perfectInfo"] == -1
                     {
                         let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
-                        
-                        self.navigationController?.pushViewController(vc, animated: true)
+                        let nav = UINavigationController.init(rootViewController: vc)
+                        self.view.window?.rootViewController = nav
                         return
                         
                     }
@@ -126,7 +126,13 @@ class LoginVC: UIViewController {
         phoneNumTextField.text = GetUser(key: "phone") as? String
         passwordTextField.text = GetUser(key: "password") as? String
         self.navigationController?.isNavigationBarHidden = true
+        
+        
+        
     }
+   
+    
+    
     //背景做动画
     func createAnimationForBGImageView() -> Void {
         let scaleAnimation = CABasicAnimation.init(keyPath: "transform.scale")

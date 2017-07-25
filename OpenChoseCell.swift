@@ -29,8 +29,6 @@ class OpenChoseCell: UITableViewCell {
         self.selectionStyle = .none
      //   switchBtn.isSelected = true
         
-               
-        
     }
 
     @IBAction func switchBtnClick(_ sender: UIButton) {
