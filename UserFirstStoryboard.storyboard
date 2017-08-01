@@ -384,6 +384,9 @@
                                         <state key="normal" title="提交">
                                             <color key="titleColor" red="0.94117647059999998" green="0.76470588240000004" blue="0.57254901960000004" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="commitClick:" destination="iw4-8u-G8s" eventType="touchUpInside" id="YZO-5M-ebu"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -414,6 +417,7 @@
                     <connections>
                         <outlet property="bottomView" destination="Rud-Md-eRk" id="jwv-8i-7ub"/>
                         <outlet property="tableView" destination="45I-Bg-So3" id="bot-DV-jXV"/>
+                        <outlet property="yueLabel" destination="GN1-BA-IeV" id="QTG-rK-ofh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qEH-LC-XVt" userLabel="First Responder" sceneMemberID="firstResponder"/>

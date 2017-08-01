@@ -9,6 +9,8 @@
 import UIKit
 import SwiftyJSON
 import SVProgressHUD
+
+
 class PaiQiDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tableView: UITableView!

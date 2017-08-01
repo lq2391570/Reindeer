@@ -29,6 +29,8 @@
 #import <Foundation/Foundation.h>
 //#import <CocoaLumberjack/CocoaLumberjack.h>
 #import <MJRefresh/MJRefresh.h>
+#import "BPush.h"
+
 
 
 #import "WXApi.h"

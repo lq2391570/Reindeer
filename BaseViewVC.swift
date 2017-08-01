@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+import SVProgressHUD
 //import NIMSDK
 class BaseViewVC: UIViewController {
        override func viewDidLoad() {
@@ -21,6 +22,8 @@ class BaseViewVC: UIViewController {
       //  self.title = "完善公司信息"
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.mainColor]
+        SVProgressHUD.setDefaultMaskType(.none)
+        
         
         if self.navigationController != nil{
             //自定义左键，并重写返回方法

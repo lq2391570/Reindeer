@@ -153,6 +153,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             getHRPostJobs(succeedClosure: { 
                  self.getHomePageJIanLiList()
             })
+            HRGetNoReadNum()
             self.tableView.mj_header = setUpMJHeader(refreshingClosure: { 
                 self.getHomePageJIanLiList()
             })
@@ -437,8 +438,22 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         }) { 
             
         }
+    }
+    //HR获取面试未读数量
+    func HRGetNoReadNum() -> Void {
+        HRNoManagerNumInterface(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId], actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                self.numOfNoReadVideo = jsonStr["video"].stringValue
+                self.numOfNoReadCommon = jsonStr["common"].stringValue
+                self.tableView.reloadData()
+                
+            }
+        }) { 
+            
+        }
         
     }
+    
     
     
     //titleView
@@ -503,6 +518,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             self.jobId = NSNumber.init(value: (self.resumeBassClass?.jobIntentList![item].id)!).stringValue
             self.getAreaWithPid(pid: (self.resumeBassClass?.jobIntentList?[item].areaId)!)
             self.getHomePageJobList(dic: ["token":GetUser(key: TOKEN),"jobId":self.jobId])
+            userGetNoReadNum()
             if self.menu.show == true {
                 self.menu.dismiss()
             }
@@ -512,6 +528,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             self.jobStyleID = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].id)!).stringValue
             self.jobId = NSNumber.init(value: (self.HRPostjobBassClass?.list?[item].jobId)!).stringValue
             self.getResumeList()
+            HRGetNoReadNum()
             if self.menu.show == true {
                 self.menu.dismiss()
             }
@@ -1041,7 +1058,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 }
                 let model:FirstJobList = (self.homePageJobBassClass?.list![indexPath.row])!
                 
-                cell.installPositionCell(jobName: model.jobName!, companyName: model.companyName!, payRange: model.salary!, area: model.city!, yearRange: model.experience!, edu: model.qualification!)
+                cell.installPositionCell(jobName: model.jobName ?? "", companyName: model.companyName ?? "", payRange: model.salary ?? "", area: model.city ?? "", yearRange: model.experience ?? "", edu: model.qualification ?? "")
                 
                 return cell
             }else if homeType == .HRHomePage

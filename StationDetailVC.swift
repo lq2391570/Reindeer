@@ -299,6 +299,8 @@ class StationDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             }
             interFaceView.sureBtnClickClosure = { (sender,numOfSelectRow) in
                 print("点击了确定")
+                SVProgressHUD.show()
+                
                 guard numOfSelectRow != -1 else {
                     interFaceAlert?.dismiss(completion: {
                         SVProgressHUD.showInfo(withStatus: "请选择排期")

@@ -90,10 +90,15 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         
         tableView.register(UINib.init(nibName: "UserVideoWaitManagerCell", bundle: nil), forCellReuseIdentifier: "UserVideoWaitManagerCell")
         tableView.register(UINib.init(nibName: "UserVideoWaitHRCell", bundle: nil), forCellReuseIdentifier: "UserVideoWaitHRCell")
+        tableView.register(UINib.init(nibName: "UserAlreadyFinishCell", bundle: nil), forCellReuseIdentifier: "UserAlreadyFinishCell")
+        tableView.register(UINib.init(nibName: "HRVideoAlreadyFinishCell1", bundle: nil), forCellReuseIdentifier: "HRVideoAlreadyFinishCell1")
+        tableView.register(UINib.init(nibName: "HRVideoNoInterfaceCell", bundle: nil), forCellReuseIdentifier: "HRVideoNoInterfaceCell")
+        tableView.register(UINib.init(nibName: "HRVideoNoInterfaceCell2", bundle: nil), forCellReuseIdentifier: "HRVideoNoInterfaceCell2")
         
         
         
         
+        print("currentDataType = \(self.dataType.rawValue)")
         
         if homeType == .HRHomePage {
             HRGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
@@ -185,13 +190,31 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     {
         if self.homeType == .HRHomePage {
             if self.dataType == .waittingInterFace {
-                //待面试
+                //待处理
                 if self.bassClass == nil {
                     return 0
                 }
                 return (self.bassClass?.list![section].list?.count)! + 1 //+1是由于一直有第一行
+            }else if self.dataType == .alreadyFinish
+            {
+                //已结束
+                if self.bassClass == nil {
+                    return 0
+                }
+                return (self.bassClass?.list![section].resumeList?.count)! + 1 //+1是由于一直有第一行
+
+            }else if self.dataType == .didNotInterView
+            {
+                //未面试
+                if self.bassClass == nil {
+                    return 0
+                }
+                return (self.bassClass?.list![section].resumeList?.count)! + 1 //+1是由于一直有第一行
+                
                 
             }
+            
+            
         }else if self.homeType == .userHomePage
         {
             //应聘者
@@ -207,6 +230,12 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     return 0
                 }
                 return 1
+            }else if self.dataType == .alreadyFinish{
+                //已结束
+                if self.userBassClass == nil {
+                    return 0
+                }
+                return 1
             }
             
         }
@@ -217,6 +246,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     {
         if self.homeType == .HRHomePage {
             let model:HRVideoInterViewStateList = (self.bassClass?.list![indexPath.section])!
+                       
             if self.dataType == .waittingHandle {
                 //待处理
                 if model.state == 3 {
@@ -234,15 +264,16 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                         
                         let dic:NSDictionary = [
                             "token":GetUser(key: TOKEN),
-                            "jobId":self.jobId,   //职位id
-                            "resumeId":self.bassClass?.list?[indexPath.section].resumeId as Any,        //简历id
+//                            "jobId":self.jobId,   //职位id
+//                            "resumeId":self.bassClass?.list?[indexPath.section].resumeId as Any,        //简历id
+                            "id":model.id as Any!,
                              "type":1
                             
                         ]
                         let jsonStr = JSON(dic)
                         let newDic = jsonStr.dictionaryValue
                         
-                        HRVideoApprovalAgreeOrRefuse(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+                        HRVideoListApprovalAgreeOrRefuse(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
                             if jsonStr["code"] == 0 {
                                 SVProgressHUD.showSuccess(withStatus: "操作成功")
                                 self.HRGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
@@ -259,15 +290,16 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                         print("同意点击")
                         let dic:NSDictionary = [
                             "token":GetUser(key: TOKEN),
-                            "jobId":self.jobId,   //职位id
-                            "resumeId":self.bassClass?.list?[indexPath.section].resumeId as Any,        //简历id
+//                            "jobId":self.jobId,   //职位id
+//                            "resumeId":self.bassClass?.list?[indexPath.section].resumeId as Any,        //简历id
+                            "id":model.id!,
                             "type":0
                             
                         ]
                         let jsonStr = JSON(dic)
                         let newDic = jsonStr.dictionaryValue
                         
-                        HRVideoApprovalAgreeOrRefuse(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+                        HRVideoListApprovalAgreeOrRefuse(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
                             if jsonStr["code"] == 0 {
                                 SVProgressHUD.showSuccess(withStatus: "操作成功")
                                 self.HRGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
@@ -285,19 +317,38 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                 }
                 
             }else if self.dataType == .alreadyFinish {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoAlreadyFinishCell") as! HRVideoAlreadyFinishCell
-                cell.installCell(name: model.name, money: model.salary, area: model.area, year: model.exp, edu: model.edu, evaluateMes: "", evaluateStateType: 1, headImageStr: model.avatar, videoStartBtnClosure: { (btn) in
-                    print("视频按钮点击")
-                    
-                })
-                return cell
+               let model:HRVideoInterViewStateList = (self.bassClass?.list![indexPath.section])!
+                //已面试
+                if indexPath.row == 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoAlreadyFinishCell1") as! HRVideoAlreadyFinishCell1
+                    cell.installCell(jobName: model.jobName, time: model.time, duration: model.duration, numOfPeople: "\(model.num!)/\(model.nums!)", agreeNum: model.good, undetermined: model.common, refusenum: model.poor)
+                    return cell
+                }else{
+                     let listModel:HRVideoInterfaceBassClass2ResumeList = (model.resumeList?[indexPath.row - 1])!
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoAlreadyFinishCell") as! HRVideoAlreadyFinishCell
+                    cell.installCell(name: listModel.name, money: listModel.salary, area: listModel.area, year: listModel.exp, edu: listModel.edu, evaluateMes: listModel.comment, evaluateStateType: listModel.satis ?? 2, headImageStr: listModel.avatar, videoStartBtnClosure: { (btn) in
+                        print("点击的链接为 \(listModel.videoUrl ?? "")")
+                        if listModel.videoUrl == nil {
+                            SVProgressHUD.showInfo(withStatus: "此面试未储存")
+                        }
+                        
+                    })
+                    return cell
+                }
+                
             }else if self.dataType == .waittingInterFace{
                 //待面试
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoWaitInterViewCell1") as! HRVideoWaitInterViewCell1
                     cell.installCell(jobName: model.jobName, time: model.time, timeLong: model.duration, numOfPeople: "\(model.num!)/\(model.nums!)",stateNum:model.state!, startBtnClosure: { (btn) in
                         print("开始面试BtnClick")
+                        if model.state == 8 {
+                            SVProgressHUD.showInfo(withStatus: "未到面试时间")
+                            return
+                        }
+                        if model.state == 9 {
                             //开始面试按钮点击
+                            SVProgressHUD.show()
                             let dic:NSDictionary = [
                                 "token":GetUser(key: TOKEN),
                                 "id":model.id!
@@ -308,7 +359,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                             HRStartInterView(dic: newDic, actionHander: { (jsonStr) in
                                 if jsonStr["code"] == 0 {
                                     SVProgressHUD.showSuccess(withStatus: "开始面试成功")
-                                      self.HRGetVideoInterViewList(num: 1, type: 2)
+                                    self.HRGetVideoInterViewList(num: 1, type: 2)
                                 }else{
                                     SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
                                 }
@@ -316,27 +367,110 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                             }, fail: {
                                 SVProgressHUD.showInfo(withStatus: "请求失败")
                             })
-                
+
+                        }
+                        if model.state == 10 {
+                            //结束面试点击
+                           getNoInterviewCount(dic: ["token":GetUser(key: TOKEN),"id":model.id!], actionHander: { (jsonStr) in
+                            if jsonStr["code"] == 0 {
+                                if jsonStr["num"] > 0 {
+                                    let num = jsonStr["num"].intValue
+                                    createAlert(title: "提示", message: "还有\(num)个人尚未面试，是否结束此次面试", viewControll: self, closure: { 
+                                        EndAnInterview(dic: ["token":GetUser(key: TOKEN),"id":model.id!,"type":0], actionHander: { (jsonStr) in
+                                            if jsonStr["code"] == 0 {
+                                                SVProgressHUD.showSuccess(withStatus: "操作成功")
+                                                self.HRGetVideoInterViewList(num: 1, type: 2)
+                                            }else{
+                                                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                                            }
+                                        }, fail: { 
+                                            
+                                        })
+                                    })
+                                }else{
+                                    //没有未面试的
+                                    EndAnInterview(dic: ["token":GetUser(key: TOKEN),"id":model.id!,"type":0], actionHander: { (jsonStr) in
+                                        if jsonStr["code"] == 0 {
+                                            SVProgressHUD.showSuccess(withStatus: "操作成功")
+                                            self.HRGetVideoInterViewList(num: 1, type: 2)
+                                        }else{
+                                            SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                                        }
+                                    }, fail: {
+                                        
+                                    })
+                                }
+                            }
+                           }, fail: { 
+                            
+                           })
+                            
+                        }
+                        
                     })
                     
                     return cell
                 }else{
                     
+                    
                     let listModel:HRVideoInterState2List = (model.list?[indexPath.row - 1])!
                     let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoWaitInterViewCell2") as! HRVideoWaitInterViewCell2
-                    cell.installCell(headImageUrl: listModel.avatar, name: listModel.name, money: listModel.salary, stateNum: listModel.ready!, videoBtnClosure: { (btn) in
+                    cell.installCell(headImageUrl: listModel.avatar, name: listModel.name, money: listModel.salary, readyNum: listModel.ready!, stateNum: listModel.state!, videoBtnClosure: { (btn) in
                         print("开始视频")
+                        if model.state == 9 || model.state == 8 {
+                            SVProgressHUD.showInfo(withStatus: "暂未开始面试")
+                            return
+                        }
+                        
+                        
                         if listModel.ready == 1 {
                     //未就绪(测试视频直接进入视频)
-//               createAlertOneBtn(title: "提示", message: "此应聘者暂未就绪", btnStr: "知道了",   viewControll: self, closure: nil)
-                       let vc = NTESVideoChatViewController(callee: "lq2391570")
-                         //   print("listModel.avatar = \(listModel.avatar)")
-                          vc?.headUrl = listModel.avatar
-                          vc?.nameStr = listModel.name
-                          vc?.ypUserId = listModel.id!
-                        //  vc?.stateLabel.text = listModel.
-                        self.navigationController?.pushViewController(vc!, animated: true)
-                      }
+               createAlertOneBtn(title: "提示", message: "此应聘者暂未就绪", btnStr: "知道了",   viewControll: self, closure: nil)
+                       
+                        }else{
+                            let vc = NTESVideoChatViewController(callee: "\(listModel.phone!)")
+                            //   print("listModel.avatar = \(listModel.avatar)")
+                            vc?.headUrl = listModel.avatar
+                            vc?.nameStr = listModel.name
+                            vc?.ypUserId = listModel.id!
+                            vc?.mianshiId = listModel.id!
+                            vc?.hangupBlock = { callId in
+                                print("挂断了")
+                                let dic = [
+                                    "token":GetUser(key: TOKEN),
+                                    "inteviewId":listModel.id!,
+                                    "channelId":callId,
+                                    "delay":0
+                                ]
+                                let jsonStr = JSON(dic)
+                                let newDic = jsonStr.dictionaryValue
+                                finishCommunicate(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+                                    if jsonStr["code"] == 0 {
+                                        print("结束成功")
+                                        let vc2 = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "EvaluateVC") as! EvaluateVC
+                                        vc2.interViewId = listModel.id
+                                        vc2.timeStr = (vc?.durationLabel.text)!
+                                        vc2.dissmissClosure = {
+                                            //成功或的回调
+                                            
+                                        }
+                                        let nav = UINavigationController(rootViewController: vc2)
+                                        self.present(nav, animated: true, completion: nil)
+                                    }else {
+                                        SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                                        
+                                    }
+                                }, fail: { 
+                                    
+                                })
+                                
+                                
+                            }
+                            
+                            //  vc?.stateLabel.text = listModel.
+                            self.navigationController?.pushViewController(vc!, animated: true)
+                            
+                        }
                         
                     })
                     
@@ -344,6 +478,23 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                 }
                 
                 
+            }else if self.dataType == .didNotInterView
+            {
+                let model:HRVideoInterViewStateList = (self.bassClass?.list![indexPath.section])!
+                print("model.jobName = \(model.jobName)")
+                //未面试
+                if indexPath.row == 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoNoInterfaceCell") as! HRVideoNoInterfaceCell
+                    cell.installCell(jobName: model.jobName, time: model.time, recentJob: "")
+                    return cell
+                }else{
+                    let listModel:HRVideoInterfaceBassClass2ResumeList = (model.resumeList?[indexPath.row - 1])!
+                    
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoNoInterfaceCell2") as! HRVideoNoInterfaceCell2
+                    cell.installCell(headImageStr: listModel.avatar, name: listModel.name, money: listModel.salary, area: listModel.area, exp: listModel.exp, edu: listModel.edu, recentJob: "最近任职:\(listModel.recentJob ?? "")")
+                    
+                    return cell
+                }
             }
             
         }else if self.homeType == .userHomePage {
@@ -407,15 +558,27 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     let cell = tableView.dequeueReusableCell(withIdentifier: "UserVideoWaitHRCell") as! UserVideoWaitHRCell
                     
                     cell.installCell(jobName: "\(model.name!)|\(model.company!)", state: "", time: model.time, during: model.duration, numOfPeople: "\(model.num!)|\(model.nums!)", headImageStr: model.avatar, HRNameAndJob: "\(model.hrName!)|\(model.job!)", score: model.score)
-                    
+                    cell.blackBGView.isHidden = true
                     return cell
                 }else if model.state == 6 {
                     //可以准备就绪（有一层遮罩）
                     let cell = tableView.dequeueReusableCell(withIdentifier: "UserVideoWaitHRCell") as! UserVideoWaitHRCell
                     
                     cell.installCell(jobName: "\(model.name!)|\(model.company!)", state: "", time: model.time, during: model.duration, numOfPeople: "\(model.num!)|\(model.nums!)", headImageStr: model.avatar, HRNameAndJob: "\(model.hrName!)|\(model.job!)", score: model.score)
+                    cell.blackBGView.isHidden = false
                     cell.readyBtnClickClosure = {
                         print("准备就绪")
+                        UserVideoReady(dic: ["token":GetUser(key: TOKEN),"id":model.id!], actionHander: { (jsonStr) in
+                            if jsonStr["code"] == 0 {
+                                SVProgressHUD.showSuccess(withStatus: "操作成功")
+                                self.UserGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
+                                
+                            }else{
+                                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                            }
+                        }, fail: { 
+                            
+                        })
                         
                     }
                     
@@ -425,16 +588,24 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     let cell = tableView.dequeueReusableCell(withIdentifier: "UserVideoWaitHRCell") as! UserVideoWaitHRCell
                     
                     cell.installCell(jobName: "\(model.name!)|\(model.company!)", state: "", time: model.time, during: model.duration, numOfPeople: "\(model.num!)|\(model.nums!)", headImageStr: model.avatar, HRNameAndJob: "\(model.hrName!)|\(model.job!)", score: model.score)
-                    
+                    cell.blackBGView.isHidden = true
+                    return cell
+                }else if model.state == 9 {
+                    //待处理
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "UserVideoWaitHRCell") as! UserVideoWaitHRCell
+                    cell.installCell(jobName: "\(model.name!)|\(model.company!)", state: "", time: model.time, during: model.duration, numOfPeople: "\(model.num!)|\(model.nums!)", headImageStr: model.avatar, HRNameAndJob: "\(model.hrName!)|\(model.job!)", score: model.score)
                     return cell
                 }
                 
-                
-
             }else if self.dataType == .alreadyFinish {
-                //已结束
+                let model:UserVideoInterfaceList = (self.userBassClass?.list![indexPath.section])!
+                 //已结束
+                let cell = tableView.dequeueReusableCell(withIdentifier: "UserAlreadyFinishCell") as! UserAlreadyFinishCell
+                
+                cell.installCell(jobName:"\(model.name!)|\(model.job!)" , time: model.duration, headImageStr: model.avatar, HRNameAndJob: "\(model.hrName!)|HR", stateName: "已评价", score: model.score)
                 
                 
+                return cell
             }
             
         }
@@ -455,6 +626,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         
         JobSeekerMesInVideo(dic: newDic, actionHander: { (jobSeekerBassClass) in
             succeedClosure!(jobSeekerBassClass)
+            
         }) { 
             
         }
@@ -464,6 +636,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     func numberOfSections(in tableView: UITableView) -> Int
     {
         if homeType == .HRHomePage {
+            
             if self.bassClass == nil {
                 return 0
             }
@@ -538,7 +711,12 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                 }
             }else if self.dataType == .alreadyFinish {
                 //已面试
-                return 120
+                if indexPath.row == 0 {
+                    return 70
+                }else{
+                    return 120
+                }
+
             }else if self.dataType == .waittingInterFace{
                 //待面试
                 if indexPath.row == 0 {
@@ -546,6 +724,14 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                 }else{
                     return 80
                 }
+            }else if self.dataType == .didNotInterView {
+                //未面试
+                if indexPath.row == 0 {
+                    return 70
+                }else{
+                    return 110
+                }
+                
             }
         }else if self.homeType == .userHomePage{
             if self.dataType == .waittingHandle {
@@ -556,6 +742,8 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     return 150
                 }
                 
+            }else if self.dataType == .alreadyFinish {
+               return 120
             }
         }
        return 150
