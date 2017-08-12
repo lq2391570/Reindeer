@@ -84,6 +84,10 @@ class UserCenterFirstVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func headImageClick() -> Void {
         print("dianji touxiang")
         let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteUserMesVC") as! CompleteUserMesVC
+        vc.enterType = .userCenterEnter
+        vc.returnClosure = {
+            self.getUserMesAndImage()
+        }
         self.navigationController?.pushViewController(vc, animated: true)
         
     }

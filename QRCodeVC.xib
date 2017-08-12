@@ -19,29 +19,45 @@
                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="请现在电脑上打开下面的网址" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VGn-ma-4tZ">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请现在电脑上打开下面的网址" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VGn-ma-4tZ">
                         <rect key="frame" x="70" y="54" width="234" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="K20-TC-zVn"/>
+                            <constraint firstAttribute="width" constant="234" id="LRp-W8-SKx"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="www.xunlu.com" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w1b-oY-P2Q">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="www.xunlu.com" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w1b-oY-P2Q">
                         <rect key="frame" x="113" y="94" width="148" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="148" id="Shb-XN-4hG"/>
+                            <constraint firstAttribute="height" constant="21" id="XzV-us-yfl"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                         <color key="textColor" red="0.95280915499999996" green="0.80192488429999997" blue="0.63282537459999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="并扫描页面中的二维码登陆" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m2G-T0-Vol">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="并扫描页面中的二维码登陆" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m2G-T0-Vol">
                         <rect key="frame" x="70" y="138" width="234" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="234" id="iES-Uq-agN"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="w1b-oY-P2Q" firstAttribute="top" secondItem="VGn-ma-4tZ" secondAttribute="bottom" constant="19" id="3wP-7e-RIb"/>
+                    <constraint firstItem="m2G-T0-Vol" firstAttribute="top" secondItem="w1b-oY-P2Q" secondAttribute="bottom" constant="23" id="6Pc-oS-Y6y"/>
+                    <constraint firstItem="m2G-T0-Vol" firstAttribute="centerX" secondItem="lGM-c3-aZb" secondAttribute="centerX" id="R3m-uJ-pm8"/>
+                    <constraint firstItem="VGn-ma-4tZ" firstAttribute="centerX" secondItem="lGM-c3-aZb" secondAttribute="centerX" id="Rcl-5k-uKF"/>
+                    <constraint firstItem="VGn-ma-4tZ" firstAttribute="top" secondItem="5eN-IU-Q8o" secondAttribute="bottom" constant="54" id="Zxy-g7-hPO"/>
+                    <constraint firstItem="w1b-oY-P2Q" firstAttribute="centerX" secondItem="lGM-c3-aZb" secondAttribute="centerX" id="n92-Vt-HxN"/>
+                </constraints>
             </view>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
             <point key="canvasLocation" x="46.5" y="-42.5"/>

@@ -60,6 +60,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate,UNUserNotifi
         }
         
         BPush.registerChannel(launchOptions, apiKey: "jlHoVGhl344MIRM5QHHi6C0Lfr2YODYt", pushMode: BPushMode.development, withFirstAction: "打开", withSecondAction: "关闭", withCategory: "test", useBehaviorTextInput: true, isDebug: true)
+        
+        BPush.bindChannel { (result, error) in
+            print("result = \(result!)")
+            print("channelId = \(BPush.getChannelId())")
+            let dic = ["token":GetUser(key: TOKEN),"channelId":BPush.getChannelId(),"type":"1"]
+            print("dic = \(dic)")
+                bindingChannelId(dic: dic as NSDictionary, actionHander: { (jsonStr) in
+                    if jsonStr["code"] == 0 {
+                        print("绑定成功")
+                    }
+                }, fail: { 
+                    
+                })
+            
+        }
        
       //  let userInfo:NSDictionary = launchOptions[UIApplicationLaunchOptionsKey.remoteNotification]
         if launchOptions?[UIApplicationLaunchOptionsKey.remoteNotification] != nil {

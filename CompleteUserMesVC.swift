@@ -11,6 +11,7 @@ import SDWebImage
 import SVProgressHUD
 import JVFloatLabeledTextField
 import JCAlertView
+import SwiftyJSON
 class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     
@@ -28,6 +29,21 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
     
     @IBOutlet var choseCityBtn: UIButton!
     
+    //返回闭包（用来刷新数据）
+    var returnClosure:(() -> ())?
+    
+    
+    //从个人中心进入还是从注册进入
+    enum enterTypeEnum {
+        case loginEnter   // 注册时进入
+        case userCenterEnter  // 个人中心进入
+    }
+    //进入修改个人信息的方式
+    var enterType:enterTypeEnum = .loginEnter
+    
+    
+    //个人信息json
+    var userMesJson:JSON?
     //地区id
     var areaId:String = ""
     //地区model
@@ -40,7 +56,7 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         installHeadBtn()
+        
         // Do any additional setup after loading the view.
         self.navigationController?.navigationBar.barTintColor=UIColor.black
         //消除毛玻璃效果
@@ -48,7 +64,69 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
         self.title = "完善个人信息"
         self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.mainColor]
+        getUserMesAndHeadImage()
+        if self.enterType == .userCenterEnter {
+            self.nextBtn.setTitle("完成", for: .normal)
+            self.nextBtn.removeTarget(self, action: nil, for: .touchUpInside)
+            self.nextBtn.addTarget(self, action: #selector(completeClick), for: .touchUpInside)
+        }
     }
+    
+    func completeClick() -> Void {
+        //完成
+        //判断性别
+        if manBtn.isSelected == true {
+            sexStr = "男"
+        }else if womanBtn.isSelected == true{
+            sexStr = "女"
+        }
+        guard nameTextField.text != nil && nameTextField.text != "" else {
+            SVProgressHUD.showInfo(withStatus: "姓名不能为空")
+            return
+        }
+        
+        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":self.areaModel?.id as Any], actionHandler: {(jsonStr) in
+            if jsonStr["code"] == 0 {
+                SVProgressHUD.showSuccess(withStatus: "完善信息成功")
+                _ = self.navigationController?.popViewController(animated: true)
+                if (self.returnClosure != nil) {
+                    self.returnClosure!()
+                }
+                
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].string)
+            }
+            
+        }, fail: {
+            
+        })
+
+        
+    }
+    //先根据token查询个人资料
+    func getUserMesAndHeadImage() -> Void {
+        getUserMes(dic: ["token":GetUser(key: TOKEN)], actionHandler: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                print("jsonStr = \(jsonStr)")
+                self.userMesJson = jsonStr
+                self.headImageStr = (self.userMesJson?["avatar"].stringValue)!
+                if self.userMesJson?["sex"].stringValue == "男" {
+                    self.headImageBtn.sd_setBackgroundImage(with: NSURL.init(string: self.headImageStr) as URL!, for: UIControlState.normal, placeholderImage: UIImage.init(named: "默认头像_男.png"))
+                    self.manBtn.isSelected = true
+                    self.womanBtn.isSelected = false
+                }else{
+                    self.headImageBtn.sd_setBackgroundImage(with: NSURL.init(string: self.headImageStr) as URL!, for: UIControlState.normal, placeholderImage: UIImage.init(named: "默认头像_女.png"))
+                    self.manBtn.isSelected = false
+                    self.womanBtn.isSelected = true
+                }
+                self.sexStr = self.userMesJson!["sex"].stringValue
+                self.installHeadBtn()
+            }
+        }) { 
+            print("请求失败")
+        }
+    }
+
     @IBAction func choseCityBtnClick(_ sender: UIButton) {
         
         if let customView = LQAreaPickView.newInstance() {
@@ -66,8 +144,6 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
                 self.cityTextField.text = "\(customView.selectProvinModel?.name! ?? "")\(customView.selevtCityModel?.name! ?? "")"
                 customAlert?.dismiss(completion: nil)
                 self.areaModel = customView.selevtCityModel
-                
-                
             }
             customAlert?.show()
             
@@ -78,6 +154,7 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
     func installHeadBtn() -> Void {
         headImageBtn.layer.cornerRadius = 50
         headImageBtn.layer.masksToBounds = true
+       
         manBtn.layer.borderColor = UIColor.init(hexColor: "f4cda2").cgColor
         manBtn.layer.borderWidth = 1
         womanBtn.layer.borderColor = UIColor.init(hexColor: "f4cda2").cgColor
@@ -86,12 +163,32 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
         manBtn.setTitleColor(UIColor.init(hexColor: "f4cda2"), for: .normal)
         womanBtn.setTitleColor(UIColor.black, for: .selected)
         womanBtn.setTitleColor(UIColor.init(hexColor: "f4cda2"), for: .normal)
-        manBtn.isSelected = true
-        manBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
-        womanBtn.isSelected = false
+        if self.userMesJson?["sex"].stringValue == "男" {
+            manBtn.isSelected = true
+            womanBtn.isSelected = false
+            manBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
+            womanBtn.backgroundColor = UIColor.clear
+           
+           
+        }else{
+            manBtn.isSelected = false
+            womanBtn.isSelected = true
+            womanBtn.backgroundColor = UIColor.init(hexColor: "f4cda2")
+            manBtn.backgroundColor = UIColor.clear
+
+        }
+      
+    
         nameTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
+        nameTextField.text = self.userMesJson?["name"].stringValue
+        
         cityTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
         cityTextField.isUserInteractionEnabled = false
+        cityTextField.text = self.userMesJson?["area"].stringValue
+        self.areaModel = AreaBaseClass(object: "")
+        self.areaModel?.id = self.userMesJson?["areaId"].intValue
+        
+        
     }
     
 

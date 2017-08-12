@@ -99,9 +99,18 @@ class ResumeManagerVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 self.navigationController?.pushViewController(vc, animated: true)
                 
                 
+            }else{
+                //更新
+                let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "AddEduExpVC") as! AddEduExpVC
+                vc.resumeBassClass = self.resumeBassClass
+                vc.typeOfEduExpAddOrUpdate = .updateEduExp
+                vc.eduExpId = NSNumber.init(value: (self.resumeBassClass?.eduExpList?[indexPath.row].id)!).stringValue
+                vc.returnClosure = {
+                    self.getJobIntension()
+                }
+                self.navigationController?.pushViewController(vc, animated: true)
+                
             }
-            
-            
             
         }
         

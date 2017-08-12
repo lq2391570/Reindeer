@@ -21,6 +21,20 @@ class SelectTimeCell: UITableViewCell {
     //after时间选择闭包
     var afterTimeClosure:((String,Date) -> ())?
     
+ 
+    func transitionTimeBefore(beginTimeUnixStr:String) -> Void {
+        
+        let nsNum:NSNumber = NSNumber(value: NSString(string: beginTimeUnixStr).floatValue)
+        self.beforeTimeBtn.setTitle(unixTransformtimeStr(unixStr: nsNum, dateStyle: "YYYY.MM"), for: .normal)
+        
+    }
+    func transitionTimeEnd(endTimeUnixStr:String) -> Void {
+        let nsNum:NSNumber = NSNumber(value: NSString(string: endTimeUnixStr).floatValue)
+        self.afterTimeBtn.setTitle(unixTransformtimeStr(unixStr: nsNum, dateStyle: "YYYY.MM"), for: .normal)
+        
+    }
+    
+    
     @IBAction func beforeTimeBtnClick(_ sender: UIButton) {
         let customView = LQDatePickView.newInstance()
         
@@ -28,10 +42,8 @@ class SelectTimeCell: UITableViewCell {
         alertView?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - (customView?.frame.size.height)!/2-20)
         customView?.cancelbtnClickClosure = { (btn) in
             alertView?.dismiss(completion: nil)
-            
         }
         customView?.sureBtnClickclosure = { (btn) in
-            
             alertView?.dismiss(completion: { 
                 print("点击确定")
                 let dateFormort = DateFormatter.init()
@@ -84,6 +96,7 @@ class SelectTimeCell: UITableViewCell {
         alertView?.show()
         
     }
+    
     
     
     override func awakeFromNib() {

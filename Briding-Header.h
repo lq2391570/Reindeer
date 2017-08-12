@@ -30,8 +30,8 @@
 //#import <CocoaLumberjack/CocoaLumberjack.h>
 #import <MJRefresh/MJRefresh.h>
 #import "BPush.h"
-
-
+//#import "UIScrollView+EmptyDataSet.h"
+#import <DZNEmptyDataSet/UIScrollView+EmptyDataSet.h>
 
 #import "WXApi.h"
 #import "WXApiObject.h"

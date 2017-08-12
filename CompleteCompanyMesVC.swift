@@ -125,7 +125,7 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     func companyDetail() -> Void {
         //获得公司详情
         print("companyId = \(self.companyId)")
-        getCompanyDetail(dic: ["companyId":self.companyId], actionHandler: { (bassClass) in
+        getCompanyDetail(dic: ["id":self.companyId,"token":GetUser(key: TOKEN)], actionHandler: { (bassClass) in
             self.companyDetailModel = bassClass
             self.productArray = bassClass.productList!
             self.companyImageModelArray = bassClass.imageList!
@@ -160,13 +160,14 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     func confineQBImagePickerController() -> Void {
         imagePickerController = QBImagePickerController()
         imagePickerController.delegate = self
+        
         imagePickerController.allowsMultipleSelection = true
         imagePickerController.maximumNumberOfSelection = 6
         imagePickerController.showsNumberOfSelectedAssets = true
     }
     
     func createFootView() -> UIView {
-        let footView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width , height: 60))
+        let footView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width , height: 50))
         let btn = UIButton(type: .custom)
         btn.backgroundColor = UIColor.black
         btn.setTitle("保存", for: .normal)
@@ -177,9 +178,9 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         
         btn.snp.makeConstraints { (make) in
             make.left.equalTo(footView.snp.left).offset(20)
-            make.top.equalTo(footView.snp.top).offset(10)
-            make.bottom.equalTo(footView.snp.bottom).offset(10)
-            make.right.equalTo(footView.snp.right).offset(20)
+            make.top.equalTo(footView.snp.top).offset(5)
+            make.bottom.equalTo(footView.snp.bottom).offset(-5)
+            make.right.equalTo(footView.snp.right).offset(-20)
             
         }
         return footView
@@ -581,7 +582,6 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
             
             }
             
-            
         }
     }
     //拍照
@@ -635,69 +635,110 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         
         self.dismiss(animated: true, completion: nil)
     }
+    
+    
     func qb_imagePickerController(_ imagePickerController: QBImagePickerController!, didFinishPickingAssets assets: [Any]!) {
         var index = 0
         print("asstes.count=\(assets.count)")
         //因为assets有缓存，所以每次调用需清空数组
         self.imageFileArray = []
         self.companyImageArray = []
-        
         for asset in assets {
             print("asset=\(asset)")
             index = index + 1
-        //    let imageAsset:PHAsset = asset as! PHAsset
-        //    let size = CGSize(width: imageAsset.pixelWidth, height: imageAsset.pixelHeight)
+            //    let imageAsset:PHAsset = asset as! PHAsset
+            //    let size = CGSize(width: imageAsset.pixelWidth, height: imageAsset.pixelHeight)
             let size = CGSize(width: 100, height: 100)
             //获取图片
             //PHImageRequestOptionsDeliveryModeOpportunistic 当选用此项时，Photos会在你请求时给你提供一个或者多个结果，这就意味着resultHandler block可能会执行一次或多次，例如Photos会先给你一个低分辨率的图片让你暂时显示，然后加载出高质量的图片后再次给你。如果PHImageManager已经pre-cache了图片，那result handler便只会执行一次。另外，如果synchronous属性为NO,此选项是不起作用的。
+            
             let option = PHImageRequestOptions()
             option.isSynchronous = true
             option.deliveryMode = .opportunistic
-            
-            PHImageManager.default().requestImage(for: asset as! PHAsset, targetSize: size, contentMode: PHImageContentMode.aspectFit, options: option, resultHandler: { (result, info) in
-                print("result = \(result) info = \(info)")
-                let image:UIImage = result!
-                
-                var imageData:Data? = UIImageJPEGRepresentation(image, 0.5)
-                
-                if imageData == nil {
-                    imageData = UIImagePNGRepresentation(image)
+            option.isNetworkAccessAllowed = true
+            option.progressHandler = { (progress, error,point,hash) in
+                print("progress = \(progress)")
+                SVProgressHUD.showProgress(Float(progress))
+            }
+            PHImageManager.default().requestImageData(for: asset as! PHAsset, options: option, resultHandler: { (imageData, dataUTI, orientation, info) in
+                if let dic = info {
+                    if let error = dic[PHImageErrorKey]{
+                        print("error = \(error)")
+                        return
+                    }else{
+                        
+                        var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                        
+                        if FileManager.default.fileExists(atPath: path) == true {
+                            try! FileManager.default.removeItem(atPath: path)
+                            path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                        }
+                        
+                        
+                        
+                        print("path = \(path)")
+                        let url = NSURL.fileURL(withPath: path)
+                        do {
+                            try imageData?.write(to: url)
+                        } catch {
+                            print("error")
+                        }
+                        self.imageFileArray.add(url)
+                        if self.imageFileArray.count > 0 {
+                            self.isHaveImage = true
+                        }
+                        self.isReflashCollection = false
+                        
+                        self.tableView.reloadData()
+                    }
+                    
                 }
-                
-                let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
-                print("path = \(path)")
-                let url = NSURL.fileURL(withPath: path)
-                do {
-                    try imageData?.write(to: url)
-                } catch {
-                    print("error")
-                }
-                
-                self.imageFileArray.add(url)
-                if self.imageFileArray.count > 0 {
-                    self.isHaveImage = true
-                }
-                self.isReflashCollection = false
-                
-                self.tableView.reloadData()
                 
             })
+            
+//            PHImageManager.default().requestImage(for: asset as! PHAsset, targetSize: size, contentMode: PHImageContentMode.aspectFit, options: option, resultHandler: { (result, info) in
+//
+//                print("result = \(result) info = \(info)")
+//                let image:UIImage = result!
+//                
+//                var imageData:Data? = UIImageJPEGRepresentation(image, 0.5)
+//                
+//                if imageData == nil {
+//                    imageData = UIImagePNGRepresentation(image)
+//                }
+//                
+//                let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+//                print("path = \(path)")
+//                let url = NSURL.fileURL(withPath: path)
+//                do {
+//                    try imageData?.write(to: url)
+//                } catch {
+//                    print("error")
+//                }
+//                
+//                self.imageFileArray.add(url)
+//                if self.imageFileArray.count > 0 {
+//                    self.isHaveImage = true
+//                }
+//                self.isReflashCollection = false
+//                
+//                self.tableView.reloadData()
+//                
+//            })
+//        }
         }
         print("self.imageFileArray.count=\(self.imageFileArray.count)")
-                   self.companyImageArray.removeAll()
-                    for model in self.companyImageModelArray {
-                        self.companyImageArray.append(model.path!)
-                    }
         
         for imageUrl in self.imageFileArray {
             uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
-                
                 print("jsonstr = \(jsonStr)")
                 if jsonStr["code"] == 0 {
                     let imageUrlStr = jsonStr["url"].stringValue
                     self.companyImageArray.append(imageUrlStr)
+                    print("self.companyImageArray = \(self.companyImageArray)")
                     self.isReflashCollection = false
                     self.tableView.reloadData()
+                    
                 }
             }, fail: {
                 
@@ -705,9 +746,84 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         }
         
         self.dismiss(animated: true, completion: nil)
-        
     }
-    
+     func dowloadAsset(_ asset: PHAsset, to url: URL, completion handle:@escaping (()->())) {
+        if #available(iOS 9.1, *) {
+            if asset.mediaType == .image && asset.mediaSubtypes == .photoLive {
+                let options = PHLivePhotoRequestOptions()
+                options.isNetworkAccessAllowed = true
+                PHImageManager.default().requestLivePhoto(for: asset, targetSize: CGSize.zero, contentMode: .aspectFill, options: options, resultHandler: { (livePhoto, info) in
+                    if let dic = info {
+                        if let error = dic[PHImageErrorKey] {
+                            print(error)
+                            return
+                        }else {
+                            let livePhotoData = NSKeyedArchiver.archivedData(withRootObject: livePhoto!)
+                            if FileManager.default.createFile(atPath: url.path, contents: livePhotoData, attributes: nil) {
+                                print(url.path)
+                                handle()
+                            }else {
+                                return
+                            }
+                        }
+                    }else {
+                        return
+                    }
+                })
+            }
+        }else{
+        if asset.mediaType == .image {
+            let options = PHImageRequestOptions()
+            options.isNetworkAccessAllowed = true
+            PHImageManager.default().requestImageData(for: asset, options: options, resultHandler: { (imageData, dataUTI, orientation, info) in
+                if let dic = info {
+                    if let error = dic[PHImageErrorKey] {
+                        print(error)
+                        return ;
+                    }else {
+                        if FileManager.default.createFile(atPath: url.path, contents: imageData, attributes: nil) {
+                            print(url.path)
+                            handle()
+                        }else {
+                            return
+                        }
+                    }
+                }
+            })
+        }
+        }
+        
+        if #available(iOS 9.0, *) {
+            if asset.mediaType == .video {
+                let options = PHVideoRequestOptions()
+                options.isNetworkAccessAllowed = true
+                PHImageManager.default().requestExportSession(forVideo: asset, options: options, exportPreset: AVAssetExportPresetHighestQuality, resultHandler: { (session, info) in
+                    if let dic = info {
+                        if let error = dic[PHImageErrorKey] {
+                            print(error)
+                            return
+                        }else {
+                            session?.outputURL = url
+                            let resources = PHAssetResource.assetResources(for: asset)
+                            for resource in resources {
+                                session?.outputFileType = resource.uniformTypeIdentifier
+                                if let _ = session?.outputFileType {
+                                    break
+                                }
+                            }
+                            session?.exportAsynchronously(completionHandler: {
+                                if session?.status == .completed {
+                                    print(url.path)
+                                    handle()
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        }
+    }
+        
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         if indexPath.section == 0 {
@@ -766,6 +882,7 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     {
       return 6
     }
+    
     //图片选择代理
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         picker.dismiss(animated: true, completion: nil)

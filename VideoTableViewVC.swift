@@ -11,8 +11,10 @@ import SwiftyJSON
 import SVProgressHUD
 import NIMSDK
 import MJRefresh
+import DZNEmptyDataSet
 
-class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
+
+class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSource,DZNEmptyDataSetSource,DZNEmptyDataSetDelegate {
 
     /*
     HR端视频面试状态
@@ -74,14 +76,19 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
     //底部刷新
     let footer = MJRefreshAutoFooter()
     
-
     @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+        tableView.tableFooterView = UIView()
+        
+        
         tableView.register(UINib.init(nibName: "HRVideoWaitToManagerCell", bundle: nil), forCellReuseIdentifier: "HRVideoWaitToManagerCell")
         tableView.register(UINib.init(nibName: "HRVideoWaitUserManagerCell", bundle: nil), forCellReuseIdentifier: "HRVideoWaitUserManagerCell")
         tableView.register(UINib.init(nibName: "HRVideoAlreadyFinishCell", bundle: nil), forCellReuseIdentifier: "HRVideoAlreadyFinishCell")
@@ -94,9 +101,6 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         tableView.register(UINib.init(nibName: "HRVideoAlreadyFinishCell1", bundle: nil), forCellReuseIdentifier: "HRVideoAlreadyFinishCell1")
         tableView.register(UINib.init(nibName: "HRVideoNoInterfaceCell", bundle: nil), forCellReuseIdentifier: "HRVideoNoInterfaceCell")
         tableView.register(UINib.init(nibName: "HRVideoNoInterfaceCell2", bundle: nil), forCellReuseIdentifier: "HRVideoNoInterfaceCell2")
-        
-        
-        
         
         print("currentDataType = \(self.dataType.rawValue)")
         
@@ -116,6 +120,38 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         
         // Do any additional setup after loading the view.
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if homeType == .HRHomePage {
+            HRGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
+        }else{
+             UserGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
+        }
+        
+        
+    }
+    
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return UIImage(named: "null_icon.png")
+    }
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let text = "点击刷新"
+        let attributes = [NSFontAttributeName:UIFont.boldSystemFont(ofSize: 18),NSForegroundColorAttributeName:UIColor.gray]
+        return NSAttributedString.init(string: text, attributes: attributes)
+        
+    }
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap view: UIView!) {
+        print("点击kongbai")
+        if homeType == .HRHomePage {
+            self.tableView.mj_header.beginRefreshing {
+                print("self.dataType.rawValue = \(self.dataType.rawValue)")
+                self.HRGetVideoInterViewList(num: 1, type: self.dataType.rawValue)
+            }
+        }
+        
+    }
+    
     //获得视频待处理面试列表（HR）
     func HRGetVideoInterViewList(num:Int,type:Int) -> Void {
         var pageNum = 1
@@ -261,7 +297,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     
                     cell.installCell(jobName: model.jobName, state: "待处理", time: model.time, timeLong: model.duration, waiterNum: "\(model.num ?? 0)/\(model.nums ?? 0)", headImageStr: model.avatar, name: model.name, money: model.salary, area: model.area, exp: model.exp, edu: model.edu, refuseBtnClosure: { (btn) in
                         print("拒绝点击")
-                        
+                        SVProgressHUD.show()
                         let dic:NSDictionary = [
                             "token":GetUser(key: TOKEN),
 //                            "jobId":self.jobId,   //职位id
@@ -288,6 +324,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                         
                     }, agreeBtnClosure: { (btn) in
                         print("同意点击")
+                        SVProgressHUD.show()
                         let dic:NSDictionary = [
                             "token":GetUser(key: TOKEN),
 //                            "jobId":self.jobId,   //职位id
@@ -434,6 +471,39 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                             vc?.nameStr = listModel.name
                             vc?.ypUserId = listModel.id!
                             vc?.mianshiId = listModel.id!
+                            vc?.isHRVideo = true
+                            vc?.token = GetUser(key: TOKEN) as! String
+                            vc?.otherUserHangUpBlock = { callId,userId in
+                                print("对方挂断了，对方的userId = \(userId!) ,callId = \(callId)")
+                                let dic = [
+                                    "token":GetUser(key: TOKEN),
+                                    "inteviewId":listModel.id!,
+                                    "channelId":callId,
+                                    "delay":0
+                                ]
+                                let jsonStr = JSON(dic)
+                                let newDic = jsonStr.dictionaryValue
+                                finishCommunicate(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+                                    if jsonStr["code"] == 0 {
+                                        print("结束成功")
+                                        let vc2 = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "EvaluateVC") as! EvaluateVC
+                                        vc2.interViewId = listModel.id
+                                        vc2.timeStr = (vc?.durationLabel.text)!
+                                        vc2.dissmissClosure = {
+                                            //成功或的回调
+                                            
+                                        }
+                                        let nav = UINavigationController(rootViewController: vc2)
+                                        self.present(nav, animated: true, completion: nil)
+                                    }else {
+                                        SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                                        
+                                    }
+                                }, fail: {
+                                    
+                                })
+                            }
+                            
                             vc?.hangupBlock = { callId in
                                 print("挂断了")
                                 let dic = [
@@ -485,7 +555,9 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                 //未面试
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "HRVideoNoInterfaceCell") as! HRVideoNoInterfaceCell
-                    cell.installCell(jobName: model.jobName, time: model.time, recentJob: "")
+                    cell.installCell(jobName: model.jobName, time: model.time, recentJob: "该场共\(model.num ?? 0)人报名，\(model.unNum ?? 0)人未面试")
+                    
+                    
                     return cell
                 }else{
                     let listModel:HRVideoInterfaceBassClass2ResumeList = (model.resumeList?[indexPath.row - 1])!
@@ -508,6 +580,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                     let cell = tableView.dequeueReusableCell(withIdentifier: "UserVideoWaitManagerCell") as! UserVideoWaitManagerCell
                     cell.installCell(jobName: "\(model.name!)|\(model.company!)", state: "待处理", time: model.time, during: model.duration, numOfPeople: "\(model.num!)|\(model.nums!)", headImageStr: model.avatar, HRNameAndJob: "\(model.hrName!)|\(model.job!)", score: model.score, refuseClosure: { (btn) in
                         print("拒绝")
+                        SVProgressHUD.show()
                         userVideoApprovalAgreeOrRefuse(dic: ["token":GetUser(key: TOKEN),"id":model.id!,"type":"1"], actionHander: { (jsonStr) in
                             if jsonStr["code"] == 0 {
                                 print("成功")
@@ -522,6 +595,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                         }
                     }, agreeClosure: { (btn) in
                         print("同意")
+                        SVProgressHUD.show()
                         userVideoApprovalAgreeOrRefuse(dic: ["token":GetUser(key: TOKEN),"id":model.id!,"type":"0"], actionHander: { (jsonStr) in
                             if jsonStr["code"] == 0 {
                                 print("成功")

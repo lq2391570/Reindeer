@@ -40,8 +40,10 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //学历model
     var positionBaseClass:PositionBaseClass?
     
+    //教育经历model
+    var eduBassClass:UserWorkEduListUserWorkEduBassClass?
     
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -56,7 +58,22 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             btn.addTarget(self, action: #selector(saveBtnClick), for: .touchUpInside)
         })
         getEducationList()
+        if self.typeOfEduExpAddOrUpdate == .updateEduExp {
+            self.searchUserEdu(eduId: self.eduExpId)
+        }
+        
     }
+    //根据eduId查询教育经历
+    func searchUserEdu(eduId:String) -> Void {
+       UserSearchEdu(dic: ["eduExpId":self.eduExpId], actionHander: { (bassClass) in
+        self.eduBassClass = bassClass
+        self.tableView.reloadData()
+        
+       }) { () -> Void in
+        
+     }
+   }
+    
     func saveBtnClick() -> Void {
         print("保存")
         
@@ -79,10 +96,10 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             SVProgressHUD.showInfo(withStatus: "请填写在校经历")
             return
         }
-        
+        var dic:NSDictionary = [:]
         if self.typeOfEduExpAddOrUpdate == updateOrAddType.addEduExp {
             //添加
-            let dic:NSDictionary = [
+             dic = [
                 "resumeId":self.resumeBassClass?.id ?? 0,
                 "school":schoolNameStr,
                 "profession":majorNameStr,
@@ -92,6 +109,19 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 "schoolExp":schoolExpStr
             ]
             
+        }else{
+            dic = [
+                "id":self.eduExpId,
+                "resumeId":self.resumeBassClass?.id ?? 0,
+                "school":schoolNameStr,
+                "profession":majorNameStr,
+                "qualificationsId":positionModel?.id ?? 0,
+                "startDate":beginTimeUnixStr,
+                "endDate":endTimeUnixStr,
+                "schoolExp":schoolExpStr
+            ]
+            
+        }
             addEduExpInterface(dic: dic, actionHander: { (jsonStr) in
                 if jsonStr["code"] == 0 {
                     SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].stringValue)
@@ -108,7 +138,7 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 SVProgressHUD.showInfo(withStatus: "请求失败")
             })
             
-        }
+        
         
         
         
@@ -135,14 +165,25 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         if indexPath.section == 0{
             if indexPath.row == 3 {
                 let timeCell = tableView.dequeueReusableCell(withIdentifier: "SelectTimeCell") as! SelectTimeCell
+                if self.eduBassClass != nil {
+                    if self.beginTimeUnixStr == "" || self.endTimeUnixStr == "" {
+                        timeCell.transitionTimeBefore(beginTimeUnixStr: "\(self.eduBassClass?.startDate ?? 0)")
+                        timeCell.transitionTimeEnd(endTimeUnixStr: "\(self.eduBassClass?.endDate ?? 0)")
+                    }
+                    self.beginTimeUnixStr = "\(self.eduBassClass?.startDate ?? 0)"
+                    self.endTimeUnixStr = "\(self.eduBassClass?.endDate ?? 0)"
+                }
+                
+                
+                
                 timeCell.beforeTimeClosure = { (dateStr,date) in
                  self.beginTimeUnixStr = dateTransformUnixStr(date: date)
-                    self.tableView.reloadData()
+                  //  self.tableView.reloadData()
                     
                 }
                 timeCell.afterTimeClosure = { (dateStr,date) in
                     self.endTimeUnixStr = dateTransformUnixStr(date: date)
-                    self.tableView.reloadData()
+                  //  self.tableView.reloadData()
                 }
                 
                 return timeCell
@@ -155,12 +196,27 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 if indexPath.row == 0 {
                     cell?.textLabel?.text = "学校"
                     cell?.detailTextLabel?.text = schoolNameStr
+                    if self.eduBassClass != nil {
+                        schoolNameStr = (self.eduBassClass?.school)!
+                        cell?.detailTextLabel?.text = self.eduBassClass?.school
+                    }
+                    
                 }else if indexPath.row == 1 {
                     cell?.textLabel?.text = "专业"
                     cell?.detailTextLabel?.text = majorNameStr
+                    if self.eduBassClass != nil {
+                        majorNameStr = (self.eduBassClass?.profession)!
+                        cell?.detailTextLabel?.text = self.eduBassClass?.profession
+                    }
                 }else if indexPath.row == 2 {
                     cell?.textLabel?.text = "学历"
                     cell?.detailTextLabel?.text = positionModel?.name
+                    if self.eduBassClass != nil {
+                        positionModel = PositionList(object: "")
+                        positionModel?.name = self.eduBassClass?.qualificationsNme
+                        positionModel?.id = self.eduBassClass?.qualificationsId
+                        cell?.detailTextLabel?.text = self.eduBassClass?.qualificationsNme
+                    }
                 }
                 return cell!
             }
@@ -174,6 +230,10 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             cell?.textLabel?.text = "在校经历"
             cell?.detailTextLabel?.numberOfLines = 0
             cell?.detailTextLabel?.text = schoolExpStr
+            if self.eduBassClass != nil {
+                schoolExpStr = (self.eduBassClass?.schoolExp)!
+                cell?.detailTextLabel?.text = self.eduBassClass?.schoolExp
+            }
             return cell!
         }
         
@@ -186,6 +246,9 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 vc.completeClosure = { (str) in
                     print("str = \(str)")
                     self.schoolNameStr = str
+                    if self.eduBassClass != nil {
+                        self.eduBassClass?.school = self.schoolNameStr
+                    }
                     self.tableView.reloadData()
                 }
                 vc.placeholdStr = "请输入学校名称"
@@ -195,6 +258,10 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 let vc = TextFieldVC()
                 vc.completeClosure = { (str) in
                     self.majorNameStr = str
+                    if self.eduBassClass != nil {
+                        self.eduBassClass?.profession = self.majorNameStr
+                    }
+                    
                     self.tableView.reloadData()
                 }
                 vc.placeholdStr = "请输入专业名称"
@@ -210,6 +277,12 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     
                     createActionSheet(title: "学历", message: "选择学历", stringArray: stringArray, viewController: self, closure: { (index) in
                         self.positionModel = self.positionBaseClass?.list?[index]
+                        if self.eduBassClass != nil{
+                            self.eduBassClass?.qualificationsNme = self.positionModel?.name
+                            self.eduBassClass?.qualificationsId = self.positionModel?.id
+                            
+                        }
+                        
                         self.tableView.reloadData()
                     })
 
@@ -225,6 +298,10 @@ class AddEduExpVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             vc.saveBtnClickClosure = { (str) in
                 
                 self.schoolExpStr = str
+                if self.eduBassClass != nil {
+                    self.eduBassClass?.schoolExp = self.schoolExpStr
+                }
+                
                 self.tableView.reloadData()
             }
             self.navigationController?.pushViewController(vc, animated: true)

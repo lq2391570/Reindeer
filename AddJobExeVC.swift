@@ -50,7 +50,7 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     //返回闭包
     var returnClosure:(() -> ())?
     //获取工作经验的model
-    var workbassClass:WorkExpBaseClass?
+    var workbassClass:UserWorkExpListUserWorkExpBassClass?
     
     
     @IBOutlet var tableView: UITableView!
@@ -65,21 +65,31 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.tableFooterView = createBottomBtn(supView: self.tableView, title: "保存", actionHander: { (btn) in
             btn.addTarget(self, action: #selector(saveBtnClick), for: .touchUpInside)
         })
-//        if self.typeOfWorkExpAddOrUpdate == .updateWorkExp {
-//            getWorkExpWithId()
-//        }
+        if self.typeOfWorkExpAddOrUpdate == .updateWorkExp {
+            getWorkExpWithId()
+            
+        }
         
     }
     //根据工作经验id查到工作经验
     func getWorkExpWithId() -> Void {
-        getWorkExpInterface(dic: ["workExpId":workExpId], actionHander: { (bassClass) in
+//        getWorkExpInterface(dic: ["workExpId":workExpId], actionHander: { (bassClass) in
+//            self.workbassClass = bassClass
+//            self.workExpId = NSNumber.init(value: (self.workbassClass?.id)!).stringValue
+//            self.companyName = (self.workbassClass?.companyName)!
+//        //    self.industryModel =
+//            
+//            
+//            self.tableView.reloadData()
+//        }) { 
+//            SVProgressHUD.showInfo(withStatus: "请求失败")
+//        }
+        UserSearchWorkExp(dic: ["workExpId":workExpId], actionHander: { (bassClass) in
             self.workbassClass = bassClass
-            self.workExpId = NSNumber.init(value: (self.workbassClass?.id)!).stringValue
+            self.workExpId = "\(self.workbassClass?.id ?? 0)"
             self.companyName = (self.workbassClass?.companyName)!
-        //    self.industryModel =
-            
-            
             self.tableView.reloadData()
+            
         }) { 
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }
@@ -212,27 +222,53 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             if indexPath.row == 0 {
                 cell?.textLabel?.text = "公司名称"
                 cell?.detailTextLabel?.text = companyName
+                if self.workbassClass != nil {
+                    cell?.detailTextLabel?.text = self.workbassClass?.companyName
+                    if companyName != "" {
+                         cell?.detailTextLabel?.text = companyName
+                    }
+                    
+                }
                 
             }else if indexPath.row == 1 {
                 cell?.textLabel?.text = "公司行业"
                 cell?.detailTextLabel?.text = self.industryModel?.name
+                if self.workbassClass != nil {
+                    self.industryModel = CompanyIndustryListList(object: "")
+                    self.industryModel?.id = self.workbassClass?.companyIndustryId
+                    self.industryModel?.name = self.workbassClass?.companyIndustry
+                    cell?.detailTextLabel?.text = self.workbassClass?.companyIndustry
+                    
+                }
+                
             }
             return cell!
             
         }else if indexPath.section == 1 {
             if indexPath.row == 0 {
                 let timeCell = tableView.dequeueReusableCell(withIdentifier: "SelectTimeCell") as! SelectTimeCell
+                if self.workbassClass != nil {
+
+                    if self.beginTimeUnixStr == "" || self.endTimeUnixStr == "" {
+                        timeCell.transitionTimeBefore(beginTimeUnixStr: "\(self.workbassClass?.startDate ?? 0)")
+                        timeCell.transitionTimeEnd(endTimeUnixStr: "\(self.workbassClass?.endDate ?? 0)")
+                    }
+                        self.beginTimeUnixStr = "\(self.workbassClass?.startDate ?? 0)"
+                        self.endTimeUnixStr = "\(self.workbassClass?.endDate ?? 0)"
+                }
+                
+                
                 timeCell.beforeTimeClosure = { (dateStr,date) in
                    
                     self.beginTimeUnixStr = dateTransformUnixStr(date: date)
                      print("self.beginTimeUnixStr = \(self.beginTimeUnixStr)")
-                    self.tableView.reloadData()
+                  //  self.tableView.reloadData()
                 }
                 timeCell.afterTimeClosure = { (dateStr,date) in
                     
                     self.endTimeUnixStr = dateTransformUnixStr(date: date)
                     print("self.endTimeUnixStr = \(self.endTimeUnixStr)")
-                    self.tableView.reloadData()
+                //    self.tableView.reloadData()
                 }
                 
                 return timeCell
@@ -246,13 +282,26 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 if indexPath.row == 1 {
                     cell?.textLabel?.text = "职位类型"
                     cell?.detailTextLabel?.text = self.positionModel?.name
-                    
+                    if self.workbassClass != nil {
+                        cell?.detailTextLabel?.text = self.workbassClass?.jobType
+                        positionModel = PositionList(object: "")
+                        positionModel?.name = self.workbassClass?.jobType
+                        positionModel?.id = self.workbassClass?.jobTypeId
+                    }
                 }else if indexPath.row == 2 {
                     cell?.textLabel?.text = "职位名称"
                     cell?.detailTextLabel?.text = positionName
+                    if self.workbassClass != nil {
+                        cell?.detailTextLabel?.text = self.workbassClass?.jobName
+                        positionName = (self.workbassClass?.jobName)!
+                    }
                 }else if indexPath.row == 3 {
                     cell?.textLabel?.text = "所属部门"
                     cell?.detailTextLabel?.text = departmentName
+                    if self.workbassClass != nil {
+                        cell?.detailTextLabel?.text = self.workbassClass?.dept
+                        departmentName = (self.workbassClass?.dept)!
+                    }
                 }
                 return cell!
             }
@@ -265,10 +314,22 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             cell?.detailTextLabel?.font = UIFont.systemFont(ofSize: 14)
             cell?.textLabel?.text = "工作内容"
             cell?.detailTextLabel?.text = workContentStr
+            if self.workbassClass != nil {
+                cell?.detailTextLabel?.text = self.workbassClass?.jobContent
+                workContentStr = (self.workbassClass?.jobContent)!
+            }
             return cell!
         }else if indexPath.section == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "OpenChoseCell") as! OpenChoseCell
             cell.nameLabel.text = "对这家公司隐藏简历"
+            if self.workbassClass != nil {
+                self.isHiddenResume = "\(self.workbassClass?.hideWithCompany ?? 0)"
+                if self.isHiddenResume == "1" {
+                    cell.switchBtn.isSelected = false
+                }else{
+                    cell.switchBtn.isSelected = true
+                }
+            }
             cell.switchBtnClickColsure = { (btn) in
                 
                 print("btn.isSelect = \(btn.isSelected)")
@@ -296,6 +357,7 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 vc.completeClosure = { (str) in
                     print("str = \(str)")
                    self.companyName = str
+                    
                     self.tableView.reloadData()
                 }
                 vc.placeholdStr = "请输入公司名称"
@@ -304,10 +366,16 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 //行业选择
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "IndustryChoseVC") as! IndustryChoseVC
                 
+                
+                
                 vc.sureBtnClickClosure = { (listModelArray:[CompanyIndustryListList]) in
                     print("listModelArray = \(listModelArray)")
                     if listModelArray.count > 0 {
                          self.industryModel = listModelArray[0]
+                        if self.workbassClass != nil {
+                            self.workbassClass?.companyIndustryId = self.industryModel?.id
+                            self.workbassClass?.companyIndustry = self.industryModel?.name
+                        }
                     }
                   self.tableView.reloadData()
                 }
@@ -322,6 +390,12 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 vc.TranslucentModel.returnClosure = { (positionModel:PositionList) in
                     print("positionModel = \(positionModel)")
                     self.positionModel = positionModel
+                    
+                    if self.workbassClass != nil {
+                        self.workbassClass?.jobType = self.positionModel?.name
+                        self.workbassClass?.jobTypeId = self.positionModel?.id
+                    }
+                    
                     self.tableView.reloadData()
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -333,6 +407,9 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 vc.completeClosure = { (str) in
                     print("str = \(str)")
                     self.positionName = str
+                    if self.workbassClass != nil {
+                        self.workbassClass?.jobName = self.positionName
+                    }
                     self.tableView.reloadData()
                 }
                 vc.placeholdStr = "请输入职位名称"
@@ -344,12 +421,14 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 vc.completeClosure = { (str) in
                     print("str = \(str)")
                     self.departmentName = str
+                    if self.workbassClass != nil {
+                        self.workbassClass?.dept = self.departmentName
+                    }
                     self.tableView.reloadData()
                 }
                 vc.placeholdStr = "请输入部门名称"
                 self.navigationController?.pushViewController(vc, animated: true)
-
-                
+               
             }
             
         }else if indexPath.section == 2 {
@@ -358,16 +437,14 @@ class AddJobExeVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             vc.textViewTypeEnum = .typeWorkContent
             vc.saveBtnClickClosure = { (str) in
                 self.workContentStr = str
+                if self.workbassClass != nil {
+                    self.workbassClass?.jobContent = self.workContentStr
+                }
                 self.tableView.reloadData()
             }
             
             self.navigationController?.pushViewController(vc, animated: true)
-            
         }
-        
-        
-        
-        
     }
 
     override func didReceiveMemoryWarning() {

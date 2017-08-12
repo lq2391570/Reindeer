@@ -78,25 +78,28 @@ class VideoInterViewListVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource
     func magicView(_ magicView: VTMagicView, viewControllerAtPage pageIndex: UInt) -> UIViewController
     {
         var vc:VideoTableViewVC? = magicView.dequeueReusablePage(withIdentifier: "VideoTableViewVC") as? VideoTableViewVC
-        if vc == nil {
+      //  if vc == nil {
             vc = VideoTableViewVC()
             vc?.jobId = self.jobId
             vc?.userMesJson = self.userMesJson
             vc?.homeType = VideoTableViewVC.HomepageType(rawValue: self.homeType.rawValue)!
             vc?.intentId = self.intentId
-
-        }
-        if pageIndex == 0 {
-            //   vc?.view.backgroundColor = UIColor.red
-            vc?.dataType = .waittingHandle
-        }else if pageIndex == 1 {
-            vc?.dataType = .waittingInterFace
-        }else if pageIndex == 2 {
-            vc?.dataType = .alreadyFinish
-        }else if pageIndex == 3 {
-            vc?.dataType = .didNotInterView
-        }
-
+       
+            print("pageIndex = \(pageIndex)")
+            
+            if pageIndex == 0 {
+                vc?.dataType = .waittingHandle
+            }else if pageIndex == 1 {
+                vc?.dataType = .waittingInterFace
+            }else if pageIndex == 2 {
+                vc?.dataType = .alreadyFinish
+            }else if pageIndex == 3 {
+                vc?.dataType = .didNotInterView
+            }
+        
+        
+      //  }
+        
         return vc!
         
         

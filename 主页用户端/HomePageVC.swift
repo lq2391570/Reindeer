@@ -173,6 +173,7 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(addPositionNoti), name: NSNotification.Name(rawValue: "ADDPOSITION"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(addJobIntensionNoti), name: NSNotification.Name(rawValue: "ADDJobIntensionNoti"), object: nil)
+         self.getUserMesAndHeadImage()
     }
     
     //添加求职意向noti
@@ -383,9 +384,14 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
         print("头像点击")
         if self.homeType == .userHomePage {
             //应聘者端的个人中心
-            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstVC") as! UserCenterFirstVC
-            vc.resumeBassClass = self.resumeBassClass
+//            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstVC") as! UserCenterFirstVC
+//            vc.resumeBassClass = self.resumeBassClass
+//            self.navigationController?.pushViewController(vc, animated: true)
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "UserCenterFirstNewVC") as! UserCenterFirstNewVC
+            
             self.navigationController?.pushViewController(vc, animated: true)
+            
+            
         }else{
             //hr端的个人中心
             let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRUserCenterVC") as! HRUserCenterVC

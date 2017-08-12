@@ -29,6 +29,9 @@ class EvaluateVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     var company:String = ""
     
     
+    
+    
+    
     //面试时长
     var timeStr:String = ""
     //满意度
@@ -52,7 +55,16 @@ class EvaluateVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.register(UINib.init(nibName: "EvaluateCell2", bundle: nil), forCellReuseIdentifier: "EvaluateCell2")
         tableView.register(UINib.init(nibName: "EvaluateCell1", bundle: nil), forCellReuseIdentifier: "EvaluateCell1")
         tableView.register(UINib.init(nibName: "OpenChoseCell", bundle: nil), forCellReuseIdentifier: "OpenChoseCell")
-        self.getUserMes(interviewId: self.interViewId)
+    //    self.getUserMes(interviewId: self.interViewId)
+        self.getJobSeekerMes(mianshiId: interViewId) { (bassClass) in
+            if bassClass.code == 0 {
+                self.avatar = bassClass.avatar ?? ""
+                self.name = bassClass.name ?? ""
+                self.job = bassClass.job ?? ""
+                self.company = bassClass.recentCompany ?? ""
+                self.tableView.reloadData()
+            }
+        }
         getAccountBalance()
     }
     @IBAction func commitClick(_ sender: UIButton) {
@@ -87,9 +99,26 @@ class EvaluateVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
             
         }
         
-        
-        
     }
+    //1获取jobeeker的个人信息
+    func getJobSeekerMes(mianshiId:Int,succeedClosure:((_ jobSeekerBassClass:JobSeekerMesInVideoBaseClass) -> ())?) -> Void {
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "id":mianshiId
+        ]
+        let jsonStr = JSON(dic)
+        let newDic = jsonStr.dictionaryValue as NSDictionary
+        
+        JobSeekerMesInVideo(dic: newDic, actionHander: { (jobSeekerBassClass) in
+            succeedClosure!(jobSeekerBassClass)
+            
+        }) {
+            
+        }
+    }
+
+    
+    
     //获得视频通话个人信息
     func getUserMes(interviewId:Int) -> Void {
         getVideoInfoMes(dic: ["token":GetUser(key: TOKEN),"id":interviewId], actionHander: { (jsonStr) in
@@ -110,7 +139,7 @@ class EvaluateVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         getAccountBalanceInterface(dic: ["token":GetUser(key: TOKEN)], actionHander: { (jsonStr) in
             if jsonStr["code"] == 0 {
                 self.balance = jsonStr["balance"].stringValue
-                
+                self.yueLabel.text = self.balance
             }
         }) { 
             

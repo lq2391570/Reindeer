@@ -328,6 +328,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                         succeedView.cancelBtnClickClsure = { (sender) in
                             print("取消")
                             succeedAlert?.dismiss(completion: nil)
+                            customAlert?.dismiss(completion: nil)
                             SVProgressHUD.dismiss()
                         }
                         
@@ -428,6 +429,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     
                     return
                 }
+                interFaceAlert?.dismiss(completion: nil)
                 let dic:NSDictionary = [
                     "token":GetUser(key: TOKEN),
                     "jobId":self.jobId as Any,
@@ -441,6 +443,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 videoInviteInterface(dic: newDic, actionHander: { (jsonStr) in
                     if jsonStr["code"] == 0 {
                         print("成功")
+                        
                         let succeedView = Bundle.main.loadNibNamed("SucceedView", owner: self, options: nil)?.last as! SucceedView
                         succeedView.frame = CGRect.init(x: 0, y: 0, width: 260, height: 320)
                         succeedView.mesLabel.text = "邀约成功，请耐心等待回应"
@@ -449,7 +452,7 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                         succeedView.cancelBtnClickClsure = { (sender) in
                             print("取消")
                             succeedAlert?.dismiss(completion: nil)
-                            interFaceAlert?.dismiss(completion: nil)
+                          //  interFaceAlert?.dismiss(completion: nil)
                             SVProgressHUD.dismiss()
                         }
                         

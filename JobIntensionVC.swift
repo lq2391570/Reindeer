@@ -171,9 +171,10 @@ class JobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if indexPath.section == 1 {
-                
+                SVProgressHUD.show()
                 delegateJobIntent(model: (self.resumeBassClass?.jobIntentList?[indexPath.row])!, succeedClosure: {
                     print("indexPath.row = \(indexPath.row)")
+                    SVProgressHUD.dismiss()
                     self.resumeBassClass?.jobIntentList?.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .automatic)
                     //保存成功后发送通知首页横向滑动列表
