@@ -24,6 +24,10 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     var imageFileArray:NSMutableArray = []
     //公司产品Array
     var productArray:[CompanyDetail2ProductList] = []
+    
+    
+    
+    
     //公司图片Array
     var companyImageModelArray:[CompanyDetail2ImageList] = []
     
@@ -42,6 +46,13 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     var scaleBassClass:CompanyScaleBaseClass?
     //公司规模model
     var scaleListModel:CompanyScaleCompanyScale?
+    
+    //公司规模NewModel
+    var scaleNewBassClass:CompanyScaleNewCompanyScaleNew?
+    //公司规模listmodel
+    var scaleNewListModel:CompanyScaleNewList?
+    
+    
     //公司电话String
     var phoneNumStr:String! = ""
     
@@ -74,6 +85,9 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     }
     var enterType:EnterTypeNum = .registerEnter
     
+    var isCompanyPhoto = false
+    
+    var returnClosure:(() -> ())?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,7 +126,9 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         
         
         companyDetail()
-        companyScale()
+       // companyScale()
+        getCompanyScale()
+        
     }
     func rightBarItemClick() -> Void {
         print("跳过")
@@ -146,20 +162,21 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         })
     }
     // 获得公司规模
-    func companyScale() -> Void {
-        getCompanyScale(dic: ["none":""], actionHandler: { (bassClass) in
-            self.scaleBassClass = bassClass
-            print("self.scaleBassClass = \(self.scaleBassClass)")
-        }, fail: {
-            
-        })
-        
-    }
+//    func companyScale() -> Void {
+//        getCompanyScale(dic: ["none":""], actionHandler: { (bassClass) in
+//            self.scaleBassClass = bassClass
+//            print("self.scaleBassClass = \(self.scaleBassClass)")
+//        }, fail: {
+//            
+//        })
+//        
+//    }
     
     //设置QBImagePickerController
     func confineQBImagePickerController() -> Void {
         imagePickerController = QBImagePickerController()
         imagePickerController.delegate = self
+        imagePickerController.mediaType = .image
         
         imagePickerController.allowsMultipleSelection = true
         imagePickerController.maximumNumberOfSelection = 6
@@ -215,24 +232,26 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         })
         }else{
             //个人中心完善公司信息
+            SVProgressHUD.show()
             let imageArray:NSArray = companyImageArray as NSArray
             let subImageStr = imageArray.componentsJoined(by: ",")
             print("subImageStr = \(subImageStr)")
             let dic:NSDictionary = [
                 "companyId":GetUser(key: COMPANYID),
-                "logo":self.logoImageStr,
+                "token":GetUser(key: TOKEN),
+                "logo":self.companyDetailModel?.logo ?? "",
                 "shortName":self.companyDetailModel?.shortName as Any,
                 "fullName":self.companyDetailModel?.name as Any,
-                "industryId":self.companyDetailModel?.companyIndustry?.id as Any,
-                "scaleId":self.companyDetailModel?.companyScale?.id as Any,
+                "industryId":self.companyDetailModel?.indyId as Any,
+                "scaleId":self.companyDetailModel?.scaleId as Any,
                 "tel":self.companyDetailModel?.tel as Any,
                 "address":self.companyDetailModel?.address as Any,
-                "lat":String.init(format: "%.4f", (self.companyDetailModel?.lat)!),
-                "lng":String.init(format: "%.4f", (self.companyDetailModel?.lng)!),
-                "desc":self.companyDetailModel?.desc as Any,
+                "lat":String.init(format: "%.4f", (self.companyDetailModel?.lat ?? 0)),
+                "lng":String.init(format: "%.4f", (self.companyDetailModel?.lng ?? 0)),
+                "desc":self.companyDetailModel?.desc ?? "",
                 "teamHighs":"",
                // "images":companyImageArray
-                "subImages":subImageStr
+                "images":subImageStr
             ]
          //   print("newDic = \(newDic)")
             print("companyImageArray = \(companyImageArray)")
@@ -240,16 +259,34 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
             let newDic = jsonStr.dictionaryValue
             print("dic = \(dic)")
             print("newDic = \(newDic)")
-            HRChangeCompanyMes(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+//            HRChangeCompanyMes(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
+//                if jsonStr["code"] == 0 {
+//                    SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
+//                    
+//                }else{
+//                     SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+//                }
+//            }, fail: { 
+//                SVProgressHUD.showInfo(withStatus: "请求失败")
+//            })
+            
+            
+            updateOrAddNewCompany(dic: newDic as NSDictionary, actionHander: { (jsonStr) in
                 if jsonStr["code"] == 0 {
                     SVProgressHUD.showSuccess(withStatus: "\(jsonStr["msg"].stringValue)")
-                    
-                }else{
-                     SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+                
+                    if self.returnClosure != nil {
+                        self.returnClosure!()
+                    }
+                    _ = self.navigationController?.popViewController(animated: true)
+                    }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
                 }
+
             }, fail: { 
                 SVProgressHUD.showInfo(withStatus: "请求失败")
             })
+            
             
         }
         
@@ -279,7 +316,6 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
        
     }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if indexPath.section == 0 {
@@ -296,6 +332,7 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                     cell.logoBtn.setTitle("", for: .normal)
                 }
                 cell.logoBtnClickclosure = { (sender) in
+                    self.isCompanyPhoto = false
                     self.uploadHeadImage()
                 }
                 return cell
@@ -315,7 +352,7 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司行业"
-                cell.rightLabel.text = self.companyDetailModel?.companyIndustry?.name
+                cell.rightLabel.text = self.companyDetailModel?.indyName
                 
                 
                 return cell
@@ -324,7 +361,7 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                 cell.topLineLabel.isHidden = true
                 cell.bottomLineLabel.isHidden = true
                 cell.nameLabel.text = "公司规模"
-                cell.rightLabel.text = self.companyDetailModel?.companyScale?.name
+                cell.rightLabel.text = self.companyDetailModel?.scaleName
                 
                 
                 return cell
@@ -516,30 +553,75 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                 }else{
                     //点击了没有图片的cell（添加公司图片的cell）
                     self.present(imagePickerController, animated: true, completion: nil)
+//                    self.isCompanyPhoto = true
+//                    self.uploadHeadImage()
                 }
             }else{
                 //点击了添加图片的cell
                     self.present(imagePickerController, animated: true, completion: nil)
-                
+//                self.isCompanyPhoto = true
+//                self.uploadHeadImage()
             }
             
         }else if indexPath.section == 5{
+            //公司产品
             if productArray.count == 0{
                 let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyProductVC") as! CompanyProductVC
-                vc.companyId = companyId
-                vc.succeedReturnClosure = { (jsonStr) in
+                if companyId != "1" {
+                    vc.companyId = companyId
                     
-                    self.companyDetail()
+                    vc.productTypeNum = .updatePro
+                }else{
+                    vc.productTypeNum = .addPro
+                }
+                
+                vc.succeedReturnClosure = { (jsonStr) in
+                    let model:CompanyDetail2ProductList = CompanyDetail2ProductList(object: "")
+                    model.id = jsonStr["id"].intValue
+                    model.logo = jsonStr["logo"].stringValue
+                    model.name = jsonStr["name"].stringValue
+                    model.desc = jsonStr["desc"].stringValue
+                    self.productArray.append(model)
+                    self.tableView.reloadData()
+                    
+                 //   self.companyDetail()
                    
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
             }else{
                 if indexPath.row == productArray.count {
                     let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyProductVC") as! CompanyProductVC
+                    if companyId != "1"{
+                        vc.companyId = companyId
+                         vc.productTypeNum = .updatePro
+                    }else{
+                        vc.productTypeNum = .addPro
+                    }
+                   
+                    vc.succeedReturnClosure = { (jsonStr) in
+                       // self.companyDetail()
+                        let model:CompanyDetail2ProductList = CompanyDetail2ProductList(object: "")
+                        model.id = jsonStr["id"].intValue
+                        model.logo = jsonStr["logo"].stringValue
+                        model.name = jsonStr["name"].stringValue
+                        model.desc = jsonStr["desc"].stringValue
+                        self.productArray.append(model)
+                        self.tableView.reloadData()
+                    }
+                    
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }else{
+                    //修改公司产品
+                    let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompanyProductVC") as! CompanyProductVC
+                    vc.productTypeNum = .searchPro
+                    vc.companyId = companyId
+                    let productModel:CompanyDetail2ProductList = productArray[indexPath.row]
+                    vc.productId = productModel.id!
                     vc.succeedReturnClosure = { (jsonStr) in
                         self.companyDetail()
+                    //    self.tableView.reloadData()
                     }
-                    vc.companyId = companyId
+                    
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
@@ -555,8 +637,8 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                         let model:CompanyIndustryListList! = listModel
                         self.industryString.append(model.name!)
                         self.industryId = "\(listModel.id!)"
-                        self.companyDetailModel?.companyIndustry?.id = listModel.id
-                        self.companyDetailModel?.companyIndustry?.name = listModel.name
+                        self.companyDetailModel?.indyId = listModel.id
+                        self.companyDetailModel?.indyName = listModel.name
                     }
                     print("self.industryString = \(self.industryString)")
                     print("self.industryId = \(self.industryId)")
@@ -566,17 +648,19 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                 self.navigationController?.pushViewController(vc, animated: true)
             }else if indexPath.row == 1 {
                 var stringArray:[String] = []
-                for scaleList in (self.scaleBassClass?.companyScale)! {
-                    let model:CompanyScaleCompanyScale = scaleList 
+                for scaleList in (self.scaleNewBassClass?.list)! {
+                    let model:CompanyScaleNewList = scaleList
                     stringArray.append(model.name!)
                     
                     
                 }
                 createActionSheet(title: "公司规模", message: "请选择公司规模", stringArray: stringArray, viewController: self, closure: { (index) in
                     print("选择了第\(index)个")
-                    self.scaleListModel = self.scaleBassClass?.companyScale?[index]
-                    self.companyDetailModel?.companyScale?.id = self.scaleListModel?.id
-                    self.companyDetailModel?.companyScale?.name = self.scaleListModel?.name
+                  //  self.scaleListModel = self.scaleBassClass?.companyScale?[index]
+                    self.scaleNewListModel = self.scaleNewBassClass?.list?[index]
+                    
+                    self.companyDetailModel?.scaleId = self.scaleNewListModel?.id
+                    self.companyDetailModel?.scaleName = self.scaleNewListModel?.name
                     self.tableView.reloadData()
                 })
             
@@ -584,6 +668,17 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
             
         }
     }
+    //获得公司规模
+    func getCompanyScale() -> Void {
+        getCompanyScaleInterFace(dic: ["token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
+            self.scaleNewBassClass = bassClass
+            self.tableView.reloadData()
+        }) { 
+            
+        }
+    }
+    
+    
     //拍照
     func takePhoto() -> Void {
         let sourceType = UIImagePickerControllerSourceType.camera
@@ -601,11 +696,22 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         imagePicker.allowsEditing = true
+        
+        
         self.present(imagePicker, animated: true, completion: nil)
     }
     //上传头像
     func uploadHeadImage() {
-        let actionSheet = UIAlertController.init(title: "设置头像", message: nil, preferredStyle: .actionSheet)
+        var titleStr = ""
+        if self.isCompanyPhoto == false {
+            titleStr = "设置头像"
+        }else{
+            titleStr = "设置公司图片"
+        }
+        
+        let actionSheet = UIAlertController.init(title: titleStr, message: nil, preferredStyle: .actionSheet)
+        
+        
         let chose1 = UIAlertAction(title: "拍一张", style: .default, handler: {(action) in
             self.takePhoto()
         })
@@ -629,7 +735,7 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
         //若无图片则清空集合
         if imagePickerController.selectedAssets.count == 0 {
             self.imageFileArray = []
-             self.isReflashCollection = false
+            self.isReflashCollection = false
             tableView.reloadData()
         }
         
@@ -637,35 +743,143 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     }
     
     
+//    func qb_imagePickerController(_ imagePickerController: QBImagePickerController!, didFinishPickingAssets assets: [Any]!) {
+//        var index = 0
+//        print("asstes.count=\(assets.count)")
+//        //因为assets有缓存，所以每次调用需清空数组
+//        self.imageFileArray = []
+//        self.companyImageArray = []
+//        for asset in assets {
+//            print("asset=\(asset)")
+//            index = index + 1
+//            //    let imageAsset:PHAsset = asset as! PHAsset
+//            //    let size = CGSize(width: imageAsset.pixelWidth, height: imageAsset.pixelHeight)
+//            let size = CGSize(width: 100, height: 100)
+//            //获取图片
+//            //PHImageRequestOptionsDeliveryModeOpportunistic 当选用此项时，Photos会在你请求时给你提供一个或者多个结果，这就意味着resultHandler block可能会执行一次或多次，例如Photos会先给你一个低分辨率的图片让你暂时显示，然后加载出高质量的图片后再次给你。如果PHImageManager已经pre-cache了图片，那result handler便只会执行一次。另外，如果synchronous属性为NO,此选项是不起作用的。
+//            
+//            let option = PHImageRequestOptions()
+//            option.isSynchronous = false
+//            option.deliveryMode = .opportunistic
+//            option.isNetworkAccessAllowed = true
+//            option.progressHandler = { (progress, error,point,hash) in
+//                print("progress = \(progress)")
+//                SVProgressHUD.showProgress(Float(progress))
+//            }
+//            let imageAsset:PHAsset = asset as! PHAsset
+//       
+//                PHImageManager.default().requestImageData(for: imageAsset , options: option, resultHandler: { (imageData, dataUTI, orientation, info) in
+//                    if let dic = info {
+//                        if let error = dic[PHImageErrorKey]{
+//                            print("error = \(error)")
+//                            return
+//                        }else{
+//                            
+//                            var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+//                            
+//                            if FileManager.default.fileExists(atPath: path) == true {
+//                                try! FileManager.default.removeItem(atPath: path)
+//                                path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+//                            }
+//                            
+//                            
+//                            
+//                            print("path = \(path)")
+//                            let url = NSURL.fileURL(withPath: path)
+//                            do {
+//                                try imageData?.write(to: url)
+//                            } catch {
+//                                print("error")
+//                            }
+//                            self.imageFileArray.add(url)
+//                            if self.imageFileArray.count > 0 {
+//                                self.isHaveImage = true
+//                            }
+//                            self.isReflashCollection = false
+//                            
+//                            self.tableView.reloadData()
+//                        }
+//                        
+//                    }
+//                    
+//                })
+//
+//            
+//            
+//            
+////            PHImageManager.default().requestImage(for: asset as! PHAsset, targetSize: size, contentMode: PHImageContentMode.aspectFit, options: option, resultHandler: { (result, info) in
+////
+////                print("result = \(result) info = \(info)")
+////                let image:UIImage = result!
+////                
+////                var imageData:Data? = UIImageJPEGRepresentation(image, 0.5)
+////                
+////                if imageData == nil {
+////                    imageData = UIImagePNGRepresentation(image)
+////                }
+////                
+////                let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+////                print("path = \(path)")
+////                let url = NSURL.fileURL(withPath: path)
+////                do {
+////                    try imageData?.write(to: url)
+////                } catch {
+////                    print("error")
+////                }
+////                
+////                self.imageFileArray.add(url)
+////                if self.imageFileArray.count > 0 {
+////                    self.isHaveImage = true
+////                }
+////                self.isReflashCollection = false
+////                
+////                self.tableView.reloadData()
+////                
+////            })
+////        }
+//        }
+//        print("self.imageFileArray.count=\(self.imageFileArray.count)")
+//        
+//        for imageUrl in self.imageFileArray {
+//            uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
+//                print("jsonstr = \(jsonStr)")
+//                if jsonStr["code"] == 0 {
+//                    let imageUrlStr = jsonStr["url"].stringValue
+//                    self.companyImageArray.append(imageUrlStr)
+//                    print("self.companyImageArray = \(self.companyImageArray)")
+//                    self.isReflashCollection = false
+//                    self.tableView.reloadData()
+//                    
+//                }
+//            }, fail: {
+//                
+//            })
+//        }
+//        
+//        self.dismiss(animated: true, completion: nil)
+//    }
     func qb_imagePickerController(_ imagePickerController: QBImagePickerController!, didFinishPickingAssets assets: [Any]!) {
-        var index = 0
-        print("asstes.count=\(assets.count)")
-        //因为assets有缓存，所以每次调用需清空数组
+        print("assets = \(assets)")
         self.imageFileArray = []
-        self.companyImageArray = []
+       // self.companyImageArray = []
+         var index = 0
         for asset in assets {
-            print("asset=\(asset)")
             index = index + 1
-            //    let imageAsset:PHAsset = asset as! PHAsset
-            //    let size = CGSize(width: imageAsset.pixelWidth, height: imageAsset.pixelHeight)
+            let imageAsset:PHAsset = asset as! PHAsset
             let size = CGSize(width: 100, height: 100)
-            //获取图片
-            //PHImageRequestOptionsDeliveryModeOpportunistic 当选用此项时，Photos会在你请求时给你提供一个或者多个结果，这就意味着resultHandler block可能会执行一次或多次，例如Photos会先给你一个低分辨率的图片让你暂时显示，然后加载出高质量的图片后再次给你。如果PHImageManager已经pre-cache了图片，那result handler便只会执行一次。另外，如果synchronous属性为NO,此选项是不起作用的。
-            
             let option = PHImageRequestOptions()
-            option.isSynchronous = true
-            option.deliveryMode = .opportunistic
-            option.isNetworkAccessAllowed = true
-            option.progressHandler = { (progress, error,point,hash) in
-                print("progress = \(progress)")
-                SVProgressHUD.showProgress(Float(progress))
-            }
-            PHImageManager.default().requestImageData(for: asset as! PHAsset, options: option, resultHandler: { (imageData, dataUTI, orientation, info) in
-                if let dic = info {
-                    if let error = dic[PHImageErrorKey]{
-                        print("error = \(error)")
-                        return
-                    }else{
+                option.isSynchronous = true
+                option.deliveryMode = .opportunistic
+                option.isNetworkAccessAllowed = true
+            
+            if #available(iOS 9.1, *) {
+                if imageAsset.mediaSubtypes == .photoScreenshot || imageAsset.mediaSubtypes == .photoLive {
+                    PHImageManager.default().requestImageData(for: imageAsset, options: option, resultHandler: { (imageData, dataUTI, orientation, info) in
+//                        var imageData:Data? = UIImageJPEGRepresentation(image!, 0.5)
+//                        
+//                        if imageData == nil {
+//                            imageData = UIImagePNGRepresentation(image!)
+//                        }
                         
                         var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
                         
@@ -674,79 +888,221 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
                             path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
                         }
                         
-                        
-                        
-                        print("path = \(path)")
                         let url = NSURL.fileURL(withPath: path)
                         do {
                             try imageData?.write(to: url)
                         } catch {
                             print("error")
                         }
+                        
                         self.imageFileArray.add(url)
+                        print("url = \(url)")
+                        print("self.imageFileArray=\(self.imageFileArray)")
                         if self.imageFileArray.count > 0 {
                             self.isHaveImage = true
                         }
-                        self.isReflashCollection = false
+                        //  self.isReflashCollection = false
                         
-                        self.tableView.reloadData()
+                        //self.tableView.reloadData()
+                        uploadImage(fileUrl: url , actionHandler: { (jsonStr) in
+                            print("jsonstr = \(jsonStr)")
+                            if jsonStr["code"] == 0 {
+                                let imageUrlStr = jsonStr["url"].stringValue
+                                self.companyImageArray.append(imageUrlStr)
+                                print("self.companyImageArray = \(self.companyImageArray)")
+                                self.isReflashCollection = false
+                                self.tableView.reloadData()
+                                
+                            }
+                        }, fail: {
+                            
+                        })
+
+                        
+                    })
+                    
+                    
+                }else{
+                    PHImageManager.default().requestImage(for: imageAsset, targetSize: size, contentMode: .aspectFit, options: option, resultHandler: { (image, info) in
+                        print("image = \(image)")
+                        
+                        var imageData:Data? = UIImageJPEGRepresentation(image!, 0.5)
+                        
+                        if imageData == nil {
+                            imageData = UIImagePNGRepresentation(image!)
+                        }
+                        
+                        var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                        
+                        if FileManager.default.fileExists(atPath: path) == true {
+                            try! FileManager.default.removeItem(atPath: path)
+                            path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                        }
+                        
+                        let url = NSURL.fileURL(withPath: path)
+                        do {
+                            try imageData?.write(to: url)
+                        } catch {
+                            print("error")
+                        }
+                        
+                        self.imageFileArray.add(url)
+                        print("url = \(url)")
+                        print("self.imageFileArray=\(self.imageFileArray)")
+                        if self.imageFileArray.count > 0 {
+                            self.isHaveImage = true
+                        }
+                        //  self.isReflashCollection = false
+                        
+                        //self.tableView.reloadData()
+                        uploadImage(fileUrl: url , actionHandler: { (jsonStr) in
+                            print("jsonstr = \(jsonStr)")
+                            if jsonStr["code"] == 0 {
+                                let imageUrlStr = jsonStr["url"].stringValue
+                                self.companyImageArray.append(imageUrlStr)
+                                print("self.companyImageArray = \(self.companyImageArray)")
+                                self.isReflashCollection = false
+                                self.tableView.reloadData()
+                                
+                            }
+                        }, fail: {
+                            
+                        })
+                        
+                        
+                        
+                    })
+                }
+                
+                
+            } else {
+                // Fallback on earlier versions
+                PHImageManager.default().requestImage(for: imageAsset, targetSize: size, contentMode: .aspectFit, options: option, resultHandler: { (image, info) in
+                    print("image = \(image)")
+                    
+                    var imageData:Data? = UIImageJPEGRepresentation(image!, 0.5)
+                    
+                    if imageData == nil {
+                        imageData = UIImagePNGRepresentation(image!)
                     }
                     
-                }
+                    var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                    
+                    if FileManager.default.fileExists(atPath: path) == true {
+                        try! FileManager.default.removeItem(atPath: path)
+                        path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+                    }
+                    
+                    let url = NSURL.fileURL(withPath: path)
+                    do {
+                        try imageData?.write(to: url)
+                    } catch {
+                        print("error")
+                    }
+                    
+                    self.imageFileArray.add(url)
+                    print("url = \(url)")
+                    print("self.imageFileArray=\(self.imageFileArray)")
+                    if self.imageFileArray.count > 0 {
+                        self.isHaveImage = true
+                    }
+                    //  self.isReflashCollection = false
+                    
+                    //self.tableView.reloadData()
+                    uploadImage(fileUrl: url , actionHandler: { (jsonStr) in
+                        print("jsonstr = \(jsonStr)")
+                        if jsonStr["code"] == 0 {
+                            let imageUrlStr = jsonStr["url"].stringValue
+                            self.companyImageArray.append(imageUrlStr)
+                            print("self.companyImageArray = \(self.companyImageArray)")
+                            self.isReflashCollection = false
+                            self.tableView.reloadData()
+                            
+                        }
+                    }, fail: {
+                        
+                    })
+                    
+                    
+                    
+                })
                 
-            })
+            }
             
-//            PHImageManager.default().requestImage(for: asset as! PHAsset, targetSize: size, contentMode: PHImageContentMode.aspectFit, options: option, resultHandler: { (result, info) in
-//
-//                print("result = \(result) info = \(info)")
-//                let image:UIImage = result!
+//            PHImageManager.default().requestImage(for: imageAsset, targetSize: size, contentMode: .aspectFit, options: option, resultHandler: { (image, info) in
+//                print("image = \(image)")
 //                
-//                var imageData:Data? = UIImageJPEGRepresentation(image, 0.5)
+//                var imageData:Data? = UIImageJPEGRepresentation(image!, 0.5)
 //                
 //                if imageData == nil {
-//                    imageData = UIImagePNGRepresentation(image)
+//                    imageData = UIImagePNGRepresentation(image!)
 //                }
 //                
-//                let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
-//                print("path = \(path)")
-//                let url = NSURL.fileURL(withPath: path)
-//                do {
-//                    try imageData?.write(to: url)
-//                } catch {
-//                    print("error")
-//                }
+//                var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
 //                
-//                self.imageFileArray.add(url)
-//                if self.imageFileArray.count > 0 {
-//                    self.isHaveImage = true
-//                }
-//                self.isReflashCollection = false
+//                    if FileManager.default.fileExists(atPath: path) == true {
+//                    try! FileManager.default.removeItem(atPath: path)
+//                    path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/companyImage\(index).jpg")
+//                    }
+//
+//                    let url = NSURL.fileURL(withPath: path)
+//                                do {
+//                                    try imageData?.write(to: url)
+//                                } catch {
+//                                    print("error")
+//                                }
 //                
-//                self.tableView.reloadData()
+//                                self.imageFileArray.add(url)
+//                print("url = \(url)")
+//                 print("self.imageFileArray=\(self.imageFileArray)")
+//                                if self.imageFileArray.count > 0 {
+//                                    self.isHaveImage = true
+//                                }
+//                              //  self.isReflashCollection = false
+//                                
+//                                //self.tableView.reloadData()
+//                uploadImage(fileUrl: url , actionHandler: { (jsonStr) in
+//                    print("jsonstr = \(jsonStr)")
+//                    if jsonStr["code"] == 0 {
+//                        let imageUrlStr = jsonStr["url"].stringValue
+//                        self.companyImageArray.append(imageUrlStr)
+//                        print("self.companyImageArray = \(self.companyImageArray)")
+//                        self.isReflashCollection = false
+//                        self.tableView.reloadData()
+//                        
+//                    }
+//                }, fail: {
+//                    
+//                })
+//
+//
 //                
 //            })
-//        }
+            
         }
-        print("self.imageFileArray.count=\(self.imageFileArray.count)")
+                print("self.imageFileArray=\(self.imageFileArray)")
         
-        for imageUrl in self.imageFileArray {
-            uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
-                print("jsonstr = \(jsonStr)")
-                if jsonStr["code"] == 0 {
-                    let imageUrlStr = jsonStr["url"].stringValue
-                    self.companyImageArray.append(imageUrlStr)
-                    print("self.companyImageArray = \(self.companyImageArray)")
-                    self.isReflashCollection = false
-                    self.tableView.reloadData()
-                    
-                }
-            }, fail: {
-                
-            })
-        }
+//                for imageUrl in self.imageFileArray {
+//                    uploadImage(fileUrl: imageUrl as! URL, actionHandler: { (jsonStr) in
+//                        print("jsonstr = \(jsonStr)")
+//                        if jsonStr["code"] == 0 {
+//                            let imageUrlStr = jsonStr["url"].stringValue
+//                            self.companyImageArray.append(imageUrlStr)
+//                            print("self.companyImageArray = \(self.companyImageArray)")
+//                            self.isReflashCollection = false
+//                            self.tableView.reloadData()
+//        
+//                        }
+//                    }, fail: {
+//        
+//                    })
+//                }
         
-        self.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true, completion: nil)
+
+        
     }
+    
      func dowloadAsset(_ asset: PHAsset, to url: URL, completion handle:@escaping (()->())) {
         if #available(iOS 9.1, *) {
             if asset.mediaType == .image && asset.mediaSubtypes == .photoLive {
@@ -885,32 +1241,63 @@ class CompleteCompanyMesVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource
     
     //图片选择代理
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        picker.dismiss(animated: true, completion: nil)
-        let image = info[UIImagePickerControllerEditedImage] as! UIImage
-        let imageData = UIImageJPEGRepresentation(image, 0.5)
-        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/logoImage.jpg")
-        print("path =\(path)")
-        let url = NSURL.fileURL(withPath: path)
-        do {
-            try imageData?.write(to: url)
-        } catch  {
-            print("error")
-        }
-        //显示及上传logo
-        uploadImage(fileUrl: url, actionHandler: {(jsonStr) in
-            print("uploadjsonStr = \(jsonStr)")
-            if jsonStr["code"] == 0 {
-                //上传成功获得url
-                print("imageUrl = \(jsonStr["url"])")
-                self.logoImageStr = jsonStr["url"].string!
-                self.tableView.reloadData()
-                
+        if self.isCompanyPhoto == false {
+            picker.dismiss(animated: true, completion: nil)
+            let image = info[UIImagePickerControllerEditedImage] as! UIImage
+            let imageData = UIImageJPEGRepresentation(image, 0.5)
+            let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/logoImage.jpg")
+            print("path =\(path)")
+            let url = NSURL.fileURL(withPath: path)
+            do {
+                try imageData?.write(to: url)
+            } catch  {
+                print("error")
             }
-            
-        }, fail: {
-            
-        })
+            //显示及上传logo
+            uploadImage(fileUrl: url, actionHandler: {(jsonStr) in
+                print("uploadjsonStr = \(jsonStr)")
+                if jsonStr["code"] == 0 {
+                    //上传成功获得url
+                    print("imageUrl = \(jsonStr["url"])")
+                    self.companyDetailModel?.logo = jsonStr["url"].string!
+                    self.tableView.reloadData()
+                }
+                
+            }, fail: {
+                
+            })
 
+        }else{
+            //上传公司图片
+            picker.dismiss(animated: true, completion: nil)
+            let image = info[UIImagePickerControllerEditedImage] as! UIImage
+            let imageData = UIImageJPEGRepresentation(image, 0.5)
+            let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0].appending("/company.jpg")
+            print("path =\(path)")
+            let url = NSURL.fileURL(withPath: path)
+            do {
+                try imageData?.write(to: url)
+            } catch  {
+                print("error")
+            }
+            //显示及上传logo
+            uploadImage(fileUrl: url, actionHandler: {(jsonStr) in
+                print("uploadjsonStr = \(jsonStr)")
+                if jsonStr["code"] == 0 {
+                    //上传成功获得url
+                    print("imageUrl = \(jsonStr["url"])")
+                    self.companyDetailModel?.logo = jsonStr["url"].string!
+                    self.tableView.reloadData()
+                }
+                
+            }, fail: {
+                
+            })
+            
+            
+        }
+        
+      
     }
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController)
     {

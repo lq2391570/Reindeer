@@ -20,7 +20,17 @@ class CompanyProductVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UII
   
     var productIntroduceStr = ""
     var companyId:String = ""
+    //产品id
+    var productId:Int = -1
  
+    enum productUpdateOrAddType {
+        case addPro  //添加
+        case updatePro   //更新
+        case searchPro   //查询
+    }
+    var productTypeNum:productUpdateOrAddType = .addPro
+    
+    
     //添加成功后回调
     var succeedReturnClosure:((JSON) -> ())?
     
@@ -43,7 +53,27 @@ class CompanyProductVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UII
         let navBtn = UIBarButtonItem(title: "完成", style: .plain, target: self, action: #selector(addProduct))
         self.navigationItem.rightBarButtonItem = navBtn
         
+        if self.productTypeNum == .searchPro {
+            searchProduct()
+        }
+        
     }
+    //查询公司产品
+    func searchProduct() -> Void {
+        searchCompanyProductInterface(dic: ["token":GetUser(key: TOKEN),"id":productId], actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                self.headImageStr = jsonStr["logo"].stringValue
+                self.productNameStr = jsonStr["name"].stringValue
+                self.productIntroduceStr = jsonStr["desc"].stringValue
+                self.tableView.reloadData()
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+        }) { 
+            
+        }
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 0 {
             return 80
@@ -92,6 +122,7 @@ class CompanyProductVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UII
             cell.backgroundColor = UIColor(hexColor: "f9f6f4")
             cell.productintroLabel.text = self.productIntroduceStr
            // cell.detailTextLabel?.numberOfLines = 0
+            cell.detailTextLabel?.textColor = UIColor.gray
             cell.selectionStyle = .none
             return cell
         }else{
@@ -130,36 +161,66 @@ class CompanyProductVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UII
     //添加公司产品
     func addProduct() -> Void {
         print("点击完成")
+        var dic:NSDictionary = [:]
         
-        if companyId == "" {
-            SVProgressHUD.showInfo(withStatus: "公司id不存在")
-            return
-        }else if productNameStr == "" {
-            SVProgressHUD.showInfo(withStatus: "请输入产品名称")
-            return
-        }else if productIntroduceStr == "" {
-            SVProgressHUD.showInfo(withStatus: "请输入产品描述")
-            return
+        if self.productTypeNum == .updatePro || self.productTypeNum == .searchPro {
+            if companyId == "" {
+                SVProgressHUD.showInfo(withStatus: "公司id不存在")
+                return
+            }else if productNameStr == "" {
+                SVProgressHUD.showInfo(withStatus: "请输入产品名称")
+                return
+            }else if productIntroduceStr == "" {
+                SVProgressHUD.showInfo(withStatus: "请输入产品描述")
+                return
+            }
+            dic = ["companyId":companyId,"logo":self.headImageStr,"name":productNameStr,"desc":productIntroduceStr,"id":productId,"token":GetUser(key: TOKEN)]
+            
+        }else{
+            if productNameStr == "" {
+                SVProgressHUD.showInfo(withStatus: "请输入产品名称")
+                return
+            }else if productIntroduceStr == ""{
+                SVProgressHUD.showInfo(withStatus: "请输入产品描述")
+                return
+            }
+        dic = ["logo":self.headImageStr,"name":productNameStr,"desc":productIntroduceStr,"token":GetUser(key: TOKEN)]
         }
         
-        addCompanyProduct(dic: ["companyId":companyId,"logo":self.headImageStr,"name":productNameStr,"desc":productIntroduceStr], actionHandler: { (jsonStr) in
-            print("jsonStr = \(jsonStr)")
-            if jsonStr["code"] == 0 {
-                //成功
-                SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].string)
-                if (self.succeedReturnClosure != nil) {
-                    self.succeedReturnClosure!(jsonStr)
-                }
-                _ = self.navigationController?.popViewController(animated: true)
-                
-            }else{
-                SVProgressHUD .showInfo(withStatus: jsonStr["msg"].string)
-                
+        
+//        addCompanyProduct(dic: ["companyId":companyId,"logo":self.headImageStr,"name":productNameStr,"desc":productIntroduceStr], actionHandler: { (jsonStr) in
+//            print("jsonStr = \(jsonStr)")
+//            if jsonStr["code"] == 0 {
+//                //成功
+//                SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].string)
+//                if (self.succeedReturnClosure != nil) {
+//                    self.succeedReturnClosure!(jsonStr)
+//                }
+//                _ = self.navigationController?.popViewController(animated: true)
+//                
+//            }else{
+//                SVProgressHUD .showInfo(withStatus: jsonStr["msg"].string)
+//                
+//            }
+//            
+//        }, fail: {
+//
+//        })
+        updateOrAddNewProduct(dic: dic, actionHander: { (jsonStr) in
+                        if jsonStr["code"] == 0 {
+                            //成功
+                            SVProgressHUD.showSuccess(withStatus: jsonStr["msg"].string)
+                            if (self.succeedReturnClosure != nil) {
+                                self.succeedReturnClosure!(jsonStr)
+                            }
+                            _ = self.navigationController?.popViewController(animated: true)
+                        }else{
+                      SVProgressHUD .showInfo(withStatus: jsonStr["msg"].string)
             }
+        }) {
             
-        }, fail: {
-
-        })
+        }
+        
         
     }
     
@@ -221,7 +282,7 @@ class CompanyProductVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource,UII
                 //上传成功获得url
                 print("imageUrl = \(jsonStr["url"])")
                 self.headImageStr = jsonStr["url"].string!
-               self.tableView.reloadData()
+                self.tableView.reloadData()
                 
             }
             

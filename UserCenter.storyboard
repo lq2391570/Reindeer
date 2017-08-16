@@ -1318,6 +1318,74 @@
             </objects>
             <point key="canvasLocation" x="12327.200000000001" y="108.39580209895054"/>
         </scene>
+        <!--User Center NewVC-->
+        <scene sceneID="qta-3z-NrI">
+            <objects>
+                <viewController storyboardIdentifier="HRUserCenterNewVC" id="MDs-pW-Hkq" customClass="HRUserCenterNewVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="IbW-A0-KjZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="YPd-S9-hAy"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="mmW-bO-nXT">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="7iO-em-aSz">
+                                <rect key="frame" x="0.0" y="-33" width="375" height="700"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="7iO-em-aSz" firstAttribute="leading" secondItem="mmW-bO-nXT" secondAttribute="leading" id="DJk-Oc-Un8"/>
+                            <constraint firstItem="7iO-em-aSz" firstAttribute="top" secondItem="mmW-bO-nXT" secondAttribute="top" constant="-33" id="MtL-X4-fzq"/>
+                            <constraint firstAttribute="trailing" secondItem="7iO-em-aSz" secondAttribute="trailing" id="oF2-k7-BHs"/>
+                            <constraint firstItem="YPd-S9-hAy" firstAttribute="top" secondItem="7iO-em-aSz" secondAttribute="bottom" id="q1j-j5-XNH"/>
+                            <constraint firstItem="YPd-S9-hAy" firstAttribute="top" secondItem="7iO-em-aSz" secondAttribute="bottom" id="ypt-AJ-PvV"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="7iO-em-aSz" id="68B-4X-9LY"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rbm-zs-3g7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="12957.6" y="105.69715142428787"/>
+        </scene>
+        <!--My ColleagueVC-->
+        <scene sceneID="E58-1l-2fs">
+            <objects>
+                <viewController storyboardIdentifier="MyColleagueVC" id="z4m-tq-U9I" customClass="MyColleagueVC" customModule="Reindeer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="MZ3-e0-1wS"/>
+                        <viewControllerLayoutGuide type="bottom" id="dX8-59-FRw"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ud8-kd-5fe">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Fvv-X5-RsZ">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dX8-59-FRw" firstAttribute="top" secondItem="Fvv-X5-RsZ" secondAttribute="bottom" id="Eb5-b3-VSe"/>
+                            <constraint firstItem="Fvv-X5-RsZ" firstAttribute="leading" secondItem="ud8-kd-5fe" secondAttribute="leading" id="KkX-VX-nMy"/>
+                            <constraint firstItem="Fvv-X5-RsZ" firstAttribute="top" secondItem="ud8-kd-5fe" secondAttribute="top" id="XOn-w3-kRm"/>
+                            <constraint firstAttribute="trailing" secondItem="Fvv-X5-RsZ" secondAttribute="trailing" id="olK-Jl-bRV"/>
+                        </constraints>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="tableView" destination="Fvv-X5-RsZ" id="DuS-2g-fgm"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ufu-X3-AFN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="13626.4" y="107.49625187406298"/>
+        </scene>
     </scenes>
     <resources>
         <image name="user_home_bj.png" width="750" height="500"/>

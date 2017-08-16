@@ -394,10 +394,12 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
             
         }else{
             //hr端的个人中心
-            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRUserCenterVC") as! HRUserCenterVC
+//            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRUserCenterVC") as! HRUserCenterVC
+//            
+//            self.navigationController?.pushViewController(vc, animated: true)
+            let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "HRUserCenterNewVC") as! HRUserCenterNewVC
             
             self.navigationController?.pushViewController(vc, animated: true)
-            
         }
         
     }
