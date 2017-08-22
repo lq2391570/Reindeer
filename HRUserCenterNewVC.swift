@@ -102,11 +102,18 @@ class HRUserCenterNewVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         }else if indexPath.section == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCenterNewCell2") as! UserCenterNewCell2
             cell.inviteCell()
+            
             cell.rencaituijianClosure = {
                 //人才推荐
+                let vc = TalentRecommendList()
+                vc.title = "人才推荐"
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             cell.wodeyaoqingClosure = {
                 //我的邀请
+                print("我的邀请")
+                let vc = UIStoryboard(name: "UserCenter", bundle: nil).instantiateViewController(withIdentifier: "MyInviteVC") as! MyInviteVC
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             cell.renzhengzhuangtaiClosure = {
                 //认证状态

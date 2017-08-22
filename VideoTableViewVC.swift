@@ -216,7 +216,7 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
         userVideoStateList(dic: newDic, actionHander: { (bassClass) in
             self.userBassClass = bassClass
             self.tableView.reloadData()
-             self.tableView.mj_header.endRefreshing()
+            self.tableView.mj_header.endRefreshing()
         }) { 
             SVProgressHUD.showInfo(withStatus: "请求失败")
         }

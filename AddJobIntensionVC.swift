@@ -173,6 +173,7 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                 //判断添加是从哪里进入的添加求职意向（enterState）,若是简历中则传一个闭包
                 if self.enterState == .resumeEnterState
                 {
+                    
                     if self.returnClosure != nil
                     {
                         self.returnClosure!()
