@@ -51,7 +51,13 @@ class GotoInviteVC: BaseViewVC,UITextFieldDelegate,YYTextViewDelegate {
         keyboardDoneButtonView.setItems([doneButton], animated: true)
         textView.inputAccessoryView = keyboardDoneButtonView
         
+        
+       
+        
+        
+        
     }
+   
     @IBAction func sureBtnClick(_ sender: UIButton) {
         SVProgressHUD.show()
         if textField1.text == "" {

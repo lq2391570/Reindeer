@@ -153,8 +153,8 @@ class AddJobIntensionVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         
        print("resumeId = \(self.resumeModel?.id),jobId = \(positionModel?.id) industryId =\(industryList[0].id),cityId = \(areaModel?.id),skills = \(skillsStr),salaryId = \(compensationModel?.id)")
        //如果是添加则不传id,如果是更新则传id
-        let noIdDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaModel?.id as Any,"skills":"","salaryId":compensationModel?.id ?? 0 ] as NSDictionary
-        let idDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaModel?.id as Any,"skills":"","salaryId":compensationModel?.id ?? 0,"id":self.jobIntensionId] as NSDictionary
+        let noIdDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaModel?.id as Any,"skills":"","salaryId":compensationModel?.id ?? 0 ,"token":GetUser(key: TOKEN)] as NSDictionary
+        let idDic = ["resumeId":self.resumeModel?.id ?? 0,"jobId":positionModel?.id ?? 0,"industryId":industryList[0].id ?? 0,"cityId":areaModel?.id as Any,"skills":"","salaryId":compensationModel?.id ?? 0,"id":self.jobIntensionId,"token":GetUser(key: TOKEN)] as NSDictionary
         if self.enterState == .resumeEnterState || self.enterState == .loginEnterState  {
             saveOrUpdateDic = noIdDic
         }else if self.enterState == .updateEnterState

@@ -7,13 +7,21 @@
 //
 
 import UIKit
-
+import SwiftyJSON
+import SVProgressHUD
+import JCAlertView
 class MyInviteVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tableView: UITableView!
     
     var bassClass:MyInviteMyInviteBassClass?
+    var dataLong:String = ""
     
+    enum listType:Int {
+        case userType = 1 //普通用户
+        case hrType       // HR
+    }
+    var typeNum:listType = .hrType
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,8 +32,34 @@ class MyInviteVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
         tableView.register(UINib.init(nibName: "HRMyInviteCell1", bundle: nil), forCellReuseIdentifier: "HRMyInviteCell1")
         tableView.register(UINib.init(nibName: "HRMyInviteCell2", bundle: nil), forCellReuseIdentifier: "HRMyInviteCell2")
         tableView.register(UINib.init(nibName: "InvitePeopleCell", bundle: nil), forCellReuseIdentifier: "InvitePeopleCell")
-        MyInvitelist()
+        if self.typeNum == .hrType {
+             MyInvitelist()
+        }
+       
     }
+    //邀请面试
+    func inviteInterviewWithUser(resumeId:Int) -> Void {
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "id":resumeId,
+            "date":dataLong
+        ]
+        let jsonStr = JSON(dic)
+        let newDic:NSDictionary = jsonStr.dictionaryValue as NSDictionary
+        
+        HRInviteInterviewWithUser(dic: newDic, actionHander: { (jsonStr) in
+            if jsonStr["code"] == 0 {
+                SVProgressHUD.showSuccess(withStatus: "邀请成功")
+            }else{
+                SVProgressHUD.showInfo(withStatus: jsonStr["msg"].stringValue)
+            }
+        }) { 
+            
+        }
+    }
+    
+    
+    
     //获取我的邀请列表
     func MyInvitelist() -> Void {
        HRMyInviterList(dic: ["token":GetUser(key: TOKEN),"no":1,"size":100], actionHander: { (bassClass) in
@@ -37,12 +71,44 @@ class MyInviteVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
     }
         
     }
+    //自定义弹出框
+    func invitePopView(sureClosure:(() -> ())?) -> Void {
+        if let customView = LQDatePickView.newInstance() {
+            
+            let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
+            
+            customAlert?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - customView.frame.size.height/2-20)
+          // customView.datePicker.datePickerMode = .time
+            customView.cancelbtnClickClosure = { (btn) in
+                customAlert?.dismiss(completion: nil)
+                
+            }
+            customView.sureBtnClickclosure = { (btn) in
+                
+                print("datePick.date = \(customView.datePicker.date)")
+                customAlert?.dismiss(completion: nil)
+               self.dataLong = dateTransformUnixStr(date: customView.datePicker.date)
+                sureClosure!()
+                
+            }
+            customView.datePickChangeClosure = { sender in
+                
+            }
+            customAlert?.show()
+            
+        }
+
+    }
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return 1
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+        
+        
         if self.bassClass != nil {
             if indexPath.section == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "InvitePeopleCell") as! InvitePeopleCell
@@ -54,7 +120,11 @@ class MyInviteVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "HRMyInviteCell2") as! HRMyInviteCell2
                     cell.installCell(headImageStr: model.avatar, name: model.name, area: model.area, year: model.exp, edu: model.edu, remark: model.remark, inviteClickClosure: { (btn) in
                         print("邀请视频点击")
-                        
+                        self.invitePopView(sureClosure: {
+                            self.inviteInterviewWithUser(resumeId: model.resumeId!)
+                            
+                        })
+                       
                     })
                     return cell
                 }else{
@@ -63,9 +133,6 @@ class MyInviteVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
                     return cell
                     
                 }
-//                let cell = tableView.dequeueReusableCell(withIdentifier: "HRMyInviteCell1") as! HRMyInviteCell1
-//                cell.installCell(headImageStr: model.avatar, name: model.name, phoneNum: model.phone, remark: model.remark)
-//                return cell
                 
             }
 

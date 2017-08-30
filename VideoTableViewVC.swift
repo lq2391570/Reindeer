@@ -369,7 +369,21 @@ class VideoTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataSour
                             SVProgressHUD.showInfo(withStatus: "此面试未储存")
                         }
                         
+                    }, recommendClosure: { (btn) in
+                        //推荐人才
+                        print("推荐人才")
+                        let vc = UIStoryboard(name: "UserFirstStoryboard", bundle: nil).instantiateViewController(withIdentifier: "RecommendTalentVC") as! RecommendTalentVC
+                        
+                        vc.resumeId = listModel.id!
+                        vc.intendId = self.intentId
+                        
+                        
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        
                     })
+                    
+                    
+                    
                     return cell
                 }
                 

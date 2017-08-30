@@ -1025,14 +1025,23 @@ class HomePageVC: UIViewController,UITableViewDelegate,UITableViewDataSource,UIS
                 }
                 cell.commonInterFaceListClosure = { (btn) in
                     //普通面试列表
-                    print("普通面试列表")
-                    let vc = InterFaceNotiVC()
-                    vc.title = "普通面试"
-                    vc.intentId = self.jobId
-                    vc.jobId = self.jobId
+//                    print("普通面试列表")
+//                    let vc = InterFaceNotiVC()
+//                    vc.title = "普通面试"
+//                    vc.intentId = self.jobId
+//                    vc.jobId = self.jobId
+//                    vc.userMesJson = self.userMesJson
+//                    vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
+//                    self.navigationController?.pushViewController(vc, animated: true)
+                   //邀请面试列表
+                    let vc = HRInviteListVC()
                     vc.userMesJson = self.userMesJson
-                    vc.homeType = InterFaceNotiVC.HomepageType(rawValue: self.homeType.rawValue)!
+//                    vc.jobId = self.jobId
+//                    vc.intentId = self.jobId
+                    vc.homeType = HRInviteListVC.HomepageType(rawValue: self.homeType.rawValue)!
                     self.navigationController?.pushViewController(vc, animated: true)
+                    
+                    
                 }
                 cell.videoInterFaceListClosure = { (btn) in
                     //视频面试列表

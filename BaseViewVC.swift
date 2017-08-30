@@ -34,6 +34,16 @@ class BaseViewVC: UIViewController {
             let leftBarButtonItem = UIBarButtonItem(customView: leftBtn)
             self.navigationItem.leftBarButtonItem = leftBarButtonItem
             
+            //自定义右键（颜色）
+
+//            if self.navigationItem.rightBarButtonItem != nil {
+//            
+////                let rightBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+////                self.navigationItem.rightBarButtonItem = rightBarButtonItem
+////                self.navigationItem.rightBarButtonItem?.tintColor
+////                             = UIColor.mainColor
+//            }
+            
         }
         
     }

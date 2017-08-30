@@ -24,6 +24,11 @@ class TalentRecommandTableVC: BaseViewVC,UITableViewDelegate,UITableViewDataSour
     let footer = MJRefreshAutoFooter()
 
     var bassClass:MyRecommendMyRecommendBassClass?
+    //搜索条件（职位列表）
+    var positionBassClass:ConditionConditionBassClass?
+    
+    //选择的model
+    var selectModel:ConditionList?
     
     var label = UILabel()
     
@@ -44,6 +49,8 @@ class TalentRecommandTableVC: BaseViewVC,UITableViewDelegate,UITableViewDataSour
         })
 //       self.tableView.tableHeaderView = createTableViewHeadView()
 //        createLayout()
+        getPositionTypeList(typeNum: self.typeNum)
+        
     }
     
     
@@ -51,16 +58,32 @@ class TalentRecommandTableVC: BaseViewVC,UITableViewDelegate,UITableViewDataSour
         print("筛选点击")
         if let customView = PositionFilterView.newInstance(superView: self.view) {
             let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: true)
-            customAlert?.center = CGPoint.init(x: ScreenWidth/2, y:  ScreenHeight/2)
+            customAlert?.center = CGPoint.init(x: ScreenWidth/2, y:  ScreenHeight/2 - sender.center.y)
+            customView.positionBassClass = self.positionBassClass
+            customView.tableView.reloadData()
+            customView.selectPositionClosure = { model in
+                print("选择了\(model.name ?? "")")
+                self.selectModel = model
+                self.getRecommendListWithPositionId(positionId: model.id!)
+                customAlert?.dismiss(completion: nil)
+            }
             customAlert?.show()
         }
         
+    }
+    
+//    //获得职位列表
+    func getPositionTypeList(typeNum:Int) -> Void {
+        positionConditionInterface(dic: ["token":GetUser(key: TOKEN),"type":typeNum], actionHander: { (bassClass) in
+            self.positionBassClass = bassClass
+            
+        
+        }) { 
+            
+        }
         
     }
-//    //获得职位列表
-//    func <#name#>(<#parameters#>) -> <#return type#> {
-//        <#function body#>
-//    }
+    
     
     
     //创建布局
@@ -123,6 +146,28 @@ class TalentRecommandTableVC: BaseViewVC,UITableViewDelegate,UITableViewDataSour
             
         }
     }
+    //根据职位id获得推荐列表
+    func getRecommendListWithPositionId(positionId:Int) -> Void {
+        let dic:NSDictionary = [
+            "token":GetUser(key: TOKEN),
+            "type":typeNum,
+            "no":1,
+            "size":100,
+            "id":positionId
+        ]
+        
+        let jsonStr = JSON(dic)
+        let newDic:NSDictionary = jsonStr.dictionaryValue as NSDictionary
+        print("newDic = \(newDic)")
+        HRMyRecommendList(dic: newDic, actionHander: { (bassClass) in
+            self.bassClass = bassClass
+            self.tableView.reloadData()
+            self.tableView.mj_header.endRefreshing()
+        }) {
+            
+        }
+    }
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {

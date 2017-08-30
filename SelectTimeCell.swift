@@ -40,6 +40,7 @@ class SelectTimeCell: UITableViewCell {
         
         let alertView = JCAlertView(customView: customView, dismissWhenTouchedBackground: true)
         alertView?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - (customView?.frame.size.height)!/2-20)
+        customView?.datePicker.datePickerMode = .dateAndTime
         customView?.cancelbtnClickClosure = { (btn) in
             alertView?.dismiss(completion: nil)
         }
@@ -70,6 +71,7 @@ class SelectTimeCell: UITableViewCell {
         
         let alertView = JCAlertView(customView: customView, dismissWhenTouchedBackground: true)
         alertView?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - (customView?.frame.size.height)!/2-20)
+        customView?.datePicker.datePickerMode = .dateAndTime
         customView?.cancelbtnClickClosure = { (btn) in
             alertView?.dismiss(completion: nil)
             

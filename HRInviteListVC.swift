@@ -1,48 +1,38 @@
 //
-//  InterFaceNotiVC.swift
+//  HRInviteListVC.swift
 //  Reindeer
 //
-//  Created by shiliuhua on 2017/5/12.
+//  Created by shiliuhua on 2017/8/25.
 //  Copyright © 2017年 shiliuhua. All rights reserved.
 //
 
 import UIKit
 import VTMagic
 import SwiftyJSON
-class InterFaceNotiVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource {
 
-    var magController:VTMagicController?
-    var jobId = ""
-    
-    var intentId = ""
+
+class HRInviteListVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource {
+
+     var magController:VTMagicController?
     //个人信息json
     var userMesJson:JSON?
-    //应聘者或HR
-//    enum HROrUserTypeEnum {
-//        case HRType
-//        case UserType
-//    }
     //首页类型（HR或应聘者）
     enum HomepageType:Int {
         case userHomePage = 1 //普通用户
         case HRHomePage   //HR
     }
-    
-    var homeType:HomepageType = .userHomePage
- //   var roleType:HROrUserTypeEnum = .HRType
-    
+     var homeType:HomepageType = .userHomePage
     var titleArray = ["待处理","待面试","已结束"]
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        self.title = "邀请面试"
         self.addChildViewController(createMagicController())
         self.view.addSubview((magController?.view)!)
+       
         self.magController?.magicView.reloadData()
-        
+        // Do any additional setup after loading the view.
     }
-
     func createMagicController() -> VTMagicController {
         if self.magController == nil {
             self.magController = VTMagicController()
@@ -67,32 +57,39 @@ class InterFaceNotiVC: BaseViewVC,VTMagicViewDelegate,VTMagicViewDataSource {
             menuItem?.setTitleColor(UIColor.gray, for: .normal)
             menuItem?.setTitleColor(UIColor.black, for: .selected)
             menuItem?.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        
+            
         }
         return menuItem!
     }
+
     func magicView(_ magicView: VTMagicView, viewControllerAtPage pageIndex: UInt) -> UIViewController
     {
-        var vc:TableViewVC? = magicView.dequeueReusablePage(withIdentifier: "recom.identifier") as? TableViewVC
-        if vc == nil {
-            vc = TableViewVC()
-            vc?.jobId = self.jobId
-            vc?.userMesJson = self.userMesJson
-            vc?.homeType = TableViewVC.HomepageType(rawValue: self.homeType.rawValue)!
-            vc?.intentId = self.intentId
-        }
-       
+        var vc:HRInviteTableViewVC? = magicView.dequeueReusablePage(withIdentifier: "HRInviteTableViewVC") as? HRInviteTableViewVC
+        //  if vc == nil {
+        vc = HRInviteTableViewVC()
+       // vc?.jobId = self.jobId
+        vc?.userMesJson = self.userMesJson
+        vc?.homeType = HRInviteTableViewVC.HomepageType(rawValue: self.homeType.rawValue)!
+      //  vc?.intentId = self.intentId
+        
+        print("pageIndex = \(pageIndex)")
+        
         if pageIndex == 0 {
-         //   vc?.view.backgroundColor = UIColor.red
-            vc?.dataType = .waittingHandle
+            vc?.typeEnum = .waittingHandle
         }else if pageIndex == 1 {
-            vc?.dataType = .waittingInterFace
+            vc?.typeEnum = .waittingInterFace
         }else if pageIndex == 2 {
-            vc?.dataType = .alreadyFinish
+            vc?.typeEnum = .alreadyFinish
         }
+        
+        
+        //  }
+        
         return vc!
         
+        
     }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
