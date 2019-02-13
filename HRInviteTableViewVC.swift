@@ -68,7 +68,6 @@ class HRInviteTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataS
             self.tableView.mj_header = setUpMJHeader(refreshingClosure: {
                  self.getUserInviteInterViewList()
             })
-
         }
         
      }
@@ -179,10 +178,12 @@ class HRInviteTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataS
                 self.getInviteInterViewList()
             }
         }else{
-            getUserInviteInterViewList()
-            self.tableView.mj_header = setUpMJHeader(refreshingClosure: {
+         //   getUserInviteInterViewList()
+            
+            self.tableView.mj_header.beginRefreshing {
+                // print("self.dataType.rawValue = \(self.dataType.rawValue)")
                 self.getUserInviteInterViewList()
-            })
+            }
             
         }
         
@@ -215,8 +216,6 @@ class HRInviteTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataS
                         
                         vc.resumeId = listModel.resumeId!
                         //  vc.intendId = self.intentId  //求职意向id？
-                        
-                        
                         self.navigationController?.pushViewController(vc, animated: true)
                     })
                     return cell
@@ -427,6 +426,7 @@ class HRInviteTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataS
                     cell.installCell(time: listModel.dateStr, headImageStr: listModel.avatar, name: listModel.company, area: "", year: "", edu: "", videoClickClosure: { (btn) in
                         print("点击视频")
                     })
+                    cell.startVideoBtn.isHidden = true
                     cell.pingjiaLabel.text = "已到面试时间"
                     cell.pingjiaLabel.textColor = UIColor.gray
                     return cell
@@ -473,8 +473,6 @@ class HRInviteTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataS
         
         
     }
-    
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if self.homeType == .HRHomePage {
@@ -562,8 +560,15 @@ class HRInviteTableViewVC: UIViewController,UITableViewDelegate,UITableViewDataS
         }else{
             //User
             if self.typeEnum == .waittingHandle {
+                let listModel:UserInterviewList = (self.userInviteBassClass?.list![indexPath.section])!
                 //待处理
                 let vc = HRDetailHomeVC()
+                vc.interviewId = listModel.id!
+                vc.hrId = listModel.hrId!
+                vc.hrName = listModel.name!
+                vc.returnClosure = {
+                     self.getUserInviteInterViewList()
+                }
                 
                 self.navigationController?.pushViewController(vc, animated: true)
             }

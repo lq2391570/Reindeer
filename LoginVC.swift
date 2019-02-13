@@ -88,7 +88,7 @@ class LoginVC: UIViewController {
                     //第一步判断是否完善了个人信息,没有则去完善个人信息
                     if jsonStr["perfectInfo"] == -1
                     {
-                        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC") as! CompleteHRMesVC
+                        let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC2") as! CompleteHRMesVC2
                         let nav = UINavigationController.init(rootViewController: vc)
                         self.view.window?.rootViewController = nav
                         return
@@ -127,10 +127,8 @@ class LoginVC: UIViewController {
         passwordTextField.text = GetUser(key: "password") as? String
         self.navigationController?.isNavigationBarHidden = true
         
-        
-        
     }
-   
+    
     
     
     //背景做动画

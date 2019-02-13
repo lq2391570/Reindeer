@@ -29,6 +29,12 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
     
     @IBOutlet var choseCityBtn: UIButton!
     
+    @IBOutlet var choseYearbtn: UIButton!
+    
+    @IBOutlet var yearTextField: JVFloatLabeledTextField!
+    
+    
+    
     //返回闭包（用来刷新数据）
     var returnClosure:(() -> ())?
     
@@ -48,6 +54,12 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
     var areaId:String = ""
     //地区model
     var areaModel:AreaBaseClass?
+    
+    //年限Array
+    var yearArray:[String] = []
+    
+    //年限name
+    var yearName = ""
     
     //性别
     var sexStr:String!
@@ -70,7 +82,18 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
             self.nextBtn.removeTarget(self, action: nil, for: .touchUpInside)
             self.nextBtn.addTarget(self, action: #selector(completeClick), for: .touchUpInside)
         }
+        createYearArray()
     }
+    
+    //创建年份数组
+    func createYearArray() -> Void {
+        for num in 1990...2017 {
+            yearArray.append("\(num)")
+        }
+        yearArray.sort{$0>$1}
+        print("yearArray = \(yearArray)")
+    }
+    
     
     func completeClick() -> Void {
         //完成
@@ -150,6 +173,33 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
         }
         
     }
+    
+    @IBAction func choseYearBtnClick(_ sender: UIButton) {
+        
+        if let customView = LQPickCustomView.newInstance() {
+            
+            customView.titleLabel.text = "选择入职年份"
+            customView.dataArray1 = yearArray
+            let customAlert = JCAlertView.init(customView: customView, dismissWhenTouchedBackground: false)
+            
+            customAlert?.center = CGPoint.init(x: ScreenWidth/2, y: ScreenHeight - customView.frame.size.height/2-20)
+            customView.cancelbtnClickClosure = { (btn) in
+                customAlert?.dismiss(completion: nil)
+                
+            }
+            customView.sureBtnClickclosure = { (btn,selectNum1,selectNum2) in
+                
+                self.yearName = self.yearArray[selectNum1!]
+                print("self.yearName = \(self.yearName)")
+                self.yearTextField.text = self.yearName
+              customAlert?.dismiss(completion: nil)
+            }
+            customAlert?.show()
+            
+        }
+
+    }
+    
    //设置头像为圆形,性别选择框边框,textfield
     func installHeadBtn() -> Void {
         headImageBtn.layer.cornerRadius = 50
@@ -185,6 +235,9 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
         cityTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
         cityTextField.isUserInteractionEnabled = false
         cityTextField.text = self.userMesJson?["area"].stringValue
+        
+        yearTextField.floatingLabelFont = UIFont.systemFont(ofSize: 16)
+        
         self.areaModel = AreaBaseClass(object: "")
         self.areaModel?.id = self.userMesJson?["areaId"].intValue
         
@@ -223,8 +276,17 @@ class CompleteUserMesVC: BaseViewVC,UIImagePickerControllerDelegate,UINavigation
             SVProgressHUD.showInfo(withStatus: "姓名不能为空")
             return
         }
+        guard self.yearName != "" else {
+            SVProgressHUD.showInfo(withStatus: "请选择参加工作年份")
+            return
+        }
+        guard self.areaModel?.id != nil else {
+            SVProgressHUD.showInfo(withStatus: "请选择所在城市")
+            return
+        }
         
-        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":self.areaModel?.id as Any], actionHandler: {(jsonStr) in
+        
+        completeMesOfUsers(dic: ["token":GetUser(key: "token"),"sex":sexStr,"name":nameTextField.text!,"avatar":self.headImageStr,"area":self.areaModel?.id as Any,"workYear":self.yearName], actionHandler: {(jsonStr) in
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "完善信息成功")
                 //完善信息后必须填写求职意向，否则无法进入首页（什么鬼需求）

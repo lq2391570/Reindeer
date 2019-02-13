@@ -24,6 +24,8 @@ class SecurityVC: UIViewController {
         
         // Do any additional setup after loading the view.
         createAnimationForBGImageView()
+         securityTextField1.attributedPlaceholder = NSAttributedString(string: " 请输入密码", attributes: [NSForegroundColorAttributeName:UIColor.white])
+        securityTextField2.attributedPlaceholder = NSAttributedString(string: " 请再次输入密码", attributes: [NSForegroundColorAttributeName:UIColor.white])
         
     }
     //背景做动画
@@ -38,6 +40,7 @@ class SecurityVC: UIViewController {
 
     @IBAction func finishBtnClick(_ sender: UIButton) {
         
+        SVProgressHUD.show()
         if securityTextField1.text == nil || securityTextField1.text == ""{
             SVProgressHUD.showInfo(withStatus: "密码不能为空")
             return

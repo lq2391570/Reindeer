@@ -20,8 +20,9 @@ class RegisterVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-createAnimationForBGImageView()
+         createAnimationForBGImageView()
         // Do any additional setup after loading the view.
+         phoneNumTextFileField.attributedPlaceholder = NSAttributedString(string: " 请输入手机号", attributes: [NSForegroundColorAttributeName:UIColor.white])
     }
     //背景做动画
     func createAnimationForBGImageView() -> Void {
@@ -34,17 +35,19 @@ createAnimationForBGImageView()
     }
 
     @IBAction func nextBtnClick(_ sender: UIButton) {
-        
+        SVProgressHUD.show()
         if phoneNumTextFileField.text == nil || phoneNumTextFileField.text == "" {
             SVProgressHUD.showInfo(withStatus: "手机号不能为空")
             return
         }
+        
+        
         getVerificationCode(dic: ["phone":phoneNumTextFileField.text!], actionHandler: { (jsonStr) in
            print("jsonStr=\(jsonStr)")
             if jsonStr["code"] == 0 {
                 SVProgressHUD.showSuccess(withStatus: "成功")
                 
-            let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "VerificationVC") as? VerificationVC
+            let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "VerificationVC2") as? VerificationVC2
             vc?.phoneNumStr = self.phoneNumTextFileField.text!
                 
             self.navigationController?.pushViewController(vc!, animated: true)

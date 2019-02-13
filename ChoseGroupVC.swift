@@ -8,15 +8,13 @@
 
 import UIKit
 import SVProgressHUD
-class ChoseGroupVC: BaseViewVC {
+class ChoseGroupVC: UIViewController {
 
     @IBOutlet var bgImageView: UIImageView!
     
     @IBOutlet var choseWorkBtn: UIButton!
     
     @IBOutlet var recruitBtn: UIButton!
-    
-    
     
     
     override func viewDidLoad() {
@@ -51,10 +49,21 @@ class ChoseGroupVC: BaseViewVC {
     @IBAction func recruitBtnClick(_ sender: UIButton) {
         choseHRSwitch(dic: ["token":GetUser(key: "token")], actionHandler: { (jsonStr) in
             print("choseHRJsonStr=\(jsonStr)")
+            let vc = UIStoryboard(name: "LoginAndUserStoryboard", bundle: nil).instantiateViewController(withIdentifier: "CompleteHRMesVC2") as! CompleteHRMesVC2
+            
+            let nav = UINavigationController.init(rootViewController: vc)
+            self.view.window?.rootViewController = nav
+            
         }, fail: {
             
         })
     }
+    @IBAction func returnBtnClick(_ sender: UIButton) {
+        print("返回")
+        _ = self.navigationController?.popViewController(animated: true)
+    }
+    
+    
     //背景做动画
     func createAnimationForBGImageView() -> Void {
         let scaleAnimation = CABasicAnimation.init(keyPath: "transform.scale")

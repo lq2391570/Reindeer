@@ -144,7 +144,7 @@ class CompanyDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 //        }) { 
 //            SVProgressHUD.showInfo(withStatus: "请求失败")
 //        }
-        userGetCompanyDetail(dic: ["id":"56"], actionHander: { (bassClass) in
+        userGetCompanyDetail(dic: ["id":"56","token":GetUser(key: TOKEN)], actionHander: { (bassClass) in
             self.companyDetailModel = bassClass
             self.myTableView.reloadData()
         }) { 

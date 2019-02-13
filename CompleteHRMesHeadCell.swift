@@ -109,7 +109,6 @@ class CompleteHRMesHeadCell: UITableViewCell,UIImagePickerControllerDelegate,UIN
                 if self.choseImageColsure != nil {
                     self.choseImageColsure!(self.headImageStr)
                 }
-                
             }
             
         }, fail: {

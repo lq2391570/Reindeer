@@ -344,7 +344,6 @@ class ResumeDetailVC: BaseViewVC,UITableViewDelegate,UITableViewDataSource {
 
     }
     
-    
     func leftBtnClick() -> Void {
         //普通邀约
         if let customView = CustomerInterviewView.newInstance() {
